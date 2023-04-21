@@ -49,7 +49,7 @@ Geometry g;
 
 unsigned nEvents = 100; // Number of events to be generated
 unsigned nTracks = 1; // Number of tracks per event
-unsigned nBibHits = 0; //  BIB hits for each event. Redefined at start up.
+unsigned nBibHits = 1; //  BIB hits for each event. Redefined at start up.
 int fillMode = 1; // optimization mode for HTA fill
 
 
@@ -80,7 +80,7 @@ int main(){
 			
 	// Open data file
 	
-	string dataFileName = "HTAdata_00_high.txt";
+	string dataFileName = "HTAdata.txt";
 	cout << "Opening Data File: " << dataFileName << " ..." << endl;
 	ifstream infile;
 	infile.open(dataFileName);
