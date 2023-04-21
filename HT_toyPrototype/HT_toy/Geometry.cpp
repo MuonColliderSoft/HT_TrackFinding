@@ -154,21 +154,21 @@ class Geometry {
 	
 	Geometry() { // default constructor
 	
-		double xphiSigmaB = 0.0;// mm
-		double xphiSigmaD = 0.0;// mm
-		double zSigmaB = 0.0;// mm
-		double rSigmaD = 0.0;// mm
+		//double xphiSigmaB = 0.0;// mm
+		//double xphiSigmaD = 0.0;// mm
+		//double zSigmaB = 0.0;// mm
+		//double rSigmaD = 0.0;// mm
 		
-		//double xphiSigmaB = 0.1;// mm
-		//double xphiSigmaD = 0.1;// mm
-		//double zSigmaB = 0.1;// mm
-		//double rSigmaD = 0.1;// mm
+		double xphiSigmaB = 0.1;// mm
+		double xphiSigmaD = 0.1;// mm
+		double zSigmaB = 0.1;// mm
+		double rSigmaD = 0.1;// mm
 		
-		double tSigmaB = 0.0;
-		double tSigmaD = 0.0;
+		//double tSigmaB = 0.0;
+		//double tSigmaD = 0.0;
 		
-		//double tSigmaB = 15.0;// 15 mm == 50 ps
-		//double tSigmaD = 15.0;// 15 mm == 50 ps
+		double tSigmaB = 15.0;// 15 mm == 50 ps
+		double tSigmaD = 15.0;// 15 mm == 50 ps
 
 		unsigned iB = 0;
 		_B.r = 31.; _B.zMax = 65.; _B.zMin =-_B.zMax; _B.xphiPrec = xphiSigmaB; _B.zPrec = zSigmaB; _B.tPrec = tSigmaB;    B[iB++] = _B;
