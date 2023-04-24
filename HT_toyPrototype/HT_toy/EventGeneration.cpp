@@ -131,6 +131,7 @@ int main(){
 	cout << "reading BIB... ";
 	int code = bibRead.readFile("BIBdata.txt");
 	cout << "return code = " << code << endl;
+	if(code == -1 && nBibHits != 0) return 0;
 	unsigned totBIB = bibRead.size();
 	cout << totBIB << " BIB events read from file" << endl;	
 	double phia = 0., phib = 0.1;// in radiants
