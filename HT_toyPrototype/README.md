@@ -28,4 +28,4 @@ Instructions:
 The ROOT macro *PlotTracks.cpp* reads the track candidates from the file *PlotData.txt* and displays the candidate hits. 
 
 Usage:\
-```root -l ../plotTracks/PlotTracks.cpp```
+```root -l PlotTracks.cpp```
