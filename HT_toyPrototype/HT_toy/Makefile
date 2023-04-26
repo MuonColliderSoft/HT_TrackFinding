@@ -13,21 +13,27 @@ GLIBS = $(ROOTGLIBS)
 
 #------------------------------------------------------------------------
 
-HDRS = Statistics.h Hit.h Track.h
+HDRS = Parameters.h Statistics.h Hit.h Track.h
 INCS = BibFileReader.cpp Event.cpp Geometry.cpp\
-       Hit.cpp HTArray.cpp Statistics.cpp Track.cpp\
-       HTArrayTraining.cpp EventGeneration.cpp
+       Hit.cpp HTArray.cpp Statistics.cpp Track.cpp
 
 #------------------------------------------------------------------------
 
-all: HTArrayTraining EventGeneration
+all: ConvertBIBHits HTArrayTraining EventGeneration
 
-HTArrayTraining EventGeneration: $(HDRS) $(INCS)
+ConvertBIBHits: Geometry.cpp ConvertBIBHits.cpp
+	@echo "Compiling $@ ... "
+	$(CXX) $@.cpp $(CXXFLAGS) $(ROOTLIBS) $(ROOTGLIBS) -o $@
+
+HTArrayTraining: $(HDRS) $(INCS) HTArrayTraining.cpp
+	@echo "Compiling $@ ... "
+	$(CXX) $@.cpp $(CXXFLAGS) $(ROOTLIBS) $(ROOTGLIBS) -o $@
+
+EventGeneration: $(HDRS) $(INCS) EventGeneration.cpp
 	@echo "Compiling $@ ... "
 	$(CXX) $@.cpp $(CXXFLAGS) $(ROOTLIBS) $(ROOTGLIBS) -o $@
 
 clean:
-	@rm -f HTArrayTraining EventGeneration
- 
+	@rm -f ConvertBIBHits HTArrayTraining EventGeneration
 
 #------------------------------------------------------------------------

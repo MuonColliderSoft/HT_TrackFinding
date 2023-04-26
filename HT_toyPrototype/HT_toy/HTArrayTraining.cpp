@@ -1,5 +1,3 @@
-
-
 #include <iostream> 
 #include <fstream> 
 #include <iomanip> 
@@ -35,6 +33,7 @@ std::default_random_engine generator;
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
+#include "Parameters.h"
 #include "Geometry.cpp"
 Geometry g;
 #include "Hit.h"
@@ -46,17 +45,21 @@ Geometry g;
 
 
 bool Debug = false;
-bool Diagonalize = false; 
-bool Summary = false;	
 
 int TrainingPhase = 0; // 0 = invalid 
-					   // 1 = from scratch 
-					   // 2 = second step after diagonalization
-					   // 3 = verification and statistics
+		       // 1 = from scratch 
+		       // 2 = second step after diagonalization
+		       // 3 = verification and statistics
 					   
 					   
 					   
-unsigned nEvents = 1e7; // number of events to be generated	for training		   
+unsigned nEvents; // number of events to be generated for training		   
+
+// The following global parameters are initialized in the main function
+
+bool Diagonalize;
+bool Summary;
+
 					   
 
 //////////////////////////////////////////////////////////////////////////////
@@ -68,10 +71,14 @@ unsigned nEvents = 1e7; // number of events to be generated	for training
 
 int main(){
   
-  
-  
-	TFile* histFile = new TFile("AAATrainingHists.root","RECREATE");  // histogram file
-  
+        Parameters par;
+
+	// Parameter initialization:
+
+	nEvents = par.train_nEvents;
+	Diagonalize = par.train_Diagonalize;
+	
+
 	// Instantiate Hough Transform Array
 	
 	cout << "Instantiating Hough Transform Array..." << endl;
@@ -84,7 +91,7 @@ int main(){
 			
 	// Open data file
 	
-	string dataFileName = "HTAdata.txt";
+	string dataFileName = par.train_dataFileName;
 	cout << "Opening Data File: " << dataFileName << " ..." << endl;
 	ifstream infile;
 	infile.open(dataFileName);
@@ -99,7 +106,23 @@ int main(){
 	
 	
 	if(TrainingPhase < 0) return TrainingPhase; // datafile does not match current configuration
+
+	string train_histFileName;
+	switch (TrainingPhase) {
+	case 1:
+	  train_histFileName = par.train_histFileName1;
+	  break;
+	case 2:
+	  train_histFileName = par.train_histFileName2;
+	  break;
+	case 3:
+	  train_histFileName = par.train_histFileName3;
+	  break;
+	}
+
+	TFile* histFile = new TFile(train_histFileName.c_str(),"RECREATE");  // histogram file
   
+
   
 	g.print(cout);
 	
@@ -424,7 +447,7 @@ int main(){
 	cout << "Event generation complete" << endl;
 	
 	
-	cout << " WWrite histogram file..." ;
+	cout << " Write histogram file " << dataFileName << " ...";
 	histFile->Write(); // write histogram file
 	cout << endl;
 	
