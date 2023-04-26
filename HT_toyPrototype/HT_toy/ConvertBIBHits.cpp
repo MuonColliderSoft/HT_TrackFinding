@@ -17,7 +17,7 @@ using namespace std;
 const float GeVtoMeV = 1000.;
 const double c = 299.792458; // mm/ns - speed of light
 
-const unsigned int verbose = 0;
+const unsigned int verboseLevel = 0;
 
 TFile *input_file;
 TTree *trkHits;
@@ -214,7 +214,7 @@ int main(int argc, char **argv){
    
   
   std::cout << std::endl;
-  if ( verbose > 1 )
+  if ( verboseLevel > 1 )
     for(unsigned i = 0; i != (unsigned)buffer.size(); ++i) buffer[i].print(std::cout);
    
   // write data file
