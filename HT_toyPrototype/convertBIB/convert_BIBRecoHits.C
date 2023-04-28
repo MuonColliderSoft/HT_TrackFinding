@@ -16,6 +16,8 @@
 const float GeVtoMeV = 1000.;
 const double c = 299.792458; // mm/ns - speed of light
 
+const unsigned int verboseLevel = 0;
+
 TFile *input_file;
 TTree *trkHits;
 TFile* histFile = new TFile("AAAhists.root","RECREATE");  // histogram file
@@ -115,12 +117,14 @@ void convert_BIBRecoHits(const TString filename="allHits_ntuple_BIB.root"){
 	 		double minDelta = 1000.;
 	 		int minB = -1;
 	 		for(int iB = 0; iB != g.nBarrels; ++ iB){
-	 			double delta = fabs(rho - g.B[iB].r);
+			        if ( trk_z[ihit] < g.B[iB].zMin || trk_z[ihit] > g.B[iB].zMax ) continue;
+				double delta = fabs(rho - g.B[iB].r);
 	 			if(delta < minDelta) {
 	 				minB = iB;
 	 				minDelta = delta;
 	 			}
 	 		}
+			if (  minB == -1 ) continue;
 	 		iLayer = minB;
 	 		cout << minB << " " << minDelta << endl;
 	 		x2 = trk_z[ihit];
@@ -135,12 +139,14 @@ void convert_BIBRecoHits(const TString filename="allHits_ntuple_BIB.root"){
 	 		int minD = -1;
 	 		// right discs are from 0 to nDhalf - 1
 	 		for(int iD = 0; iD != nDhalf; ++ iD){
+			        if ( rho < g.D[iD].rMin || rho > g.D[iD].rMax ) continue;
 	 			double delta = fabs(trk_z[ihit] - g.D[iD].z);
 	 			if(delta < minDelta) {
 	 				minD = iD;
 	 				minDelta = delta;
 	 			}
 	 		}
+			if (  minD == -1 ) continue;
 	 		iLayer = minD;
 	 		cout << minD << " " << minDelta << endl;
 	 		x2 = rho;
@@ -154,12 +160,14 @@ void convert_BIBRecoHits(const TString filename="allHits_ntuple_BIB.root"){
 	 		int minD = -1;
 	 		// left discs are from nDhalf to nDiscs - 1
 	 		for(int iD = nDhalf; iD != g.nDiscs; ++ iD){
+			        if ( rho < g.D[iD].rMin || rho > g.D[iD].rMax ) continue;
 	 			double delta = fabs(trk_z[ihit] - g.D[iD].z);
 	 			if(delta < minDelta) {
 	 				minD = iD;
 	 				minDelta = delta;
 	 			}
 	 		}
+			if (  minD == -1 ) continue;
 	 		iLayer = minD;
 	 		cout << minD << " " << minDelta << endl;
 	 		x2 = rho;
@@ -209,7 +217,8 @@ void convert_BIBRecoHits(const TString filename="allHits_ntuple_BIB.root"){
    
   
   	cout << endl;
-  	for(unsigned i = 0; i != (unsigned)buffer.size(); ++i) buffer[i].print(cout);
+	if ( verboseLevel>1 )
+	  for(unsigned i = 0; i != (unsigned)buffer.size(); ++i) buffer[i].print(cout);
    
     // write data file
     	cout << endl;
