@@ -22,11 +22,11 @@
         double u2; 
         unsigned trackInd; // index of parent track in track list (member of Event)       
         Hit(char _hitType, int _iLayer, double _x1, double _x2, double t, unsigned trackInd); 
-        void XYZ(Geometry &g, double &X, double &Y, double &Z);  
+        void XYZ(DetectorGeometry &g, double &X, double &Y, double &Z);  
 		void print(ostream &out); 
 		void write(ostream &out);
-		void printXYZ(Geometry &g, ostream &out);
-		double timeExpected(Geometry &g, double mass, double invPt);
+		void printXYZ(DetectorGeometry &g, ostream &out);
+		double timeExpected(DetectorGeometry &g, double mass, double invPt);
 		// TOF of a particle of mass "mass" and inverse pt "invPt" from the origin to the hit point
 		bool isSeed();
     

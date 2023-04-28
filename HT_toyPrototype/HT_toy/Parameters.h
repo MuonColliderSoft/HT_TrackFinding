@@ -5,6 +5,15 @@
 //  Created by Luciano Ristori on 4/25/23
 //
 
+
+// dimensions of the HT array
+//(global)
+
+const static unsigned HTA_NphiBins = 1;
+const static unsigned HTA_NetaBins = 200;
+const static unsigned HTA_NinvptBins = 10;
+		
+
 class Parameters {
 
 ////////////////////////////////////////////////////////////////////////       
@@ -24,7 +33,7 @@ public:
 	
 // number of events to be generated	for training
 	
-	unsigned train_nEvents = 1e7; 
+	unsigned train_nEvents = 1e6; 
 	
 // Histogram files for three training phases
 
@@ -51,7 +60,7 @@ public:
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = 1.;
+	double gen_fracBib = 0.;
 	
 // optimization mode for HTA fill = 0 (safe and slow) or 1 (fast)	
 	
@@ -90,11 +99,6 @@ public:
 // HTArray.cpp  ////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////// 
 
-// dimensions of the HT array
-
-	const static unsigned HTA_NphiBins = 1;
-	const static unsigned HTA_NetaBins = 200;
-	const static unsigned HTA_NinvptBins = 10;
 
 // coordinates of a single HTA cell and detector layer 
 // whose hit coordinates we want to plot in 3-D

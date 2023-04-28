@@ -36,8 +36,21 @@ std::default_random_engine generator;
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
-#include "Geometry.cpp"
-Geometry g;
+
+#include "GlobalConstants.cpp"
+
+#include "Parameters.h"
+Parameters par; // class that holds all configurable parameters					   
+
+//#include "Geometry.cpp"
+//Geometry g;
+
+#include "DetectorGeometry.cpp"
+DetectorGeometry dg;
+
+#include "TrackGeometry.cpp"
+TrackGeometry tg;
+
 #include "Hit.h"
 #include "Track.cpp"
 #include "Hit.cpp"
@@ -46,30 +59,46 @@ Geometry g;
 #include "HTArray.cpp"
 
 
-
-unsigned nEvents = 100; // Number of events to be generated
-unsigned nTracks = 1; // Number of tracks per event
-unsigned nBibHits = 1; //  BIB hits for each event. Redefined at start up.
-int fillMode = 1; // optimization mode for HTA fill
-
-
 bool Debug = false;
 bool Special = false;// used in debugging
-bool Diagonalize = false;
-bool Summary = false;
-bool PlotTracks = true;
+bool verbose = false;
+
+//bool Diagonalize = false;
+//bool Summary = false;
 
 int TrainingPhase = 0; // 0 = pattern recognition 
 					   // 1 = from scratch 
 					   // 2 = second step after diagonalization
 					   // 3 = verification and statistics
 				   
+// The following global parameters are initialized in the main function
+
+unsigned nEvents; // Number of events to be generated
+unsigned nTracks; // Number of tracks per event
+double fracBib; // fraction of Bib to be simulated
+int fillMode; // optimization mode for HTA fill
+bool PlotTracks; // create a file with data for 3-D plots of candidates		
+
+
+				   
 
 int main(){
+
+	
+	
+	// parameter initialization
+	
+	unsigned nEvents = par.gen_nEvents; // Number of events to be generated
+	unsigned nTracks = par.gen_nTracks; // Number of tracks per event
+	double fracBib = par.gen_fracBib; // fraction of Bib to be simulated
+	int fillMode = par.gen_fillMode; // optimization mode for HTA fill
+	bool PlotTracks = par.gen_PlotTracks; // create a file with data for 3-D plots of candidates		
+	
+  	long int randomSeed = par.gen_randomSeed;
+  	if(randomSeed)generator.seed(randomSeed); // seeding the random generator to be different from training
   
-  	generator.seed(121348); // seeding the random generator to be different from training
-  
-	TFile* histFile = new TFile("AAAEventGeneration.root","RECREATE");  // histogram file
+  	string histFileName = par.gen_histFileName;
+	TFile* histFile = new TFile(histFileName.c_str(),"RECREATE");  // histogram file
   
 	// Instantiate Hough Transform Array
 	
@@ -80,7 +109,7 @@ int main(){
 			
 	// Open data file
 	
-	string dataFileName = "HTAdata.txt";
+	string dataFileName = par.gen_dataFileName;
 	cout << "Opening Data File: " << dataFileName << " ..." << endl;
 	ifstream infile;
 	infile.open(dataFileName);
@@ -106,7 +135,7 @@ int main(){
 	
 	
 	
-		string plotDataFileName = "PlotData.txt";
+		string plotDataFileName = par.gen_plotDataFileName;
 		cout << "Opening Data File: " << plotDataFileName << " ..." << endl;
 		ofstream outPlotFile;
 		
@@ -129,39 +158,29 @@ int main(){
 	
 	BibFileReader bibRead;
 	cout << "reading BIB... ";
-	int code = bibRead.readFile("BIBdata.txt");
+	
+	string bibFileName = par.gen_bibFileName;	
+	int code = bibRead.readFile(bibFileName);
 	cout << "return code = " << code << endl;
-	if(code == -1 && nBibHits != 0) return 0;
+	if(code == -1 && fracBib > 0.) return 0;
+	
 	unsigned totBIB = bibRead.size();
 	cout << totBIB << " BIB events read from file" << endl;	
+	
+	// calculating the number of Bib hits to add to every event
+	// given the slice in phi that we want to cover and what
+	// fraction of background we want to simulate (fracBib)
+	
 	double phia = 0., phib = 0.1;// in radiants
 	bibRead.setPhiLimits(phia,phib); 
 	cout << "BIB phi limits: " << phia << " " << phib << endl;
 	double BIBscale = 2.*Pi/(phib - phia);
 	cout << "BIB scale factor: " << BIBscale << endl;	
-	if(nBibHits) nBibHits = totBIB/BIBscale;
+	unsigned nBibHits = totBIB/BIBscale*fracBib;
 	cout << nBibHits << " BIB scaled hits per collision" << endl;
 	double rateScale = 8.*Pi/(HTA.phiStep*HTA.NphiBins);// includes factors 2 from charge and eta
 	cout << "rate scale factor: " << rateScale << endl;	
-	
-/*	cout << "first 3 hits:" << endl;	
-		for(int i = 0; i != 3; ++i){
-			bibRead.bibList[i].print(cout);
-		}
-	cout << "last one: ";
-	bibRead.bibList[bibRead.size()-1].print(cout);
-	
-	
-	cout << endl << "10 random BIB hits:" << endl;
-	
-	for(int i = 0; i != 10; ++i){
-		Hit hit = bibRead.randomBibHit();
-		hit.print(cout);
-	}
-*/  
-  
-	//g.print(cout);
-			
+		
 			
 	TH1D HnCandidates("HnCandidates","HnCandidates", 6, -0.5,+5.5);
 	TH1D HnHitsInThisCell("HnHitsInThisCell","HnHitsInThisCell", 13, -0.5,+12.5);
@@ -221,7 +240,7 @@ int main(){
 	
 	// Define vector of 1-Dim histograms for barrel hits
 	
-	const static unsigned nBarrels = g.nBarrels;
+	const static unsigned nBarrels = dg.nBarrels;
 	
 	std::vector<TH1D*> HitTBX; // Track hits	
 	for(unsigned iB = 0; iB != nBarrels; ++iB){
@@ -229,7 +248,7 @@ int main(){
 		ss << "HitTBX" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi); 
+		TH1D* h = new TH1D(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi); 
 		HitTBX.push_back(h);	
 	}
 	
@@ -239,7 +258,7 @@ int main(){
 		ss << "HitBBX" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi); 
+		TH1D* h = new TH1D(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi); 
 		HitBBX.push_back(h);	
 	}
 	
@@ -251,7 +270,7 @@ int main(){
 		ss << "HitTBZ" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, -g.B[iB].zMin + g.B[iB].zMax, g.B[iB].zMin, g.B[iB].zMax); 
+		TH1D* h = new TH1D(title,title, -dg.B[iB].zMin + dg.B[iB].zMax, dg.B[iB].zMin, dg.B[iB].zMax); 
 		HitTBZ.push_back(h);	
 	}
 	
@@ -261,7 +280,7 @@ int main(){
 		ss << "HitBBZ" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, -g.B[iB].zMin + g.B[iB].zMax, g.B[iB].zMin, g.B[iB].zMax); 
+		TH1D* h = new TH1D(title,title, -dg.B[iB].zMin + dg.B[iB].zMax, dg.B[iB].zMin, dg.B[iB].zMax); 
 		HitBBZ.push_back(h);	
 	}
 	
@@ -305,14 +324,14 @@ int main(){
 		ss << "HitBXCorr" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi); 
+		TH1D* h = new TH1D(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi); 
 		HitBXCorr.push_back(h);	
 	}
 	
 	
 	// Define vector of 1-Dim histograms for disc hits
 	
-	const static unsigned nDiscs = g.nDiscs;
+	const static unsigned nDiscs = dg.nDiscs;
 		
 	std::vector<TH1D*> HitTDPhi; // track Hits
 	
@@ -345,7 +364,7 @@ int main(){
 		ss << "HitTDR" << iD;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, -g.D[iD].rMin + g.D[iD].rMax, g.D[iD].rMin, g.D[iD].rMax);
+		TH1D* h = new TH1D(title,title, -dg.D[iD].rMin + dg.D[iD].rMax, dg.D[iD].rMin, dg.D[iD].rMax);
 		HitTDR.push_back(h);	
 	}
 	
@@ -356,7 +375,7 @@ int main(){
 		ss << "HitBDR" << iD;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, -g.D[iD].rMin + g.D[iD].rMax, g.D[iD].rMin, g.D[iD].rMax);
+		TH1D* h = new TH1D(title,title, -dg.D[iD].rMin + dg.D[iD].rMax, dg.D[iD].rMin, dg.D[iD].rMax);
 		HitBDR.push_back(h);	
 	}
 	
@@ -410,7 +429,7 @@ int main(){
 	
 	// Define vector of 2-Dim histograms for barrel hits
 	
-	//const static unsigned nBarrels = g.nBarrels;
+	//const static unsigned nBarrels = dg.nBarrels;
 	std::vector<TH2I*> HitBXZ;
 	
 	for(unsigned iB = 0; iB != nBarrels; ++iB){
@@ -418,14 +437,14 @@ int main(){
 		ss << "HitBXZ" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH2I* h = new TH2I(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi,1000,g.B[iB].zMin,g.B[iB].zMax);
+		TH2I* h = new TH2I(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi,1000,dg.B[iB].zMin,dg.B[iB].zMax);
 		h->SetStats(false);
 		HitBXZ.push_back(h);	
 	}
 	
 	// Define vector of 2-Dim histograms for disc hits
 	
-	//const static unsigned nDiscs = g.nDiscs;
+	//const static unsigned nDiscs = dg.nDiscs;
 	std::vector<TH2I*> HitDPhiR;
 	
 	for(unsigned iD = 0; iD != nDiscs; ++iD){
@@ -433,7 +452,7 @@ int main(){
 		ss << "HitDPhiR" << iD;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH2I* h = new TH2I(title,title,1000, -1., +1., 1000,g.D[iD].rMin,g.D[iD].rMax);
+		TH2I* h = new TH2I(title,title,1000, -1., +1., 1000,dg.D[iD].rMin,dg.D[iD].rMax);
 		h->SetStats(false);
 		HitDPhiR.push_back(h);	
 	}
@@ -467,7 +486,7 @@ int main(){
     		printf("%s", ctime(&my_time));
     
     		
-			Event ev(g, nTracks);// (geometry, nTracks)
+			Event ev(dg, nTracks);// (geometry, nTracks)
 			
 			//add BIB hits
 			
@@ -519,7 +538,7 @@ int main(){
 			if(Debug) cout << " processing layer " << thisHit.iLayer << endl;
 			
 			double X, Y, Z;
-			thisHit.XYZ(g, X, Y, Z);
+			thisHit.XYZ(dg, X, Y, Z);
 			double R = sqrt(X*X + Y*Y);
 			double Phi = atan2(Y,X);
 			

@@ -53,9 +53,9 @@
         
         // constructors
         
-        Track(); // default - generates random track with default parameters from Geometry class
+        Track(); // default - generates random track with default parameters from TrackGeometry class
         
-        Track(Geometry &g); // generates random track with parameters from specific Geometry class instance
+        Track(TrackGeometry &g); // generates random track with parameters from specific TrackGeometry class instance
         
         Track(int massInd_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_); // specific track constructor
         
@@ -66,8 +66,8 @@
         // calculate coordinates of intersections of this track with detector planes
         
         bool xzBarrel(double yDet, double &x, double &z, double &t); // yDet is the position of the barrel plane (parallel to xz)
-        bool xyDisc(Geometry &g, int iDisc, double &X, double &R, double &T); // disc plane (parallel to xy)
-        bool phizBarrel(Geometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT);// hitPhi is a linear coordinate measured along phi
+        bool xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T); // disc plane (parallel to xy)
+        bool phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT);// hitPhi is a linear coordinate measured along phi
         
         // rigidly rotate track around z
         

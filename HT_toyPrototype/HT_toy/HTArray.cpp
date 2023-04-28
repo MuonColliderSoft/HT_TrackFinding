@@ -7,10 +7,7 @@
 
 
  extern int TrainingPhase;
- extern bool Debug;
  extern bool Special;
- extern bool Diagonalize; 
- extern bool Summary;	
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -243,7 +240,7 @@
            
     public:
                
-        unsigned nBarrels = g.nBarrels;       
+        unsigned nBarrels = dg.nBarrels;       
         unsigned nHitLayers	; // number of layers hit for current event in this element
              
         // list of layers for this element implemented as a map
@@ -365,12 +362,14 @@
 		TH3I *H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
 
     
-    	// size of the array
-    	const static unsigned NphiBins = 1;
-		const static unsigned NetaBins = 200;
-		const static unsigned NinvptBins = 10;
+    	// dimensions of the array
+    	
+    	const static unsigned NphiBins = HTA_NphiBins;
+		const static unsigned NetaBins = HTA_NetaBins;
+		const static unsigned NinvptBins = HTA_NinvptBins;
 		
 		// origin and steps of the array
+		
 		double phiMin;
 		double phiStep;
 		double etaMin;
@@ -379,26 +378,27 @@
 		double invPtStep;
 		
 		// HT Array bin and layer to plot content in 3D
-		int plotBinX = 0;
-		int plotBinY = 900;
-		int plotBinZ = 5;
-		int plotLay = 7;
+		
+		int plotBinX = par.HTA_plotBinX;
+		int plotBinY = par.HTA_plotBinY;
+		int plotBinZ = par.HTA_plotBinZ;
+		int plotLay = par.HTA_plotLay;
 		
 		// HT Array proper	
 			
-		HTArrayElement ArrElem[NphiBins][NetaBins][NinvptBins];
+		HTArrayElement ArrElem[HTA_NphiBins][HTA_NetaBins][HTA_NinvptBins];
 		
 		HTArray(){ // constructor
 		
-			phiMin = g.t_phi - g.t_deltaPhi;
-			phiStep = 2*g.t_deltaPhi/double(NphiBins);
-			etaMin = g.t_eta - g.t_deltaEta;
-			etaStep = 2*g.t_deltaEta/double(NetaBins);
-			invPtMin = g.t_invPt_min;
-			invPtStep = (g.t_invPt_max - g.t_invPt_min)/double(NinvptBins);
+			phiMin = tg.t_phi - tg.t_deltaPhi;
+			phiStep = 2*tg.t_deltaPhi/double(NphiBins);
+			etaMin = tg.t_eta - tg.t_deltaEta;
+			etaStep = 2*tg.t_deltaEta/double(NetaBins);
+			invPtMin = tg.t_invPt_min;
+			invPtStep = (tg.t_invPt_max - tg.t_invPt_min)/double(NinvptBins);
 			
-			
-			outfile.open("mapData.txt");
+			string mapDataFileName = par.HTA_mapDataFileName;
+			outfile.open(mapDataFileName);
 				
 		}
 		
@@ -603,7 +603,7 @@
 				
 				if(i==plotBinX && j==plotBinY && k==plotBinZ){
 					int lay = h.iLayer;
-					if (h.hitType == 'D') lay += g.nBarrels;
+					if (h.hitType == 'D') lay += dg.nBarrels;
 					if(lay == plotLay) {
 						// This is the right cell we want to plot
 						if(H3D_HTcellx->GetEntries()==0){
@@ -681,10 +681,10 @@
 				double r,z;
 				if(h.hitType == 'B'){
 					z = h.x2;
-					r = g.B[h.iLayer].r;	
+					r = dg.B[h.iLayer].r;	
 				}
 				else{
-					z = g.D[h.iLayer].z;
+					z = dg.D[h.iLayer].z;
 					r = h.x2;	
 				}		
 				double eta = asinh(z/r);

@@ -18,7 +18,7 @@ extern     std::normal_distribution<double> gauss;
 Track::Track(){}; // default constructor
 
 
-Track::Track(Geometry &g){ // constructor with parameters from specific geometry file
+Track::Track(TrackGeometry &g){ // constructor with parameters from specific geometry file
     
     // create random track parameters
     
@@ -189,7 +189,7 @@ bool Track::xzBarrel(double yDet, double &x, double &z, double &t){
 };
 
 
-bool Track::xyDisc(Geometry &g, int iDisc, double &X, double &R, double &T){
+bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T){
     
     // R is the radial position of the measured hit
     // X is the distance from phi = 0 measured along the circumference
@@ -257,7 +257,7 @@ bool Track::xyDisc(Geometry &g, int iDisc, double &X, double &R, double &T){
     
 }; // end xyDisc
 
-bool Track::phizBarrel(Geometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT){
+bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT){
     
     // find intersection with cylindrical barrel with successive approximations using xzBarrel
     // measurement errors are included

@@ -87,8 +87,8 @@
         	Record rec = bibList[bibIndex]; 
         	double x1Min = 0.; double x1Max = 0.;
 			if(rec.hitType == 'B') {
-				x1Max = phiMax*g.B[rec.iLayer].r;
-				x1Min = phiMin*g.B[rec.iLayer].r;
+				x1Max = phiMax*dg.B[rec.iLayer].r;
+				x1Min = phiMin*dg.B[rec.iLayer].r;
         	}
         	else{
 				x1Max = phiMax*rec.x2;

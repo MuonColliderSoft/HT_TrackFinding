@@ -11,7 +11,14 @@
 
 using namespace std;
 
-#include "Geometry.cpp"
+
+#include "GlobalConstants.cpp"
+
+#include "Parameters.h"
+Parameters par; // class that holds all configurable parameters					   
+
+
+#include "DetectorGeometry.cpp"
 
 
 const float GeVtoMeV = 1000.;
@@ -50,7 +57,7 @@ int main(int argc, char **argv){
   const char* rootfilename = ( argc > 1 ? argv[1] : "allHits_ntuple_BIB.root" );
   const char* outfilename = ( argc > 2 ? argv[2] : "BIBdata.txt");
   
-  Geometry g;
+  DetectorGeometry g;
   g.print(std::cout);
 
   input_file = new TFile(rootfilename, "read");

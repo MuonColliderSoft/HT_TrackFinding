@@ -16,11 +16,10 @@
 			t = _t;
 			trackInd = _trackInd;
 			layerInd = iLayer;
-			if(hitType == 'D')layerInd = iLayer + g.nBarrels;
+			if(hitType == 'D')layerInd = iLayer + dg.nBarrels;
         
         }
             
-       
 		void Hit::print(ostream &out){
 	
 		out <<  "type " << hitType << " layer: " << layerInd  << " x1: " << x1 << " x2: " << x2 << " time: " << t << " iT: " <<  trackInd << std::endl;
@@ -31,13 +30,13 @@
 		
 		double X, Y, Z;
 			
-		XYZ(g, X,Y,Z);
+		XYZ(dg, X,Y,Z);
 	
 		out << hitType << " " << layerInd  << " " << X << " " << Y << " " << Z << " " << t << " " <<  trackInd << std::endl;
 	
 		}
 		
-		void Hit::XYZ(Geometry &g, double &X, double &Y, double &Z){
+		void Hit::XYZ(DetectorGeometry &g, double &X, double &Y, double &Z){
 			double PHI;
 			if(hitType == 'B'){
 				Z = x2;
@@ -56,7 +55,7 @@
 		}
 		
     
-		void Hit::printXYZ(Geometry &g, ostream &out){
+		void Hit::printXYZ(DetectorGeometry &g, ostream &out){
 		
 			double X, Y, Z;
 			
@@ -66,7 +65,7 @@
 		}
 		
 		
-		double Hit::timeExpected(Geometry &g, double mass, double invPt){
+		double Hit::timeExpected(DetectorGeometry &g, double mass, double invPt){
 		
 		// TOF of a particle of mass "mass" and inverse pt "invPt" from the origin to the hit point
 		// This takes into account both the curvature of the track and the beta.

@@ -1,34 +1,12 @@
 //
-//  Geometry.cpp
+//  DetectorGeometry.cpp
 //  MuonColliderToy
 //
-//  Created by Luciano Ristori on 6/24/21.
+//  Created by Luciano Ristori on 64/28/23.
 //
 
 
-
-// GLOBAL VARIABLES
-
-const static double Pi = 3.14159265;
-const static double SpeedOfLight = 0.000299792458;// m/ps
-
-	
-// PARTICLE MASSES in GeV/c2
-
-static const unsigned nMasses = 5;
-double mass[] = {
-	0.,
-	0.000511, // electron: 1
-	0.139570, // charged pion: 2
-	0.493677, // charged kaon: 3
-	0.938272  // proton: 4
-	};
-
-bool verbose = false;
-
-
-
-
+extern Parameters par;
 
 
 class Barrel {
@@ -92,54 +70,18 @@ public:
 }; // end Disc
 
 
-class Geometry {
+class DetectorGeometry {
 
 
-	public:
-			
-    
-    // TRACK GENERATION PARAMETERS
-    
-	//const double t_eta = 0;
-	//const double t_deltaEta = 3.;
-	
-	//const double t_phi = 0.;
-	//const double t_deltaPhi = Pi;
-	
-	//const double t_invPt_max = 1./3.; // Gev/c^(-1)  
-	//const double t_invPt_min = -1./3.; // Gev/c^(-1)
-	
-	
-	const double t_phi = 0.005;
-	const double t_deltaPhi = 0.005;
-	
-	const double t_eta = 1.0;
-	const double t_deltaEta = 1.0;
+public:
 
-	const double t_invPt_max = 1./3.; // Gev/c^(-1)  
-	const double t_invPt_min = 0.; // Gev/c^(-1)
-
-	
-	const double t_invPt_mean = (t_invPt_max+t_invPt_min)/2.;// used for hit X correction
-
-	const double t_x0 = 0.0;
-	const double t_y0 = 0.0;
-	const double t_z0 = 0.0;
-	const double t_t0 = 0.0;
-	const double t_deltaX0 = 0.0;
-	const double t_deltaY0 = 0.0;
-	const double t_deltaZ0 = 0.0;
-	const double t_deltaT0 = 0.0;// mm
-
-	 
-	// Parameters for longitudinal binning (Phi0 - Pz)
-	
-	const double phi0Center = 0.;
-	const double phi0Delta = 0.002;
-	const double invPzCenter = 1/10.;
-	const double invPzDelta =  0.002;
-	
-
+	double xphiSigmaB;
+	double xphiSigmaD;
+	double zSigmaB;
+	double rSigmaD; 
+	double tSigmaB;
+	double tSigmaD;	
+   
 
 	// DETECTORS	
 
@@ -150,25 +92,18 @@ class Geometry {
 	Disc _D, D[nDiscs];
 
 	
+
+	DetectorGeometry() { // default constructor
 	
-	
-	Geometry() { // default constructor
-	
-		//double xphiSigmaB = 0.0;// mm
-		//double xphiSigmaD = 0.0;// mm
-		//double zSigmaB = 0.0;// mm
-		//double rSigmaD = 0.0;// mm
+		// detector measurement errors
 		
-		double xphiSigmaB = 0.1;// mm
-		double xphiSigmaD = 0.1;// mm
-		double zSigmaB = 0.1;// mm
-		double rSigmaD = 0.1;// mm
-		
-		//double tSigmaB = 0.0;
-		//double tSigmaD = 0.0;
-		
-		double tSigmaB = 15.0;// 15 mm == 50 ps
-		double tSigmaD = 15.0;// 15 mm == 50 ps
+		xphiSigmaB = par.geo_xphiSigmaB;
+		xphiSigmaD = par.geo_xphiSigmaD;
+		zSigmaB = par.geo_zSigmaB;
+		rSigmaD = par.geo_rSigmaD; 
+		tSigmaB = par.geo_tSigmaB;
+		tSigmaD = par.geo_tSigmaD;
+			
 
 		unsigned iB = 0;
 		_B.r = 31.; _B.zMax = 65.; _B.zMin =-_B.zMax; _B.xphiPrec = xphiSigmaB; _B.zPrec = zSigmaB; _B.tPrec = tSigmaB;    B[iB++] = _B;
@@ -217,9 +152,9 @@ class Geometry {
 		_D.z = -2200.; _D.rMin = 620.; _D.rMax = 1440.; _D.xphiPrec = xphiSigmaD; _D.rPrec = rSigmaD; _D.tPrec = tSigmaD;    D[iD++] = _D;
 
 
-		cout << " GEOMETRY INITIALIZED" << endl;
+		cout << " DETECTOR GEOMETRY INITIALIZED" << endl;
 		if(iB == nBarrels && iD == nDiscs) return;
-		else cout << " GEOMETRY INITIALIZATION ERROR" << endl;
+		else cout << " DETECTOR GEOMETRY INITIALIZATION ERROR" << endl;
 		return;
 		
 		
@@ -230,7 +165,7 @@ class Geometry {
 	
 	void print(std::ostream &out) {
 	
-		out << endl << "GEOMETRY DATA" << endl;
+		out << endl << "DETECTOR GEOMETRY DATA" << endl;
 		
 		out << endl;
 		out  << "Barrels: "<< nBarrels << endl;
@@ -251,7 +186,7 @@ class Geometry {
 	}// end print
 
 
-}; // end class Geometry
+}; // end class DetectorGeometry
 
 
 

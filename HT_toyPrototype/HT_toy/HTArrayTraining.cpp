@@ -33,9 +33,20 @@ std::default_random_engine generator;
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
+#include "GlobalConstants.cpp"
+
 #include "Parameters.h"
-#include "Geometry.cpp"
-Geometry g;
+Parameters par; // class that holds all configurable parameters					   
+
+//#include "Geometry.cpp"
+//Geometry g;
+
+#include "DetectorGeometry.cpp"
+DetectorGeometry dg;
+
+#include "TrackGeometry.cpp"
+TrackGeometry tg;
+
 #include "Hit.h"
 #include "Track.cpp"
 #include "Hit.cpp"                                        
@@ -45,6 +56,7 @@ Geometry g;
 
 
 bool Debug = false;
+bool verbose = false;
 
 int TrainingPhase = 0; // 0 = invalid 
 		       // 1 = from scratch 
@@ -52,15 +64,14 @@ int TrainingPhase = 0; // 0 = invalid
 		       // 3 = verification and statistics
 					   
 					   
+// The following global parameters are initialized in the main function
 					   
 unsigned nEvents; // number of events to be generated for training		   
-
-// The following global parameters are initialized in the main function
-
 bool Diagonalize;
 bool Summary;
+bool Special;
 
-					   
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -71,12 +82,12 @@ bool Summary;
 
 int main(){
   
-        Parameters par;
 
 	// Parameter initialization:
 
 	nEvents = par.train_nEvents;
 	Diagonalize = par.train_Diagonalize;
+	Summary = par.train_Summary;
 	
 
 	// Instantiate Hough Transform Array
@@ -124,7 +135,7 @@ int main(){
   
 
   
-	g.print(cout);
+	dg.print(cout);
 	
 	
 	TH1D HBarrelFraction("HBarrelFraction","HBarrelFraction", 11, -0.05, 1.05);HBarrelFraction.SetStats(false);
@@ -158,7 +169,7 @@ int main(){
 	
 	// Define vector of 1-Dim histograms for barrel hits
 	
-	const static unsigned nBarrels = g.nBarrels;
+	const static unsigned nBarrels = dg.nBarrels;
 	
 	std::vector<TH1D*> HitBX;	
 	for(unsigned iB = 0; iB != nBarrels; ++iB){
@@ -166,7 +177,7 @@ int main(){
 		ss << "HitBX" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi); 
+		TH1D* h = new TH1D(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi); 
 		HitBX.push_back(h);	
 	}
 	
@@ -176,7 +187,7 @@ int main(){
 		ss << "HitBZ" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, -g.B[iB].zMin + g.B[iB].zMax, g.B[iB].zMin, g.B[iB].zMax); 
+		TH1D* h = new TH1D(title,title, -dg.B[iB].zMin + dg.B[iB].zMax, dg.B[iB].zMin, dg.B[iB].zMax); 
 		HitBZ.push_back(h);	
 	}
 	
@@ -189,7 +200,6 @@ int main(){
 		TH1D* h = new TH1D(title,title, 2000, 0., 2000.); 
 		HitBT.push_back(h);	
 	}
-	
 	
 	
 	std::vector<TH1D*> HitBTX;	
@@ -210,14 +220,14 @@ int main(){
 		ss << "HitBXCorr" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi); 
+		TH1D* h = new TH1D(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi); 
 		HitBXCorr.push_back(h);	
 	}
 	
 	
 	// Define vector of 1-Dim histograms for disc hits
 	
-	const static unsigned nDiscs = g.nDiscs;
+	const static unsigned nDiscs = dg.nDiscs;
 		
 	std::vector<TH1D*> HitDPhi;
 	
@@ -237,7 +247,7 @@ int main(){
 		ss << "HitDR" << iD;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH1D* h = new TH1D(title,title, -g.D[iD].rMin + g.D[iD].rMax, g.D[iD].rMin, g.D[iD].rMax);
+		TH1D* h = new TH1D(title,title, -dg.D[iD].rMin + dg.D[iD].rMax, dg.D[iD].rMin, dg.D[iD].rMax);
 		HitDR.push_back(h);	
 	}
 	
@@ -281,7 +291,7 @@ int main(){
 	
 	// Define vector of 2-Dim histograms for barrel hits
 	
-	//const static unsigned nBarrels = g.nBarrels;
+	//const static unsigned nBarrels = dg.nBarrels;
 	std::vector<TH2I*> HitBXZ;
 	
 	for(unsigned iB = 0; iB != nBarrels; ++iB){
@@ -289,14 +299,14 @@ int main(){
 		ss << "HitBXZ" << iB;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH2I* h = new TH2I(title,title, 2* g.B[iB].r * Pi, -g.B[iB].r * Pi, g.B[iB].r * Pi,1000,g.B[iB].zMin,g.B[iB].zMax);
+		TH2I* h = new TH2I(title,title, 2* dg.B[iB].r * Pi, -dg.B[iB].r * Pi, dg.B[iB].r * Pi,1000,dg.B[iB].zMin,dg.B[iB].zMax);
 		h->SetStats(false);
 		HitBXZ.push_back(h);	
 	}
 	
 	// Define vector of 2-Dim histograms for disc hits
 	
-	//const static unsigned nDiscs = g.nDiscs;
+	//const static unsigned nDiscs = dg.nDiscs;
 	std::vector<TH2I*> HitDPhiR;
 	
 	for(unsigned iD = 0; iD != nDiscs; ++iD){
@@ -304,7 +314,7 @@ int main(){
 		ss << "HitDPhiR" << iD;
 		string sss = ss.str();
 		TString title = TString(sss.c_str());
-		TH2I* h = new TH2I(title,title,1000, -1., +1., 1000,g.D[iD].rMin,g.D[iD].rMax);
+		TH2I* h = new TH2I(title,title,1000, -1., +1., 1000,dg.D[iD].rMin,dg.D[iD].rMax);
 		h->SetStats(false);
 		HitDPhiR.push_back(h);	
 	}
@@ -325,7 +335,7 @@ int main(){
     		if(iEv && ((iEv % (int)1e5) == 0) ) cout << iEv << "/" << nEvents << " processed events" << endl;
     
     		
-		Event ev(g, 1);// one event with 1 track
+		Event ev(dg, 1);// one event with 1 track
 		
 		//ev.print(cout,1);
 		
@@ -369,7 +379,7 @@ int main(){
 				
 				/////////////////////////////////////////////////////////////
 										
-				double tx = thisHit.timeExpected(g, mass[2], thisTrack.invPt);
+				double tx = thisHit.timeExpected(dg, mass[2], thisTrack.invPt);
 				
 				if(thisHit.hitType == 'B') {
 					++nHitB;	
@@ -398,7 +408,7 @@ int main(){
 		
 			Hit thisHit = ev.hitList[iH];
 			double X, Y, Z;
-			thisHit.XYZ(g, X, Y, Z);
+			thisHit.XYZ(dg, X, Y, Z);
 			double R = sqrt(X*X + Y*Y);
 			double Phi = atan2(Y,X);
 			
@@ -421,8 +431,8 @@ int main(){
 				HitBT[thisHit.iLayer]->Fill(thisHit.t);
 				//double tx = thisHit.timeExpected(g,mass[1],)/////////////////////////
 				
-				double xCorr = thisHit.x1 - R*(g.phi0Center + 6.e-4 * g.invPzCenter * Z);
-				HitBXCorr[thisHit.iLayer]->Fill(xCorr);
+				//double xCorr = thisHit.x1 - R*(dg.phi0Center + 6.e-4 * dg.invPzCenter * Z);
+				//HitBXCorr[thisHit.iLayer]->Fill(xCorr);
 			}
 			if(thisHit.hitType == 'D') {
 				HitXYdisc.Fill(X,Y);
@@ -433,8 +443,8 @@ int main(){
 				HitDT[thisHit.iLayer]->Fill(thisHit.t);
 					//if(thisHit.iLayer==10)cout << thisHit.t << "  ";////////////////////
 				
-				double phiCorr = Phi - g.t_phi - asin(6.e-4*g.t_invPt_mean*R);
-				HitDPhiCorr[thisHit.iLayer]->Fill(phiCorr);
+				//double phiCorr = Phi - dg.t_phi - asin(6.e-4*dg.t_invPt_mean*R);
+				//HitDPhiCorr[thisHit.iLayer]->Fill(phiCorr);
 			}	
 		}// end loop on hits
 		
@@ -485,7 +495,7 @@ int main(){
 	unsigned int nPhi = HTA.NphiBins;
 	unsigned int nEta = HTA.NetaBins;
 	unsigned int nInvpt = HTA.NinvptBins;
-	unsigned int nLayers = g.nBarrels + g.nDiscs;
+	unsigned int nLayers = dg.nBarrels + dg.nDiscs;
 	
 	
 	// Loop on all cells of HT array (3 nested loops)

@@ -20,12 +20,12 @@
         
         // Constructor
         
-        Event(Geometry &g, int nTracks){
+        Event(DetectorGeometry &g, int nTracks){
         
         	// Create all tracks
         	for(unsigned iT = 1; iT != nTracks+1; ++iT){// iT=0 is BIB
         		
-        		Track thisTrack(g); //  create track
+        		Track thisTrack(tg); //  create track
         		thisTrack.ID = iT; // assign track iD = track index
         		
         		// find hits in all barrel detectors
@@ -82,7 +82,7 @@
         }// end print
         
         
-         void printXYZ(Geometry &g, ostream &out){
+         void printXYZ(DetectorGeometry &g, ostream &out){
          
         // Print input for Mathematica ListPointPlot3D   
         
