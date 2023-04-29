@@ -23,9 +23,3 @@ double mass[] = {
 	0.493677, // charged kaon: 3
 	0.938272  // proton: 4
 	};
-
-
-
-
-
-

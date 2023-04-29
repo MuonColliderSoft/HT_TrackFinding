@@ -123,7 +123,6 @@ int main(int argc, char **argv){
 	int minB = -1;
 	for(int iB = 0; iB != g.nBarrels; ++ iB){
 	  if ( trk_z[ihit] < g.B[iB].zMin || trk_z[ihit] > g.B[iB].zMax ) continue;  
-	  
 	  double delta = fabs(rho - g.B[iB].r);
 	  if(delta < minDelta) {
 	    minB = iB;

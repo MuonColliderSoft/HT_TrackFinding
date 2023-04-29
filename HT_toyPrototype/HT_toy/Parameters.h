@@ -31,7 +31,7 @@ public:
 
 	bool train_Summary = false;	
 	
-// number of events to be generated	for training
+// number of events to be generated for training
 	
 	unsigned train_nEvents = 1e6; 
 	
