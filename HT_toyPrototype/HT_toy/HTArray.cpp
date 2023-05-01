@@ -364,7 +364,7 @@
     
     	// dimensions of the array
     	
-    	const static unsigned NphiBins = HTA_NphiBins;
+                const static unsigned NphiBins = HTA_NphiBins;
 		const static unsigned NetaBins = HTA_NetaBins;
 		const static unsigned NinvptBins = HTA_NinvptBins;
 		
@@ -385,9 +385,9 @@
 		int plotLay = par.HTA_plotLay;
 		
 		// HT Array proper	
-			
-		HTArrayElement ArrElem[HTA_NphiBins][HTA_NetaBins][HTA_NinvptBins];
-		
+
+                HTArrayElement ArrElem[HTA_NphiBins][HTA_NetaBins][HTA_NinvptBins];
+      
 		HTArray(){ // constructor
 		
 			phiMin = tg.t_phi - tg.t_deltaPhi;
@@ -688,8 +688,10 @@
 					r = h.x2;	
 				}		
 				double eta = asinh(z/r);
-				int iEtaMap = eta*100; // 100 bin per unità di eta
-				
+
+				// index of the hit eta bin
+				int iEtaMap = (eta-etaMin)/etaStep;
+
 				int errEta = 2;
 				int iEta1 = iEtaMap - errEta;
 				int iEta2 = iEtaMap + errEta;
@@ -731,18 +733,21 @@
 			
 			
 		unsigned getBestCell(unsigned &iPhi_, unsigned &iEta_, unsigned &iInvpt_){
-		
+
 			unsigned maxHits = 0;
 			for(unsigned iPhi = 0; iPhi != NphiBins; ++iPhi)
 					for(unsigned iEta = 0; iEta != NetaBins; ++iEta)
 						for(unsigned iInvpt = 0; iInvpt != NinvptBins; ++iInvpt){
 							unsigned nHits = ArrElem[iPhi][iEta][iInvpt].nHitLayers;
+
 							if(nHits > maxHits){
 								maxHits = nHits;
-								iPhi_ = iPhi; iEta_ = iEta; iInvpt_ = iInvpt;						
+								iPhi_ = iPhi; iEta_ = iEta; iInvpt_ = iInvpt;
 							}
-		      			}
-		    return maxHits;
+
+						}
+
+			return maxHits;
 		    			
 		    } // end getBestCell
 		
@@ -806,7 +811,3 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
-      
-        
-        
-  
