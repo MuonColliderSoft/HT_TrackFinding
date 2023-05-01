@@ -457,7 +457,7 @@ int main(){
 	cout << "Event generation complete" << endl;
 	
 	
-	cout << " Write histogram file " << dataFileName << " ...";
+	cout << " Write histogram file " << train_histFileName.c_str() << " ...";
 	histFile->Write(); // write histogram file
 	cout << endl;
 	
@@ -473,9 +473,9 @@ int main(){
 	
 	if(TrainingPhase == 1 || TrainingPhase == 2) {
 		// write data file
-		cout << "writing data file..." << endl;
+		cout << "Writing data file..." << endl;
 		ofstream outfile;	
-		outfile.open("HTAdata.txt");
+		outfile.open(dataFileName);
 		HTA.write(outfile);
 		outfile.close();
 	}

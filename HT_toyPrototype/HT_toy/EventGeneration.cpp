@@ -67,9 +67,9 @@ bool verbose = false;
 //bool Summary = false;
 
 int TrainingPhase = 0; // 0 = pattern recognition 
-					   // 1 = from scratch 
-					   // 2 = second step after diagonalization
-					   // 3 = verification and statistics
+                       // 1 = from scratch
+                       // 2 = second step after diagonalization
+                       // 3 = verification and statistics
 				   
 // The following global parameters are initialized in the main function
 
@@ -87,12 +87,11 @@ int main(){
 	
 	
 	// parameter initialization
-	
-	unsigned nEvents = par.gen_nEvents; // Number of events to be generated
-	unsigned nTracks = par.gen_nTracks; // Number of tracks per event
-	double fracBib = par.gen_fracBib; // fraction of Bib to be simulated
-	int fillMode = par.gen_fillMode; // optimization mode for HTA fill
-	bool PlotTracks = par.gen_PlotTracks; // create a file with data for 3-D plots of candidates		
+        nEvents = par.gen_nEvents; // Number of events to be generated
+	nTracks = par.gen_nTracks; // Number of tracks per event
+	fracBib = par.gen_fracBib; // fraction of Bib to be simulated
+	fillMode = par.gen_fillMode; // optimization mode for HTA fill
+	PlotTracks = par.gen_PlotTracks; // create a file with data for 3-D plots of candidates
 	
   	long int randomSeed = par.gen_randomSeed;
   	if(randomSeed)generator.seed(randomSeed); // seeding the random generator to be different from training

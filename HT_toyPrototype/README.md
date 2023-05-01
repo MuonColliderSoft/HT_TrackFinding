@@ -15,7 +15,7 @@ Instructions:
   ```./ConvertBIBHits <input LCTuple file> <output text file>```
 
 - to run the Hough-Transform array training:\
-  ```./run_HTtraining.sh```
+  ```source run_HTtraining.sh```
 
 - to generate events:\
   ```./EventGeneration```

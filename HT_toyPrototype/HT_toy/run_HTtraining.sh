@@ -17,7 +17,7 @@ for phase in {1..3};
 do
 
     echo -n "Training PHASE $phase ... "
-    ./HTArrayTraining >& out_HTtraining_$phase.log
+    ./HTArrayTraining 1> out_HTtraining_$phase.log
     echo "DONE"
 
 done
