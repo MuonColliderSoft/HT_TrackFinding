@@ -669,6 +669,10 @@
 								if(strike == 0) {
 									outfile << strike << " " << h.hitType << " " << h.iLayer << " " << h.x1 << " " << h.x2 << " " << h.t;
 									outfile << " " << iPhi << " " << iEta << " " << iInvpt << endl;
+									
+									Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
+									thisStat->hitLayer = true;
+									thisStat->hitIDList.push_back(h.ID);
 							
 								}
 							}	// end triple for
