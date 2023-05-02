@@ -176,6 +176,7 @@ int main(){
 	double BIBscale = 2.*Pi/(phib - phia);
 	cout << "BIB scale factor: " << BIBscale << endl;	
 	unsigned nBibHits = totBIB/BIBscale*fracBib;
+		if(fracBib < 0.) nBibHits = 0;
 	cout << nBibHits << " BIB scaled hits per collision" << endl;
 	double rateScale = 8.*Pi/(HTA.phiStep*HTA.NphiBins);// includes factors 2 from charge and eta
 	cout << "rate scale factor: " << rateScale << endl;	

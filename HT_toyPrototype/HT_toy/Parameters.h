@@ -60,7 +60,7 @@ public:
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = 0.;
+	double gen_fracBib = -1.; // -1. == no BIB hit
 	
 // optimization mode for HTA fill = 0 (safe and slow) or 1 (fast)	
 	

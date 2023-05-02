@@ -658,27 +658,13 @@
 		
 		int fill(Hit &h, int mode = 0){
 		
-			if(mode == 0){
-			
-			//cout << "mode 0" << endl;
-			
-				for(unsigned iPhi = 0; iPhi != NphiBins; ++iPhi)
-						for(unsigned iEta = 0; iEta != NetaBins; ++iEta)
-							for(unsigned iInvpt = 0; iInvpt != NinvptBins; ++iInvpt){
-								int strike = ArrElem[iPhi][iEta][iInvpt].fill(h, mode);
-								if(strike == 0) {
-									outfile << strike << " " << h.hitType << " " << h.iLayer << " " << h.x1 << " " << h.x2 << " " << h.t;
-									outfile << " " << iPhi << " " << iEta << " " << iInvpt << endl;
-									
-									Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
-									thisStat->hitLayer = true;
-									thisStat->hitIDList.push_back(h.ID);
-							
-								}
-							}	// end triple for
-				return 0;
-				
-			} // end mode = 0
+			int iPhi1 = 0;
+			int iPhi2 = NphiBins;
+			int iEta1 = 0;
+			int iEta2 = NetaBins -1;
+			int iInvpt1 = 0;
+			int iInvpt2 = NinvptBins;
+		
 			
 			if(mode == 1){
 			
@@ -697,39 +683,29 @@
 				int iEtaMap = (eta-etaMin)/etaStep;
 
 				int errEta = 2;
-				int iEta1 = iEtaMap - errEta;
-				int iEta2 = iEtaMap + errEta;
+				iEta1 = iEtaMap - errEta;
+				iEta2 = iEtaMap + errEta +1;
 				
 				if(iEta2 < 0) return 0;
 				if(iEta1 < 0) iEta1 = 0;
-				if(iEta1 >= NetaBins) return 0;
-				if(iEta2 >= NetaBins) iEta2 = NetaBins -1;
+				if(iEta1 > NetaBins-1) iEta1 = NetaBins - 1;
+				if(iEta2 > NetaBins) iEta2 = NetaBins;
+				
+			} // end mode = 1
 			
-				for(unsigned iPhi = 0; iPhi != NphiBins; ++iPhi){
-						for(unsigned iEta = iEta1; iEta <= iEta2; ++iEta)
-							for(unsigned iInvpt = 0; iInvpt != NinvptBins; ++iInvpt){	
-								int strike = ArrElem[iPhi][iEta][iInvpt].fill(h, mode);
-								
-							/* if(strike != 0) {		
-									outfile << " " << strike << " ";
-									if(h.trackInd != 0) outfile << 'T';
-									               else outfile << 'B';
-									               outfile << h.hitType << h.iLayer << " " << h.x1 << " " << h.x2 << " " << h.t;
-									outfile << " " << iPhi << " " << iEta << " " << iInvpt << endl;
-								//} */
-								
+				for(unsigned iPhi = iPhi1; iPhi != iPhi2; ++iPhi){
+						for(unsigned iEta = iEta1; iEta != iEta2; ++iEta){
+							for(unsigned iInvpt = iInvpt1; iInvpt != iInvpt2; ++iInvpt){	
+								int strike = ArrElem[iPhi][iEta][iInvpt].fill(h, mode);			
 								if(strike == 0) {
-									//cout << "strike " << iEta << " " << iInvpt << " " 
-									 //  << h.hitType << " "<< h.layerInd << " " << h.x1 << " " << h.x2 << " " << h.t << endl;
 									Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
 									thisStat->hitLayer = true;
 									thisStat->hitIDList.push_back(h.ID);
-									//cout << " +++ " << h.ID << endl;
-								}
-									
+								}							
 							} // end loop on invpt	
+						} // end loop on eta
 				} // end loop on phi	
-			} // end mode = 1
+			
 			
 			return 0;
 			
