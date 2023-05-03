@@ -11,6 +11,8 @@ extern     std::default_random_engine generator;
 extern     std::uniform_real_distribution<double> distribution;
 extern     std::normal_distribution<double> gauss;
 
+//extern Parameters par;
+
 
 // constructors
 
@@ -97,7 +99,8 @@ void Track::init(int massInd_, double x0_, double y0_, double z0_, double t0_, d
     
     // derived parameters
     
-    c = 1.2*invPt/1000; // signed curvature in mmm^(-1)
+    c = 3.e-4*invPt*par.magneticField; // signed curvature in mmm^(-1)
+    
     charge = 1.;
     	if(invPt < 0.) charge = -1.;
     

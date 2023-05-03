@@ -71,7 +71,7 @@
 		// This takes into account both the curvature of the track and the beta.
 		// r and z have the usual meaning in the global coordinate system
 		
-			const static double k= 833.333333333; // mm/GeV magnetic field (Radius/Pt)
+			const static double k= 3333.333333333/par.magneticField;; // mm/GeV  (Radius/Pt)
 			
 			double r = 0.;
 			double z = 0.;
