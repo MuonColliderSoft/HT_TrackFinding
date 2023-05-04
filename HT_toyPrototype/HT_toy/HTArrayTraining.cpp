@@ -132,6 +132,8 @@ int main(){
 	}
 
 	TFile* histFile = new TFile(train_histFileName.c_str(),"RECREATE");  // histogram file
+	
+	HTA.initHist3D();
   
 
   

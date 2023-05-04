@@ -87,7 +87,7 @@ int main(){
 	
 	
 	// parameter initialization
-        nEvents = par.gen_nEvents; // Number of events to be generated
+    nEvents = par.gen_nEvents; // Number of events to be generated
 	nTracks = par.gen_nTracks; // Number of tracks per event
 	fracBib = par.gen_fracBib; // fraction of Bib to be simulated
 	fillMode = par.gen_fillMode; // optimization mode for HTA fill

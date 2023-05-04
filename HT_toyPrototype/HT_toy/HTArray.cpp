@@ -358,8 +358,11 @@
     	
     	// one histogram of a single HT cell content as an exampl
 			
-		TH3I *H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx",40,0.,1.,40,0.,1.,40,0.,1.);
-		TH3I *H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
+		//TH3I *H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx",40,0.,1.,40,0.,1.,40,0.,1.);
+		//TH3I *H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
+	
+		TH3I *H3D_HTcellx;
+		TH3I *H3D_HTcellu;
 
     
     	// dimensions of the array
@@ -400,6 +403,12 @@
 			string mapDataFileName = par.HTA_mapDataFileName;
 			outfile.open(mapDataFileName);
 				
+		}
+		
+		void initHist3D(){
+			
+			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx",40,0.,1.,40,0.,1.,40,0.,1.);
+			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
 		}
 		
 				

@@ -11,7 +11,7 @@ extern     std::default_random_engine generator;
 extern     std::uniform_real_distribution<double> distribution;
 extern     std::normal_distribution<double> gauss;
 
-//extern Parameters par;
+
 
 
 // constructors
