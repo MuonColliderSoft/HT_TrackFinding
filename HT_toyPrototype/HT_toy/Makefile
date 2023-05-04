@@ -19,7 +19,7 @@ INCS = BibFileReader.cpp Event.cpp DetectorGeometry.cpp TrackGeometry.cpp\
 
 #------------------------------------------------------------------------
 
-all: ConvertBIBHits HTArrayTraining EventGeneration
+all: ConvertBIBHits HTArrayTraining EventGeneration PlotTracks
 
 ConvertBIBHits: DetectorGeometry.cpp ConvertBIBHits.cpp
 	@echo "Compiling $@ ... "
@@ -33,7 +33,11 @@ EventGeneration: $(HDRS) $(INCS) EventGeneration.cpp
 	@echo "Compiling $@ ... "
 	$(CXX) $@.cpp $(CXXFLAGS) $(ROOTLIBS) $(ROOTGLIBS) -o $@
 
+PlotTracks: PlotTracks.cpp
+	@echo "Compiling $@ ... "
+	$(CXX) $@.cpp $(CXXFLAGS) $(ROOTLIBS) $(ROOTGLIBS) -o $@
+
 clean:
-	@rm -f ConvertBIBHits HTArrayTraining EventGeneration
+	@rm -f ConvertBIBHits HTArrayTraining EventGeneration PlotTracks
 
 #------------------------------------------------------------------------
