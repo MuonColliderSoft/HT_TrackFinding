@@ -1,12 +1,16 @@
 # HT_toy
 
-The HT toy package consists of three executables:
+The HT toy package consists of four executables:
 
 - *ConvertBIBHits*: it runs on the tracker's RecoHit collections stored in an LCTuple, adjusts the hit positions to lay on the simplified tracker geometry used in the HT_toy, and saves the converted hits into a flat text file.
 - *HTArrayTraining*: training of the Hough-Transform array.
 - *EventGeneration*: generation of tracks with the BIB overlaid.
+- *PlotTracks*: it reads the track candidates from the file *PlotData.txt* and displays the candidate hits.
 
-Instructions:
+All the configurable parameters are set in the file *Parameters.h*.
+
+
+### Instructions:
 
 - to compile the executables:\
   ```make```
@@ -20,10 +24,6 @@ Instructions:
 - to generate events:\
   ```./EventGeneration```
   
+- to display the candidate hits:\
+  ```./PlotTracks <input text file>```
 
-# plotTracks
-
-The ROOT macro *PlotTracks.cpp* reads the track candidates from the file *PlotData.txt* and displays the candidate hits. 
-
-Usage:\
-```root -l PlotTracks.cpp```
