@@ -133,9 +133,7 @@ int main(){
 
 	TFile* histFile = new TFile(train_histFileName.c_str(),"RECREATE");  // histogram file
 	
-	HTA.initHist3D();
-  
-
+	HTA.initHists();
   
 	dg.print(cout);
 	
@@ -334,7 +332,10 @@ int main(){
     	
     	
     	if(nEvents >= 1e6)
-    		if(iEv && ((iEv % (int)1e5) == 0) ) cout << iEv << "/" << nEvents << " processed events" << endl;
+    		if(iEv && ((iEv % (int)1e5) == 0) ) {
+    			cout << iEv << "/" << nEvents << " processed events" << endl;
+    			cerr << ".";
+    	}
     
     		
 		Event ev(dg, 1);// one event with 1 track

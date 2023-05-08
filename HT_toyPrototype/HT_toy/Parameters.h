@@ -62,13 +62,18 @@ public:
 
 	double gen_fracBib = -1.; // -1. == no BIB hit
 	
-// optimization mode for HTA fill = 0 (safe and slow) or 1 (fast)	
+// limits in phi for BIB generation
+
+	double gen_phia = 0.0;
+	double gen_phib = 0.1;
+	
+// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster)	
 	
 	int gen_fillMode = 1; 
 	
-// these should not be used by event generation	
-	//bool Diagonalize = false;
-	//bool Summary = false;
+// max error for eta projection in fillMode = 1
+
+	int gen_errEta = 2;
 	
 // create a file with data to 3D plot track candidates
 
@@ -84,7 +89,7 @@ public:
 
 	string gen_dataFileName = "HTAdata.txt";
 	
-// data file with all Bib events
+// data file with all Bib hits
 
 	string gen_bibFileName = "BIBdata.txt";	
 	//int code = bibRead.readFile("BIBdata.txt");

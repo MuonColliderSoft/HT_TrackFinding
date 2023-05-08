@@ -103,7 +103,8 @@ int main(){
 	
 	cout << "Instantiating Hough Transform Array..." << endl;
 	
-	static HTArray HTA;
+	static HTArray HTA;	
+	HTA.initHists();
 	HTA.print(cout);
 			
 	// Open data file
@@ -170,7 +171,8 @@ int main(){
 	// given the slice in phi that we want to cover and what
 	// fraction of background we want to simulate (fracBib)
 	
-	double phia = 0., phib = 0.1;// in radiants
+	double phia = par.gen_phia; // low limit in phi
+	double phib = par.gen_phib; // high limit in phi
 	bibRead.setPhiLimits(phia,phib); 
 	cout << "BIB phi limits: " << phia << " " << phib << endl;
 	double BIBscale = 2.*Pi/(phib - phia);

@@ -363,6 +363,7 @@
 	
 		TH3I *H3D_HTcellx;
 		TH3I *H3D_HTcellu;
+		TH1D *HDeltaEta;
 
     
     	// dimensions of the array
@@ -405,10 +406,11 @@
 				
 		}
 		
-		void initHist3D(){
+		void initHists(){
 			
 			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx",40,0.,1.,40,0.,1.,40,0.,1.);
 			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
+			HDeltaEta = new TH1D("DeltaEta","DeltaEta",21,-10.5,+10.5);
 		}
 		
 				
@@ -675,7 +677,7 @@
 			int iInvpt2 = NinvptBins;
 		
 			
-			if(mode == 1){
+			
 			
 				double r,z;
 				if(h.hitType == 'B'){
@@ -691,7 +693,9 @@
 				// index of the hit eta bin
 				int iEtaMap = (eta-etaMin)/etaStep;
 
-				int errEta = 2;
+			if(mode == 1){
+	
+				int errEta = par.gen_errEta;
 				iEta1 = iEtaMap - errEta;
 				iEta2 = iEtaMap + errEta +1;
 				
@@ -710,6 +714,8 @@
 									Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
 									thisStat->hitLayer = true;
 									thisStat->hitIDList.push_back(h.ID);
+									int delta = iEtaMap - iEta;
+									HDeltaEta->Fill(delta);
 								}							
 							} // end loop on invpt	
 						} // end loop on eta
