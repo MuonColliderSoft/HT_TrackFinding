@@ -52,7 +52,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 1000; 
+	unsigned gen_nEvents = 100;
 
 // number of tracks to be generated for each event
 
@@ -151,8 +151,8 @@ public:
 	const double geo_def_t_t0 = 0.0; // track mean t0
 	const double geo_def_t_deltaX0 = 0.0; // track sigma x0
 	const double geo_def_t_deltaY0 = 0.0; // track sigma y0
-	const double geo_def_t_deltaZ0 = 1.5; // track sigma z0
-	const double geo_def_t_deltaT0 = 1.5; // track sigma t0 mm
+	const double geo_def_t_deltaZ0 = 0.0; // track sigma z0
+	const double geo_def_t_deltaT0 = 0.0; // track sigma t0 mm
 	
 	// fiducial additional fractions with respect to default parameter spaces
 	// 

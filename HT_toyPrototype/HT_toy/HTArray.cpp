@@ -693,7 +693,6 @@
 			if(mode == 1){
 	
 				int errEta = par.gen_errEta;
-				cout << "****** errEta: " << errEta << endl; 
 				iEta1 = iEtaMap - errEta;
 				iEta2 = iEtaMap + errEta +1;
 				
