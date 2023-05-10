@@ -42,14 +42,11 @@ std::normal_distribution<double> gauss(0.0,1.0);
 #include "Parameters.h"
 Parameters par; // class that holds all configurable parameters					   
 
-//#include "Geometry.cpp"
-//Geometry g;
-
 #include "DetectorGeometry.cpp"
 DetectorGeometry dg;
 
 #include "TrackGeometry.cpp"
-TrackGeometry tg;
+TrackGeometry tg("gen"); // track parameters for event generation
 
 #include "Hit.h"
 #include "Track.cpp"
@@ -600,6 +597,8 @@ int main(){
 		unsigned phi_b, eta_b, pt_b;// best cell
 		
 		unsigned nLayersHit = HTA.getBestCell(phi_b, eta_b, pt_b);// num of layers hit in best cell
+		if(nLayersHit == 0) continue; // skip to next event
+		
 		unsigned nLayers = HTA.ArrElem[phi_b][eta_b][pt_b].layerIndHitStat.size();// total num of layers in best cell
 		unsigned minLayers = HTA.ArrElem[phi_b][eta_b][pt_b].minLayers;// min possible layers hit in best cell
 		

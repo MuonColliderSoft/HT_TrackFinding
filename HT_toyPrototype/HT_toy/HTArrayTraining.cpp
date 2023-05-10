@@ -38,14 +38,11 @@ std::normal_distribution<double> gauss(0.0,1.0);
 #include "Parameters.h"
 Parameters par; // class that holds all configurable parameters					   
 
-//#include "Geometry.cpp"
-//Geometry g;
-
 #include "DetectorGeometry.cpp"
 DetectorGeometry dg;
 
 #include "TrackGeometry.cpp"
-TrackGeometry tg;
+TrackGeometry tg("train"); // track parameters for HTA training
 
 #include "Hit.h"
 #include "Track.cpp"

@@ -354,7 +354,7 @@
   
     	public:
     	
-    	ofstream outfile;	
+    	//ofstream outfile;	
     	
     	// one histogram of a single HT cell content as an exampl
 			
@@ -368,7 +368,7 @@
     
     	// dimensions of the array
     	
-                const static unsigned NphiBins = HTA_NphiBins;
+        const static unsigned NphiBins = HTA_NphiBins;
 		const static unsigned NetaBins = HTA_NetaBins;
 		const static unsigned NinvptBins = HTA_NinvptBins;
 		
@@ -394,16 +394,13 @@
       
 		HTArray(){ // constructor
 		
-			phiMin = tg.t_phi - tg.t_deltaPhi;
-			phiStep = 2*tg.t_deltaPhi/double(NphiBins);
-			etaMin = tg.t_eta - tg.t_deltaEta;
-			etaStep = 2*tg.t_deltaEta/double(NetaBins);
-			invPtMin = tg.t_invPt_min;
-			invPtStep = (tg.t_invPt_max - tg.t_invPt_min)/double(NinvptBins);
-			
-			string mapDataFileName = par.HTA_mapDataFileName;
-			outfile.open(mapDataFileName);
-				
+			phiMin = par.HTA_t_phi - par.HTA_t_deltaPhi;
+			phiStep = 2*par.HTA_t_deltaPhi/double(NphiBins);
+			etaMin = par.HTA_t_eta - par.HTA_t_deltaEta;
+			etaStep = 2*par.HTA_t_deltaEta/double(NetaBins);
+			invPtMin = par.HTA_t_invPt_min;
+			invPtStep = (par.HTA_t_invPt_max - par.HTA_t_invPt_min)/double(NinvptBins);
+		
 		}
 		
 		void initHists(){
@@ -696,10 +693,11 @@
 			if(mode == 1){
 	
 				int errEta = par.gen_errEta;
+				cout << "****** errEta: " << errEta << endl; 
 				iEta1 = iEtaMap - errEta;
 				iEta2 = iEtaMap + errEta +1;
 				
-				if(iEta2 < 0) return 0;
+				if(iEta2 < 1) return 0;
 				if(iEta1 < 0) iEta1 = 0;
 				if(iEta1 > NetaBins-1) iEta1 = NetaBins - 1;
 				if(iEta2 > NetaBins) iEta2 = NetaBins;
