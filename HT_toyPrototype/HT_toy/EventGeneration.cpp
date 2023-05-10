@@ -598,7 +598,7 @@ int main(){
 		
 		unsigned nLayersHit = HTA.getBestCell(phi_b, eta_b, pt_b);// num of layers hit in best cell
 		if(nLayersHit == 0) continue; // skip to next event
-		
+
 		unsigned nLayers = HTA.ArrElem[phi_b][eta_b][pt_b].layerIndHitStat.size();// total num of layers in best cell
 		unsigned minLayers = HTA.ArrElem[phi_b][eta_b][pt_b].minLayers;// min possible layers hit in best cell
 		
