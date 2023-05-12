@@ -65,7 +65,7 @@ public:
 // limits in phi for BIB generation
 
 	double gen_phia = 0.0;
-	double gen_phib = 0.1;
+	double gen_phib = 0.344;
 	
 // optimization mode for HTA fill = 0 (safe and slow) or 1 (faster)	
 	
