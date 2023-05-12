@@ -76,6 +76,7 @@ public:
 	int gen_errEta = 2;
 	
 // create a file with data to 3D plot track candidates
+// this file is the input for PlotTracks
 
 	bool gen_PlotTracks = true;	
 	string gen_plotDataFileName = "PlotData.txt";
@@ -91,14 +92,11 @@ public:
 	
 // data file with all Bib hits
 
-	string gen_bibFileName = "BIBdata.txt";	
-	//int code = bibRead.readFile("BIBdata.txt");
-
+	string gen_bibFileName = "BIBdata.txt";
+	
 // event generation histogram file
 
 	string gen_histFileName = "AAAEventGeneration.root";
-	//TFile* histFile = new TFile("AAAEventGeneration.root","RECREATE");  // histogram file
-
 
 //////////////////////////////////////////////////////////////////////// 
 // MISCELLANEA /////////////////////////////////////////////////////////
@@ -154,15 +152,16 @@ public:
 	const double geo_def_t_deltaZ0 = 0.0; // track sigma z0
 	const double geo_def_t_deltaT0 = 0.0; // track sigma t0 mm
 	
-	// fiducial additional fractions with respect to default parameter spaces
-	// 
+	
+	// expansion factors applied to default parameter spaces
+	// for EventGeneration(gen), HTA, and HTAtraining (train)
 	
 	const double gen_fiducial = 1.0;
 	const double HTA_fiducial = 1.0;
 	const double train_fiducial = 1.0;
 
 
-	// track parameters - event generation
+	// track parameters for event generation
 
 	const bool geo_gen_default = true; // apply default values?
 
@@ -184,7 +183,7 @@ public:
 	double geo_gen_t_deltaT0 = 0.0; // track sigma t0 mm
 
 
-	// track parameters - Hough Transform Array
+	// track parameters for Hough Transform Array
 
 	const bool HTA_default = true; // apply default values?
 
@@ -206,7 +205,7 @@ public:
 	double HTA_t_deltaT0 = 0.0; // track sigma t0 mm
 
 
-	// track parameters - training
+	// track parameters for training
 
 	const bool geo_train_default = true; // apply default values?
 
@@ -235,6 +234,8 @@ public:
 //////////////////////////////////////////////////////////////////////// 
 
 	Parameters(){
+	
+	// copy default values where appropriate
 	
 		if(geo_gen_default){
 		

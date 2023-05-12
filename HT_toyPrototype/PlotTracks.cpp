@@ -21,6 +21,11 @@
 using namespace std;
 
 
+#include "Parameters.h"
+Parameters par; // class that holds all configurable parameters					   
+
+
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -109,7 +114,7 @@ int main(int argc, char **argv){
       g2->SetMarkerStyle(20);
       g2->SetMarkerSize(1);
   
-      TH3I *Track_Plot = new TH3I("Track_Plot","Track_Plot",1,0.,+1600.,1,0.,+1600.,1,0.,+2500.);
+      TH3I *Track_Plot = new TH3I("Track_Plot","Track_Plot",1,0.,+1600.,1,0.,1600*par.gen_phib,1,0.,+2500.);
       Track_Plot->SetStats(false);
   
       Track_Plot->SetTitle("; X [mm];Y [mm];Z [mm]");

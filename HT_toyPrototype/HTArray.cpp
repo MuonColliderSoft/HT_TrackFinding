@@ -405,8 +405,8 @@
 		
 		void initHists(){
 			
-			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx",40,0.,1.,40,0.,1.,40,0.,1.);
-			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
+			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx; x1; x2; t",40,0.,1.,40,0.,1.,40,0.,1.);
+			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu; x1; u1; u2",40,0.,1.,40,0.,1.,40,0.,1.);
 			HDeltaEta = new TH1D("DeltaEta","DeltaEta",21,-10.5,+10.5);
 		}
 		
