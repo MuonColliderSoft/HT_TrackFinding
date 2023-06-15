@@ -16,7 +16,7 @@ echo "Starting the Hough-Transform array training."
 for phase in {1..3};
 do
 
-    echo -n "Training PHASE $phase ... "
+    echo -n "Training PHASE $phase ..."
     ./HTArrayTraining 1> out_HTtraining_$phase.log
     echo "DONE"
 

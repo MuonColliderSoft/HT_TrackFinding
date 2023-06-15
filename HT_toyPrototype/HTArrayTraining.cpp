@@ -322,6 +322,7 @@ int main(){
 	
 	cout << "BEGIN TRAINING PHASE " << TrainingPhase << endl;
 	
+	double minPhi = 0., maxPhi = 0.;
 
     for(unsigned iEv = 0; iEv != nEvents; ++iEv){
     
@@ -412,6 +413,9 @@ int main(){
 			double R = sqrt(X*X + Y*Y);
 			double Phi = atan2(Y,X);
 			
+			if(Phi < minPhi) minPhi = Phi;
+			if(Phi > maxPhi) maxPhi = Phi;
+			
 			
 			HitX.Fill(X);
 			HitY.Fill(Y);
@@ -457,11 +461,17 @@ int main(){
 	cout << "Event generation complete" << endl;
 	
 	
-	cout << " Write histogram file " << train_histFileName.c_str() << " ...";
+	cout << "Write histogram file " << train_histFileName.c_str() << " ...";
 	histFile->Write(); // write histogram file
 	cout << endl;
 	
-	
+	cout << endl;
+	cout << "Phi limits for Bib distribution" << endl;
+	cout << "(copy and paste into Parameters.h)"<< endl;
+	cout << " double gen_phia = " << minPhi << ";" << endl;
+	cout << " double gen_phib = " << maxPhi << ";" << endl;
+	cout << endl;
+		
 	
 	if(TrainingPhase==1 && Diagonalize) {
 		cout << "Diagonalize ...";
