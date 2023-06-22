@@ -252,11 +252,13 @@
         unsigned maxLayers = 0;// max number of layers hit by a track from this param space
         
        // train this array element
-        // add this layer to the list for this element if missing
+        // during TrainigPhase 1, add this layer to the list for this element if missing
         
         void train(Hit &h){
-        	
-        	layerIndHitStat[h.layerInd].train(h);
+        
+        	if(TrainingPhase == 1)layerIndHitStat[h.layerInd].train(h);
+        	else if(layerIndHitStat.find(h.layerInd) != layerIndHitStat.end())
+        								layerIndHitStat[h.layerInd].train(h);
         }
         
         // diagonalize this element

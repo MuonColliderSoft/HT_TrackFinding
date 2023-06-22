@@ -138,6 +138,8 @@ int main(){
 	TH1D HBarrelFraction("HBarrelFraction","HBarrelFraction", 11, -0.05, 1.05);HBarrelFraction.SetStats(false);
 	TH2D HNDvsNB("NDvsNB","NDvsNB",  13, -0.5,+12.5, 13, -0.5, +12.5); HNDvsNB.SetStats(false);
 	
+	TH1D HCellStat("HCellStat","HCellStat",1000, 0., 5000.);
+	
 	
 	TH1D HitX("HitX","HitX", 4000, -2000.,+2000.); HitX.SetStats(false);
 	TH1D HitY("HitY","HitY", 4000, -2000.,+2000.); HitY.SetStats(false);
@@ -457,10 +459,32 @@ int main(){
 	
 	} // end loop on events ///////////////////////////////////////////////////////////
 	
-	
+		
 	cout << "Event generation complete" << endl;
+
+	// compute minimum accepted number of hits in a layer (expected value minus a number of Poisson sigmas)	
+
+	unsigned totNelements = HTA_NphiBins*HTA_NetaBins*HTA_NinvptBins;
+	double meanNhits = par.train_nEvents/(double)totNelements;
+	double sigma = sqrt(meanNhits);
+	unsigned nMin = meanNhits-par.train_nSigmaCell *sigma;
 	
-	
+// Fill histogram of number of hits in each HTA cell and prune poorly populated layers
+
+	 for(int i = 0; i != HTA_NphiBins; ++i) 
+			for(int j = 0; j != HTA_NetaBins; ++j)
+				for(int k = 0; k != HTA_NinvptBins; ++k){										
+					for(auto it = HTA.ArrElem[i][j][k].layerIndHitStat.begin(); it != HTA.ArrElem[i][j][k].layerIndHitStat.end(); ){     						
+							int n = (it->second).nEntries;
+							HCellStat.Fill(n);
+							if(n < nMin){ 
+								cerr << "cell " << i << " " << j << " " << k << " pruned layer " << it->first << " nHits " << n << endl;
+								HTA.ArrElem[i][j][k].layerIndHitStat.erase(it++);
+							}
+							else ++it;   						
+					} 
+				}
+				
 	cout << "Write histogram file " << train_histFileName.c_str() << " ...";
 	histFile->Write(); // write histogram file
 	cout << endl;

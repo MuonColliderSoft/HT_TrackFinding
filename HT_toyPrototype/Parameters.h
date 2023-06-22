@@ -45,6 +45,11 @@ public:
 // This is where all the data from training are written to
 	
 	string train_dataFileName = "HTAdata.txt";
+	
+// number of Poisson sigmas to accept as a down fluctuation of the number of hits
+// in each detector layer to be accepted for a HTA cell
+	
+	double train_nSigmaCell = 3.;
 
 //////////////////////////////////////////////////////////////////////// 
 // EVENT GENERATION SECTION  ///////////////////////////////////////////
