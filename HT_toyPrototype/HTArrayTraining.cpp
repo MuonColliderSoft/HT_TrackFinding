@@ -86,7 +86,11 @@ int main(){
 	Diagonalize = par.train_Diagonalize;
 	Summary = par.train_Summary;
 	
-
+	// seeding the random generator 
+  	long int randomSeed = par.train_randomSeed;
+  	if(randomSeed)generator.seed(randomSeed); 
+	
+	
 	// Instantiate Hough Transform Array
 	
 	cout << "Instantiating Hough Transform Array..." << endl;

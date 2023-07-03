@@ -90,9 +90,10 @@ int main(){
 	fillMode = par.gen_fillMode; // optimization mode for HTA fill
 	PlotTracks = par.gen_PlotTracks; // create a file with data for 3-D plots of candidates
 	
+	// seeding the random generator 
   	long int randomSeed = par.gen_randomSeed;
-  	if(randomSeed)generator.seed(randomSeed); // seeding the random generator to be different from training
-  
+  	if(randomSeed)generator.seed(randomSeed); 
+  	
   	string histFileName = par.gen_histFileName;
 	TFile* histFile = new TFile(histFileName.c_str(),"RECREATE");  // histogram file
   
@@ -177,6 +178,11 @@ int main(){
 	unsigned nBibHits = totBIB/BIBscale*fracBib;
 		if(fracBib < 0.) nBibHits = 0;
 	cout << nBibHits << " BIB scaled hits per collision" << endl;
+	
+	// fluctuate nBibHits
+	std::poisson_distribution<int> poissDist(nBibHits);
+	nBibHits = poissDist(generator);
+	
 	double rateScale = 8.*Pi/(HTA.phiStep*HTA.NphiBins);// includes factors 2 from charge and eta
 	cout << "rate scale factor: " << rateScale << endl;	
 		

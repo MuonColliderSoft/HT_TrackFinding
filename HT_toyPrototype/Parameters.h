@@ -50,6 +50,10 @@ public:
 // in each detector layer to be accepted for a HTA cell
 	
 	double train_nSigmaCell = 3.;
+	
+// seed random generator
+
+	long int train_randomSeed = 0;
 
 //////////////////////////////////////////////////////////////////////// 
 // EVENT GENERATION SECTION  ///////////////////////////////////////////
@@ -89,7 +93,6 @@ public:
 // seed random generator
 
 	long int gen_randomSeed = 121348;
-	//generator.seed(121348); // seeding the random generator to be different from training
 	
 // data file from where HT array is initialized from
 
