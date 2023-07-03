@@ -181,7 +181,6 @@ int main(){
 	
 	// fluctuate nBibHits
 	std::poisson_distribution<int> poissDist(nBibHits);
-	nBibHits = poissDist(generator);
 	
 	double rateScale = 8.*Pi/(HTA.phiStep*HTA.NphiBins);// includes factors 2 from charge and eta
 	cout << "rate scale factor: " << rateScale << endl;	
@@ -492,6 +491,11 @@ int main(){
     
     		
 			Event ev(dg, nTracks);// (geometry, nTracks)
+			
+			
+			// fluctuate BIB hits
+			
+			nBibHits = poissDist(generator);
 			
 			//add BIB hits
 			
