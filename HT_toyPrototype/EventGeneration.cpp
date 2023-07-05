@@ -189,7 +189,7 @@ int main(){
 	TH1D HnCandidates("HnCandidates","HnCandidates", 6, -0.5,+5.5);
 	TH1D HnHitsInThisCell("HnHitsInThisCell","HnHitsInThisCell", 13, -0.5,+12.5);
 	TH1D HnBestCellHits("HnBestCellHits","HnBestCellHits", 13, -0.5,+12.5);
-	
+	TH1D HCellStat("HCellStat","HCellStat",21, -0.5, 20.5);
 	
 	TH1D HBarrelFraction("HBarrelFraction","HBarrelFraction", 11, -0.05, 1.05);HBarrelFraction.SetStats(false);
 	TH2D HNDvsNB("NDvsNB","NDvsNB",  13, -0.5,+12.5, 13, -0.5, +12.5); HNDvsNB.SetStats(false);
@@ -700,12 +700,19 @@ int main(){
 			
 	
 		///////////// END SUMMARY////////////////////////////////////////	
-			
-			
 		
-		//ev.print(cout,1); // mode = 1 prints all hits for each track
-		//ev.printXYZ(g,cout); // prints data for Mathematica Plot
-	
+		// Fill histogram of number of hits in each HTA cell 
+
+		 for(int i = 0; i != HTA_NphiBins; ++i) 
+				for(int j = 0; j != HTA_NetaBins; ++j)
+					for(int k = 0; k != HTA_NinvptBins; ++k){										
+						for(auto it = HTA.ArrElem[i][j][k].layerIndHitStat.begin(); it != HTA.ArrElem[i][j][k].layerIndHitStat.end();++it ){     						
+								int n = (it->second).nHits;
+								HCellStat.Fill(n);
+								//cout << j << " " << k << " " << n << endl;					 						
+						} 
+					}
+
 	} // end loop on events ///////////////////////////////////////////////////////////
 	
 	

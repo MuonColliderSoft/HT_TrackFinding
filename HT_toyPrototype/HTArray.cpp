@@ -22,7 +22,8 @@
 		
 		bool hitLayer; // this layer has been hit in this HT element	
 		vector<unsigned> hitIDList; // list of hit ID's (indices in hit vector in event)
-    
+    	unsigned nHits;
+    	
     	long int nEntries;
     	double mean[3]; // mean values of x1, x2 and t
     	double low[3]; // min value
@@ -39,6 +40,7 @@
     	
     	Hitstat(){ // constructor
     		nEntries = 0;
+    		nHits = 0;
     		hitIDList.clear();
     		c00 = 0.;
     		c11 = 0.;
@@ -191,6 +193,7 @@
     	
     		hitLayer = false;
     		hitIDList.clear();
+    		nHits = 0;
     	}
     	
     	void print(ostream &out){
@@ -333,7 +336,7 @@
 					if(Special)cout << "good u2"<< endl;
 						
 				if(!stat.hitLayer)++nHitLayers;
-				
+				++(it->second.nHits);
 				return 0;
 					
 			} 

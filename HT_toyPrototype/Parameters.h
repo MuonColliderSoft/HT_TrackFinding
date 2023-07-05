@@ -65,11 +65,11 @@ public:
 
 // number of tracks to be generated for each event
 
-	unsigned gen_nTracks = 1; // Number of tracks per event
+	unsigned gen_nTracks = 0.; // Number of tracks per event
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = -1.; // -1. == no BIB hit
+	double gen_fracBib = 1.; // -1. == no BIB hit
 	
 // limits in phi for BIB generation
 
@@ -157,8 +157,8 @@ public:
 	const double geo_def_t_t0 = 0.0; // track mean t0
 	const double geo_def_t_deltaX0 = 0.0; // track sigma x0
 	const double geo_def_t_deltaY0 = 0.0; // track sigma y0
-	const double geo_def_t_deltaZ0 = 0.0; // track sigma z0
-	const double geo_def_t_deltaT0 = 0.0; // track sigma t0 mm
+	const double geo_def_t_deltaZ0 = 1.5; // track sigma z0
+	const double geo_def_t_deltaT0 = 1.5; // track sigma t0 mm
 	
 	
 	// expansion factors applied to default parameter spaces
