@@ -29,7 +29,8 @@ using namespace std;
 
 // random generator
 
-std::default_random_engine generator;
+//std::default_random_engine generator;
+std::mt19937 generator; // Mersenne Twister 
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
@@ -474,7 +475,7 @@ int main(){
 	unsigned nMin = meanNhits-par.train_nSigmaCell *sigma;
 	
 // Fill histogram of number of hits in each HTA cell and prune poorly populated layers
-
+	unsigned nPruned = 0;
 	 for(int i = 0; i != HTA_NphiBins; ++i) 
 			for(int j = 0; j != HTA_NetaBins; ++j)
 				for(int k = 0; k != HTA_NinvptBins; ++k){										
@@ -482,7 +483,8 @@ int main(){
 							int n = (it->second).nEntries;
 							HCellStat.Fill(n);
 							if(n < nMin){ 
-								cerr << "cell " << i << " " << j << " " << k << " pruned layer " << it->first << " nHits " << n << endl;
+								++nPruned;
+								cout << nPruned << " cell " << i << " " << j << " " << k << " pruned layer " << it->first << " nHits " << n << endl;
 								HTA.ArrElem[i][j][k].layerIndHitStat.erase(it++);
 							}
 							else ++it;   						

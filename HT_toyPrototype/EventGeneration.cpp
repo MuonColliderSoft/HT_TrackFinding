@@ -32,7 +32,8 @@ using namespace std;
 
 // random generator
 
-std::default_random_engine generator;
+//std::default_random_engine generator;
+std::mt19937 generator; // Mersenne Twister
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
