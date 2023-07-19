@@ -475,6 +475,7 @@ int main(){
 	
 	unsigned nTracksFound = 0;
 	double candidateRate = 0.;
+	unsigned nEventsWithCandidates = 0;
 	
 
     for(unsigned iEv = 0; iEv != nEvents; ++iEv){
@@ -674,16 +675,16 @@ int main(){
 			unsigned nCan = HTA.getCellCandidates();
 			HnCandidates.Fill(nCan);
 			
-			//if(nCan){
-				cout << "ev " << iEv << ": "<< nCan << " Candidates" << endl;
-				//cout << endl;		
-				HTA.printCellCandidateList(cout);
-				cout << " ---------------------------------------" << endl;
-				
-				// write file with track candidates
-				outPlotFile << "Event " << iEv << " ";
-				HTA.writeCellCandidateList(outPlotFile, ev.hitList);
-			//}
+			if(nCan) ++nEventsWithCandidates;
+			cout << "ev " << iEv << ": "<< nCan << " Candidates" << endl;
+			//cout << endl;		
+			HTA.printCellCandidateList(cout);
+			cout << " ---------------------------------------" << endl;
+			
+			// write file with track candidates
+			outPlotFile << "Event " << iEv << " ";
+			HTA.writeCellCandidateList(outPlotFile, ev.hitList);
+
 				
 			
 			// Loop on candidates 
@@ -727,7 +728,10 @@ int main(){
 	cout << "Efficiency = " << nTracksFound/(double)nEvents << endl;
 
 			
-			
+	///// Events ///////////////////////////////////
+	
+	cout << "Number of Events with candidates = " << nEventsWithCandidates << endl;
+	cout << "Trigger probability = " << nEventsWithCandidates/(double)nEvents << endl;
 			
 	///// Rate (candidates/collision) /////////////////////////////////////////////
 			
