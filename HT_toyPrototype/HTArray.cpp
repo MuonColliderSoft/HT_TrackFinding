@@ -362,13 +362,17 @@
     	//ofstream outfile;	
     	
     	// one histogram of a single HT cell content as an exampl
-			
-		//TH3I *H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx",40,0.,1.,40,0.,1.,40,0.,1.);
-		//TH3I *H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu",40,0.,1.,40,0.,1.,40,0.,1.);
 	
+		TH1D *HDeltaEta;
+		
 		TH3I *H3D_HTcellx;
 		TH3I *H3D_HTcellu;
-		TH1D *HDeltaEta;
+		TH1D *Hcellx1;
+		TH1D *Hcellx2;
+		TH1D *Hcellt;
+		TH1D *Hcellu0;
+		TH1D *Hcellu1;
+		TH1D *Hcellu2;
 
     
     	// dimensions of the array
@@ -410,9 +414,15 @@
 		
 		void initHists(){
 			
+			HDeltaEta = new TH1D("DeltaEta","DeltaEta",21,-10.5,+10.5);
 			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx; x1; x2; t",40,0.,1.,40,0.,1.,40,0.,1.);
 			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu; x1; u1; u2",40,0.,1.,40,0.,1.,40,0.,1.);
-			HDeltaEta = new TH1D("DeltaEta","DeltaEta",21,-10.5,+10.5);
+			Hcellx1 = new TH1D("Hcellx1","Hcellx1",100,0.,1.);
+			Hcellx2 = new TH1D("Hcellx2","Hcellx2",100,0.,1.);
+			Hcellt = new TH1D("Hcellt","Hcellt",100,0.,1.);
+			Hcellu0 = new TH1D("Hcellu0","Hcellu0",100,0.,1.);
+			Hcellu1 = new TH1D("Hcellu1","Hcellu1",100,0.,1.);
+			Hcellu2 = new TH1D("Hcellu2","Hcellu2",100,0.,1.);
 		}
 		
 				
@@ -618,8 +628,9 @@
 					int lay = h.iLayer;
 					if (h.hitType == 'D') lay += dg.nBarrels;
 					if(lay == plotLay) {
-						// This is the right cell we want to plot
-						if(H3D_HTcellx->GetEntries()==0){
+						// This is the special cell we want to plot
+						
+						if(H3D_HTcellx->GetEntries()==0){// init hist limits (first fill only)
 							// Set histogram boundaries
 							double xLow = ArrElem[i][j][k].layerIndHitStat[lay].low[0];
 							double xHigh = ArrElem[i][j][k].layerIndHitStat[lay].high[0];
@@ -631,6 +642,10 @@
 							H3D_HTcellx->GetYaxis()->SetLimits(yLow,yHigh);
 							H3D_HTcellx->GetZaxis()->SetLimits(zLow,zHigh);	
 							
+							Hcellx1->GetXaxis()->SetLimits(xLow,xHigh);
+							Hcellx2->GetXaxis()->SetLimits(yLow,yHigh);
+							Hcellt->GetXaxis()->SetLimits(zLow,zHigh);
+							
 							xLow = ArrElem[i][j][k].layerIndHitStat[lay].u0Min;
 							xHigh = ArrElem[i][j][k].layerIndHitStat[lay].u0Max;
 							yLow = ArrElem[i][j][k].layerIndHitStat[lay].u1Min;
@@ -641,11 +656,21 @@
 							H3D_HTcellu->GetYaxis()->SetLimits(yLow,yHigh);
 							H3D_HTcellu->GetZaxis()->SetLimits(zLow,zHigh);	
 							
-							//cout << xLow << " " << xHigh << " " << yLow << " " << yHigh
-							//<< " " << zLow << " " << zHigh << endl;
-						}
+							Hcellu0->GetXaxis()->SetLimits(xLow,xHigh);
+							Hcellu1->GetXaxis()->SetLimits(yLow,yHigh);
+							Hcellu2->GetXaxis()->SetLimits(zLow,zHigh);
+						
+						}// end init hist limits
+						
 						H3D_HTcellx->Fill(h.x1,h.x2,h.t);
-						H3D_HTcellu->Fill(h.u0,h.u1,h.u2);
+						H3D_HTcellu->Fill(h.u0,h.u1,h.u2);					
+						Hcellx1->Fill(h.x1);
+						Hcellx2->Fill(h.x2);
+						Hcellt->Fill(h.t);
+						Hcellu0->Fill(h.u0);
+						Hcellu1->Fill(h.u1);
+						Hcellu2->Fill(h.u2);
+						
 					}
 				}
 		

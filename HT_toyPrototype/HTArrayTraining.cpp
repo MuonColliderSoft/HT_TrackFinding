@@ -144,6 +144,9 @@ int main(){
 	TH2D HNDvsNB("NDvsNB","NDvsNB",  13, -0.5,+12.5, 13, -0.5, +12.5); HNDvsNB.SetStats(false);
 	
 	TH1D HCellStat("HCellStat","HCellStat",1000, 0., 5000.);
+	TH1D Hd0Width("Hd0Width","Hd0Width",100,0.,100.);
+	TH1D Hd1Width("Hd1Width","Hd1Width",100,0.,200.);
+	TH1D Hd2Width("Hd2Width","Hd2Width",100,0.,200.);
 	
 	
 	TH1D HitX("HitX","HitX", 4000, -2000.,+2000.); HitX.SetStats(false);
@@ -490,10 +493,7 @@ int main(){
 							else ++it;   						
 					} 
 				}
-				
-	cout << "Write histogram file " << train_histFileName.c_str() << " ...";
-	histFile->Write(); // write histogram file
-	cout << endl;
+	
 	
 	cout << endl;
 	cout << "Phi limits for Bib distribution" << endl;
@@ -508,7 +508,7 @@ int main(){
 		HTA.diagonalize();
 		cout << endl;
 	}
-		if(Summary) HTA.print(cout,1);
+		
 		
 	
 	if(TrainingPhase == 1 || TrainingPhase == 2) {
@@ -520,24 +520,56 @@ int main(){
 		outfile.close();
 	}
 	
+	if(TrainingPhase != 3 ) {				
+		cout << "Write histogram file " << train_histFileName.c_str() << " ...";
+		histFile->Write(); // write histogram file
+		cout << endl;
+		return 0;// end main without training results
+	}
+	
+	// This is executed only for TrainingPhase == 3 
 	
 	
-	
-	if(!Summary) return 0; // end main without training results
-	if(TrainingPhase != 3 ) return 0;// end main without training results
-	
-	
-	
-	
-	// summarize coordinate cut statistics
-	cout << "Summarizing training results" << endl;
+	//if(Summary) HTA.print(cout,1);
 	
 	unsigned int nPhi = HTA.NphiBins;
 	unsigned int nEta = HTA.NetaBins;
 	unsigned int nInvpt = HTA.NinvptBins;
-	unsigned int nLayers = dg.nBarrels + dg.nDiscs;
+	//unsigned int nLayers = dg.nBarrels + dg.nDiscs;
 	
+	// Loop on all cells of HT array (3 nested loops)
+	for(unsigned int iPhi = 0; iPhi != nPhi; ++iPhi)
+		for(unsigned int iEta = 0; iEta != nEta; ++iEta)
+			for(unsigned int iInvpt = 0; iInvpt != nInvpt; ++iInvpt){		
+				HTArrayElement thisElement = HTA.ArrElem[iPhi][iEta][iInvpt];
+				unsigned int kLayers = thisElement.layerIndHitStat.size();			
+				for(auto it = thisElement.layerIndHitStat.begin(); it != thisElement.layerIndHitStat.end(); ++it){
+					unsigned int N = it->second.nEntries;
+        			int layerInd = it->first;
+        			double d0 = it->second.u0Max - it->second.u0Min;
+        			double d1 = it->second.u1Max - it->second.u1Min;
+        			double d2 = it->second.u2Max - it->second.u2Min;
+        			Hd0Width.Fill(d0); 
+        			Hd1Width.Fill(d1);
+        			Hd2Width.Fill(d2);
+        		}	
+			
+			} // end loop on cells of HT array for summarizing
+			
+			
+	if(!Summary) {			
+		cout << "Write histogram file " << train_histFileName.c_str() << " ...";
+		histFile->Write(); // write histogram file
+		cout << endl;
+		return 0;// end main without summary
+	}
 	
+	//this is executed only if TrainingPhase == 3 && Summary == true		
+
+	
+	// summarize coordinate cut statistics
+	cout << "Summarizing training results" << endl;
+		
 	// Loop on all cells of HT array (3 nested loops)
 	for(unsigned int iPhi = 0; iPhi != nPhi; ++iPhi)
 		for(unsigned int iEta = 0; iEta != nEta; ++iEta)
@@ -549,14 +581,10 @@ int main(){
 	 
 				for(auto it = thisElement.layerIndHitStat.begin(); it != thisElement.layerIndHitStat.end(); ++it){
 					unsigned int N = it->second.nEntries;
-					//if(N < 100) continue; // do not consider cell layers with low statistics
         			int layerInd = it->first;
         			double d0 = it->second.u0Max - it->second.u0Min;
         			double d1 = it->second.u1Max - it->second.u1Min;
         			double d2 = it->second.u2Max - it->second.u2Min;
-        			//double d0 = sqrt(it->second.u0v);
-        			//double d1 = sqrt(it->second.u1v);
-        			//double d2 = sqrt(it->second.u2v);
         		    cout << "layer: " << layerInd;			
 					cout << " N: " << N;
 					cout << " d0: " << d0;
@@ -567,8 +595,11 @@ int main(){
 			
 			} // end loop on cells of HT array for summarizing
 			
-			
-			
+		
+	cout << "Write histogram file " << train_histFileName.c_str() << " ...";
+	histFile->Write(); // write histogram file
+	cout << endl;
+
 			
 	return 0;		
 	
