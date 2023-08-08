@@ -9,7 +9,7 @@
 // dimensions of the HT array
 // (global variables)
 
-const static unsigned HTA_NphiBins = 1;
+const static unsigned HTA_NphiBins = 50;
 const static unsigned HTA_NetaBins = 200;
 const static unsigned HTA_NinvptBins = 10;
 		
@@ -33,7 +33,7 @@ public:
 	
 // number of events to be generated for training
 	
-	unsigned train_nEvents = 1e6; 
+	unsigned train_nEvents = 1e7; 
 	
 // Histogram files for three training phases
 
@@ -53,7 +53,8 @@ public:
 	
 // seed random generator
 
-	long int train_randomSeed = 0;
+	long int train_randomSeed = 123456;
+	long int train_randomSeed_trk = 0; // for track generation;
 
 //////////////////////////////////////////////////////////////////////// 
 // EVENT GENERATION SECTION  ///////////////////////////////////////////
@@ -61,42 +62,54 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 100;
+	unsigned gen_nEvents = 10;
 
 // number of tracks to be generated for each event
 
-	unsigned gen_nTracks = 1.; // Number of tracks per event
+	unsigned gen_nTracks = 1; // Number of tracks per event
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = -1.; // -1. == no BIB hit
+	double gen_fracBib = 1.; // -1. == no BIB hit
 	
 // limits in phi for BIB generation
+	
+	 double gen_phia = -0.00216988; // for 500 mrad phi sector
+	 double gen_phib = 0.806467;    //
+	 
+	 //double gen_phia = -0.00312222; // for 100 mrad phi sector
+ 	 //double gen_phib = 0.406729;    //
+ 	 
+// print candidates for every event
 
-	double gen_phia = 0.0;
-	double gen_phib = 0.344;
+	bool gen_printCandidates = false;
+
+// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster)	or 2 (fastest)
 	
-// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster)	
+	int gen_fillMode = 2; 
 	
-	int gen_fillMode = 1; 
-	
-// max error for eta projection in fillMode = 1
+// max error for eta projection in fillMode = 1 and 2
 
 	int gen_errEta = 2;
 	
+// max error for phi projection in fillMode = 2
+
+	int gen_errPhi = 1;
+			
 // create a file with data to 3D plot track candidates
 // this file is the input for PlotTracks
 
-	bool gen_PlotTracks = true;	
+	bool gen_PlotTracks = false;	
 	string gen_plotDataFileName = "PlotData.txt";
 
-// seed random generator
+// random generator seeds 
 
 	long int gen_randomSeed = 121348;
+	long int gen_randomSeed_trk = 220472; // for track generation
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata.txt";
+	string gen_dataFileName = "HTAdata_500mrad.txt";
 	
 // data file with all Bib hits
 
@@ -145,8 +158,10 @@ public:
 
 	// track parameters - default values
 
-	const double geo_def_t_phi = 0.005; // track phi mean
-	const double geo_def_t_deltaPhi = 0.005; // track delta phi
+	const double geo_def_t_phi = 0.250; // track phi mean
+	const double geo_def_t_deltaPhi = 0.250; // track delta phi
+	//const double geo_def_t_phi = 0.050; // track phi mean
+	//const double geo_def_t_deltaPhi = 0.050; // track delta phi
 	const double geo_def_t_eta = 1.0; // track eta mean
 	const double geo_def_t_deltaEta = 1.0; // track delta eta
 	const double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  

@@ -34,6 +34,8 @@ using namespace std;
 
 //std::default_random_engine generator;
 std::mt19937 generator; // Mersenne Twister
+std::mt19937 generator_trk; // Mersenne Twister for track generation
+
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
@@ -83,7 +85,6 @@ bool PlotTracks; // create a file with data for 3-D plots of candidates
 int main(){
 
 	
-	
 	// parameter initialization
     nEvents = par.gen_nEvents; // Number of events to be generated
 	nTracks = par.gen_nTracks; // Number of tracks per event
@@ -91,9 +92,11 @@ int main(){
 	fillMode = par.gen_fillMode; // optimization mode for HTA fill
 	PlotTracks = par.gen_PlotTracks; // create a file with data for 3-D plots of candidates
 	
-	// seeding the random generator 
+	// seeding the random generators 
   	long int randomSeed = par.gen_randomSeed;
-  	if(randomSeed)generator.seed(randomSeed); 
+  	if(randomSeed)generator.seed(randomSeed);
+  	long int randomSeed_trk = par.gen_randomSeed_trk;
+  	if(randomSeed_trk)generator_trk.seed(randomSeed_trk);  
   	
   	string histFileName = par.gen_histFileName;
 	TFile* histFile = new TFile(histFileName.c_str(),"RECREATE");  // histogram file
@@ -129,16 +132,16 @@ int main(){
 	}
 	
 	
+		ofstream outPlotFile; // file for to plot candidates
+		
+		if(PlotTracks) {	
 	
 	// Open plot tracks data file
 	
-	
-	
 		string plotDataFileName = par.gen_plotDataFileName;
-		cout << "Opening Data File: " << plotDataFileName << " ..." << endl;
-		ofstream outPlotFile;
+		cout << "Opening Plot Data File: " << plotDataFileName << " ..." << endl;
 		
-	if(PlotTracks) {	
+
 	
 		outPlotFile.open(plotDataFileName);
 	
@@ -153,35 +156,43 @@ int main(){
 	
 	}
 	
-	// opening BIB background file
+	unsigned nBibHits = 0;
 	
 	BibFileReader bibRead;
-	cout << "reading BIB... ";
 	
-	string bibFileName = par.gen_bibFileName;	
-	int code = bibRead.readFile(bibFileName);
-	cout << "return code = " << code << endl;
-	if(code == -1 && fracBib > 0.) return 0;
+	if(fracBib > 0){
 	
-	unsigned totBIB = bibRead.size();
-	cout << totBIB << " BIB events read from file" << endl;	
+		// opening BIB background file
 	
-	// calculating the number of Bib hits to add to every event
-	// given the slice in phi that we want to cover and what
-	// fraction of background we want to simulate (fracBib)
+		cout << "reading BIB... ";
 	
-	double phia = par.gen_phia; // low limit in phi
-	double phib = par.gen_phib; // high limit in phi
-	bibRead.setPhiLimits(phia,phib); 
-	cout << "BIB phi limits: " << phia << " " << phib << endl;
-	double BIBscale = 2.*Pi/(phib - phia);
-	cout << "BIB scale factor: " << BIBscale << endl;	
-	unsigned nBibHits = totBIB/BIBscale*fracBib;
-		if(fracBib < 0.) nBibHits = 0;
-	cout << nBibHits << " BIB scaled hits per collision" << endl;
+		string bibFileName = par.gen_bibFileName;	
+		int code = bibRead.readFile(bibFileName);
+		cout << "return code = " << code << endl;
+		if(code == -1 && fracBib > 0.) return 0;
 	
-	// fluctuate nBibHits
-	std::poisson_distribution<int> poissDist(nBibHits);
+		unsigned totBIB = bibRead.size();
+		cout << totBIB << " BIB events read from file" << endl;	
+	
+		// calculating the number of Bib hits to add to every event
+		// given the slice in phi that we want to cover and what
+		// fraction of background we want to simulate (fracBib)
+	
+		double phia = par.gen_phia; // low limit in phi
+		double phib = par.gen_phib; // high limit in phi
+		bibRead.setPhiLimits(phia,phib); 
+		cout << "BIB phi limits: " << phia << " " << phib << endl;
+		double BIBscale = 2.*Pi/(phib - phia);
+		cout << "BIB scale factor: " << BIBscale << endl;	
+		nBibHits = totBIB/BIBscale*fracBib;
+			if(fracBib < 0.) nBibHits = 0;
+		cout << nBibHits << " BIB scaled hits per collision" << endl;
+	
+	}
+					
+	std::poisson_distribution<unsigned> poissDist(nBibHits);
+	
+	
 	
 	double rateScale = 8.*Pi/(HTA.phiStep*HTA.NphiBins);// includes factors 2 from charge and eta
 	cout << "rate scale factor: " << rateScale << endl;	
@@ -464,6 +475,17 @@ int main(){
 	
 
 	
+		// cell centers
+	
+		cout << endl;
+		for(int i = 0; i != HTA_NphiBins; ++i) cout << "i: " << i << " phi: " << HTA.getCell_Phi(i) << endl;
+		cout << endl;
+		for(int j = 0; j != HTA_NetaBins; ++j) cout << "j: " << j << " eta: " << HTA.getCell_Eta(j) << endl;
+		cout << endl;
+		for(int k = 0; k != HTA_NinvptBins; ++k)cout << "k: " << k << " invPt: " << HTA.getCell_InvPt(k) << endl;
+		cout << endl;										
+	
+	
 	
 
 	
@@ -480,6 +502,7 @@ int main(){
 
     for(unsigned iEv = 0; iEv != nEvents; ++iEv){
     	
+	cout << "***************************************************" << endl;			
     		cout << iEv << "/" << nEvents << " processed events" << endl;
     		//if(nEvents >= 1e6)
     		//if(iEv && ((iEv % (int)100) == 0) ) cout << iEv << "/" << nEvents << " processed events" << endl;
@@ -493,15 +516,15 @@ int main(){
     
     		
 			Event ev(dg, nTracks);// (geometry, nTracks)
+			if(nBibHits){	
+				// fluctuate BIB hits			
+				unsigned nxBibHits = poissDist(generator);			
+				//add BIB hits		
+				ev.addBibHits(bibRead, nxBibHits);
+				cout << "nBibHits = " << nxBibHits << endl;
+			}
+			cout << "finished adding BIB" << endl;
 			
-			
-			// fluctuate BIB hits
-			
-			nBibHits = poissDist(generator);
-			
-			//add BIB hits
-			
-			ev.addBibHits(bibRead, nBibHits);
 			
 			HTA.reset(); // clear all hits from HT Array
 	
@@ -640,7 +663,6 @@ int main(){
 		
 		
 			cout << endl;
-			cout << "***************************************************" << endl;			
 			cout << " bestCell " << nLayersHit 
 						<< " hits in  phi " << phi_b << " eta " << eta_b << " pt " << pt_b << endl;	
 						
@@ -673,18 +695,18 @@ int main(){
 				
 					
 			unsigned nCan = HTA.getCellCandidates();
-			HnCandidates.Fill(nCan);
-			
+			HnCandidates.Fill(nCan);			
 			if(nCan) ++nEventsWithCandidates;
-			cout << "ev " << iEv << ": "<< nCan << " Candidates" << endl;
-			//cout << endl;		
-			HTA.printCellCandidateList(cout);
-			cout << " ---------------------------------------" << endl;
 			
-			// write file with track candidates
-			outPlotFile << "Event " << iEv << " ";
-			HTA.writeCellCandidateList(outPlotFile, ev.hitList);
-
+			cout << "ev " << iEv << ": "<< nCan << " Candidates" << endl;		
+			if(par.gen_printCandidates) HTA.printCellCandidateList(cout);
+			//cout << " ---------------------------------------" << endl;
+			
+			if(PlotTracks) {
+				// write file with track candidates
+				outPlotFile << "Event " << iEv << " ";
+				HTA.writeCellCandidateList(outPlotFile, ev.hitList);
+			}
 				
 			
 			// Loop on candidates 
@@ -737,9 +759,7 @@ int main(){
 			
 	cout << "Total number of candidates = " << candidateRate << endl;
 	cout << "Number of candidates per Collision = " << candidateRate/nEvents*rateScale << endl;
-	
-	
-	
+		
 	cout << "Writing histogram file..." << endl;
 	histFile->Write(); // write histogram file
 	

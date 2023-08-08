@@ -84,7 +84,7 @@
         Hit randomBibHit(){
         	std::uniform_int_distribution<unsigned> intDistribution(0,nBIB-1);
         	unsigned bibIndex = intDistribution(generator);
-        	Record rec = bibList[bibIndex]; 
+        	Record rec = bibList[bibIndex];
         	double x1Min = 0.; double x1Max = 0.;
 			if(rec.hitType == 'B') {
 				x1Max = phiMax*dg.B[rec.iLayer].r;

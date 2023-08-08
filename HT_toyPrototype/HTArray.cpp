@@ -361,9 +361,15 @@
     	
     	//ofstream outfile;	
     	
-    	// one histogram of a single HT cell content as an exampl
+    	// some histograms of inside quantities
 	
 		TH1D *HDeltaEta;
+		TH1D *HDeltaPhi;
+		TH1D *HDeltaPhi2;
+		TH1D *HInvptTimesR; 
+		TH2I *HDeltaPhiVsInvptTimesR;
+		
+		// histograms of a single HT cell content as an example
 		
 		TH3I *H3D_HTcellx;
 		TH3I *H3D_HTcellu;
@@ -400,6 +406,8 @@
 		// HT Array proper	
 
                 HTArrayElement ArrElem[HTA_NphiBins][HTA_NetaBins][HTA_NinvptBins];
+                
+        double signedCurvaturePerInvPt;
       
 		HTArray(){ // constructor
 		
@@ -409,12 +417,20 @@
 			etaStep = 2*par.HTA_t_deltaEta/double(NetaBins);
 			invPtMin = par.HTA_t_invPt_min;
 			invPtStep = (par.HTA_t_invPt_max - par.HTA_t_invPt_min)/double(NinvptBins);
+			
+			// constant for phi cell prediction
+			
+			signedCurvaturePerInvPt = 3.e-4*par.magneticField;
 		
 		}
 		
 		void initHists(){
 			
 			HDeltaEta = new TH1D("DeltaEta","DeltaEta",21,-10.5,+10.5);
+			HDeltaPhi = new TH1D("DeltaPhi","DeltaPhi",51,-10.5,+40.5);
+			HDeltaPhi2 = new TH1D("DeltaPhi2","DeltaPhi2",21,-10.5,+10.5);
+			HInvptTimesR = new TH1D("InvptTimesR","InvptTimesR",1000, 0.,0.3);
+			HDeltaPhiVsInvptTimesR = new TH2I("DeltaPhiVsInvptTimesR","DeltaPhiVsInvptTimesR",100,0.,0.3,510,-10.5,+40.5);					 
 			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx; x1; x2; t",40,0.,1.,40,0.,1.,40,0.,1.);
 			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu; x1; u1; u2",40,0.,1.,40,0.,1.,40,0.,1.);
 			Hcellx1 = new TH1D("Hcellx1","Hcellx1",100,0.,1.);
@@ -594,6 +610,36 @@
 			return 0;
 		
 		}
+		
+		int getCell_i(double xPhi, int &i){
+			i = (xPhi - phiMin)/phiStep;
+			if(i < 0 || i >= NphiBins) return -1;
+			else return 0;	
+		}
+		
+		int getCell_j(double xEta, int &j){
+			j = (xEta - etaMin)/etaStep;
+			if(j < 0 || j >= NetaBins) return -1;
+			else return 0;	
+		}
+		
+		int getCell_k(double xInvPt, int &k){
+			k = (xInvPt - invPtMin)/invPtStep;
+			if(k < 0 || k >= NinvptBins) return -1;
+			else return 0;	
+		}
+		
+		double getCell_Phi(int i){
+			return phiMin + ((double)i+0.5)*phiStep;
+		}
+			
+		double getCell_Eta(int j){
+			return etaMin + ((double)j+0.5)*etaStep;
+		}
+		
+		double getCell_InvPt(int k){
+			return invPtMin + ((double)k+0.5)*invPtStep;
+		}	
 				
 		
 		// Train this Array with hit h coming from track t
@@ -699,7 +745,7 @@
 			int iPhi1 = 0;
 			int iPhi2 = NphiBins;
 			int iEta1 = 0;
-			int iEta2 = NetaBins -1;
+			int iEta2 = NetaBins;
 			int iInvpt1 = 0;
 			int iInvpt2 = NinvptBins;
 		
@@ -717,36 +763,85 @@
 				}		
 				double eta = asinh(z/r);
 
-				// index of the hit eta bin
-				int iEtaMap = (eta-etaMin)/etaStep;
+				// indexes of the hit coordinates
+						
+				int iPhiMap;
+				int iPhiMap2;
+				
+				
+				int iEtaMap; 
+				getCell_j(eta, iEtaMap);
+				
 
-			if(mode == 1){
+			if(mode == 1 || mode == 2){
 	
 				int errEta = par.gen_errEta;
 				iEta1 = iEtaMap - errEta;
-				iEta2 = iEtaMap + errEta +1;
+				iEta2 = iEtaMap + errEta + 1;
 				
 				if(iEta2 < 1) return 0;
 				if(iEta1 < 0) iEta1 = 0;
 				if(iEta1 > NetaBins-1) iEta1 = NetaBins - 1;
 				if(iEta2 > NetaBins) iEta2 = NetaBins;
 				
-			} // end mode = 1
+			} // end mode = 1 or 2
 			
-				for(unsigned iPhi = iPhi1; iPhi != iPhi2; ++iPhi){
-						for(unsigned iEta = iEta1; iEta != iEta2; ++iEta){
-							for(unsigned iInvpt = iInvpt1; iInvpt != iInvpt2; ++iInvpt){	
-								int strike = ArrElem[iPhi][iEta][iInvpt].fill(h, mode);			
-								if(strike == 0) {
-									Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
-									thisStat->hitLayer = true;
-									thisStat->hitIDList.push_back(h.ID);
-									int delta = iEtaMap - iEta;
-									HDeltaEta->Fill(delta);
+				//h.print(cout);
+		
+				for(unsigned iEta = iEta1; iEta != iEta2; ++iEta){
+					for(unsigned iInvpt = iInvpt1; iInvpt != iInvpt2; ++iInvpt){
+					
+						//cout << iEta << " "<< iInvpt << endl;
+					
+						getCell_i(h.realPhi(dg), iPhiMap);
+						getCell_i(h.realPhi(dg) - 0.5*signedCurvaturePerInvPt*getCell_InvPt(iInvpt)*r, iPhiMap2);
+						
+						if(mode == 2){
+							int errPhi = par.gen_errPhi;
+							//cout << "errPhi = " << errPhi << endl;
+							iPhi1 = iPhiMap2 - errPhi;
+							iPhi2 = iPhiMap2 + errPhi +1;
+				
+							if(iPhi2 < 1) continue;
+							if(iPhi1 < 0) iPhi1 = 0;
+							if(iPhi1 > NphiBins-1) iPhi1 = NphiBins - 1;
+							if(iPhi2 > NphiBins) iPhi2 = NphiBins;
+							
+							//cout << iPhi1 << " " << iPhi2 << endl;
+				
+						} // end mode = 2
+						
+						
+					
+						for(unsigned iPhi = iPhi1; iPhi != iPhi2; ++iPhi){
+						//for(unsigned iPhi = 0; iPhi != NphiBins; ++iPhi){
+						
+							int strike = ArrElem[iPhi][iEta][iInvpt].fill(h, mode);			
+							if(strike == 0) { //cout << "strike iPhi = " << iPhi << endl;
+								Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
+								thisStat->hitLayer = true;
+								thisStat->hitIDList.push_back(h.ID);
+							
+								int deltaEta = iEtaMap - iEta;
+								HDeltaEta->Fill(deltaEta);
+							
+								int deltaPhi = iPhiMap - iPhi;
+								HDeltaPhi->Fill(deltaPhi);
+								
+								double xCoord = 0.5*signedCurvaturePerInvPt*getCell_InvPt(iInvpt)*r;
+								HInvptTimesR->Fill(xCoord);
+								HDeltaPhiVsInvptTimesR->Fill(xCoord,deltaPhi);
+															
+								int deltaPhi2 = iPhiMap2 - iPhi;			
+								HDeltaPhi2->Fill(deltaPhi2);
+								
+								//cerr << iPhi << " " << iPhiMap << " " <<  iPhiMap2 << endl; // ********
+							
+									
 								}							
-							} // end loop on invpt	
-						} // end loop on eta
-				} // end loop on phi	
+							} // end loop on phi	
+						} // end loop on pt
+				} // end loop on eta	
 			
 			
 			return 0;

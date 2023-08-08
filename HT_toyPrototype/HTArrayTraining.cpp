@@ -31,6 +31,7 @@ using namespace std;
 
 //std::default_random_engine generator;
 std::mt19937 generator; // Mersenne Twister 
+std::mt19937 generator_trk; // Mersenne Twister for track generation
 std::uniform_real_distribution<double> distribution(0.,1.);
 std::normal_distribution<double> gauss(0.0,1.0);
 
@@ -87,9 +88,11 @@ int main(){
 	Diagonalize = par.train_Diagonalize;
 	Summary = par.train_Summary;
 	
-	// seeding the random generator 
+	// seeding the random generators
   	long int randomSeed = par.train_randomSeed;
   	if(randomSeed)generator.seed(randomSeed); 
+  	long int randomSeed_trk = par.train_randomSeed_trk;
+  	if(randomSeed_trk)generator_trk.seed(randomSeed_trk); 
 	
 	
 	// Instantiate Hough Transform Array

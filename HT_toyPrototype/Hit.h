@@ -27,6 +27,7 @@
 		void write(ostream &out);
 		void printXYZ(DetectorGeometry &g, ostream &out);
 		double timeExpected(DetectorGeometry &g, double mass, double invPt);
+		double realPhi(DetectorGeometry &g);
 		// TOF of a particle of mass "mass" and inverse pt "invPt" from the origin to the hit point
 		bool isSeed();
     

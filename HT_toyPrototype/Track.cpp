@@ -18,19 +18,18 @@ Track::Track(TrackGeometry &g){ // constructor with parameters from specific geo
     // create random track parameters
     
     int massInd_ = 2; // it's a pion 
-    //massInd_ = 3; // it's a kaon
+    //int massInd_ = 3; // it's a kaon
+	//int massInd_ = 4; // it's a proton
 
-
-    double x0_ = g.t_x0 + g.t_deltaX0*gauss(generator); // x at primary vertex
-    double y0_ = g.t_y0 + g.t_deltaY0*gauss(generator); // y at primary vertex
-    double z0_ = g.t_z0 + g.t_deltaZ0*gauss(generator); // z at primary vertex
-    double t0_ = g.t_t0 + g.t_deltaT0*gauss(generator); // t at primary vertex
+    double x0_ = g.t_x0 + g.t_deltaX0*gauss(generator_trk); // x at primary vertex
+    double y0_ = g.t_y0 + g.t_deltaY0*gauss(generator_trk); // y at primary vertex
+    double z0_ = g.t_z0 + g.t_deltaZ0*gauss(generator_trk); // z at primary vertex
+    double t0_ = g.t_t0 + g.t_deltaT0*gauss(generator_trk); // t at primary vertex
     
-    double eta_ = 2*g.t_deltaEta * distribution(generator) + g.t_eta - g.t_deltaEta; // eta of track flat distribution
-    double phi_ = 2*g.t_deltaPhi * distribution(generator) + g.t_phi - g.t_deltaPhi; // phi of track flat distribution
+    double eta_ = 2*g.t_deltaEta * distribution(generator_trk) + g.t_eta - g.t_deltaEta; // eta of track flat distribution
+    double phi_ = 2*g.t_deltaPhi * distribution(generator_trk) + g.t_phi - g.t_deltaPhi; // phi of track flat distribution
     
-    double invPt_ =  g.t_invPt_min + (g.t_invPt_max - g.t_invPt_min) * distribution(generator); // inverse pt of track
-    //if(distribution(generator) > 0.5) invPt_ = -invPt_;// choose charge// obsolete
+    double invPt_ =  g.t_invPt_min + (g.t_invPt_max - g.t_invPt_min) * distribution(generator_trk); // inverse pt of track
        
     init(massInd_, x0_, y0_, z0_ , t0_, invPt_, eta_, phi_); // initialize track
     
@@ -213,8 +212,8 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     
     if(sMax > fabs(Pi/c)) return false; // looper - ignored
     
-    //T = t0 + sMax*sqrt(1.+(1./(cotTheta*cotTheta)))/beta +  g.D[iDisc].tPrec*gauss(generator);
-    T = t0 + sMax*sqrt(1.+cotTheta*cotTheta)/beta +  g.D[iDisc].tPrec*gauss(generator);
+    //T = t0 + sMax*sqrt(1.+(1./(cotTheta*cotTheta)))/beta +  g.D[iDisc].tPrec*gauss(generator_trk);
+    T = t0 + sMax*sqrt(1.+cotTheta*cotTheta)/beta +  g.D[iDisc].tPrec*gauss(generator_trk);
     
     
     if(fabs(c) > cMin){
@@ -235,8 +234,8 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     double r = sqrt(x*x + y*y);
     double PHI = atan2(y,x);
     
-    double errTang = g.D[iDisc].xphiPrec*gauss(generator); // measurement error along PHI
-    double errRadial = g.D[iDisc].rPrec*gauss(generator); // measurement error along r   
+    double errTang = g.D[iDisc].xphiPrec*gauss(generator_trk); // measurement error along PHI
+    double errRadial = g.D[iDisc].rPrec*gauss(generator_trk); // measurement error along r   
     
     R = r + errRadial;
     X = R*PHI + errTang;
@@ -288,9 +287,9 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
     
     // add measurement errors
     
-    hitPhi += g.B[iBarrel].xphiPrec*gauss(generator);
-    hitZ += g.B[iBarrel].zPrec*gauss(generator);
-    hitT += g.B[iBarrel].tPrec*gauss(generator); 
+    hitPhi += g.B[iBarrel].xphiPrec*gauss(generator_trk);
+    hitZ += g.B[iBarrel].zPrec*gauss(generator_trk);
+    hitT += g.B[iBarrel].tPrec*gauss(generator_trk); 
     
     rotate(-rotPhi);
     

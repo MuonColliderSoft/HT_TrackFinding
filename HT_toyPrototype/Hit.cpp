@@ -54,6 +54,17 @@
 			
 		}
 		
+		double Hit::realPhi(DetectorGeometry &g){
+			double PHI;
+			if(hitType == 'B') {
+				double R = g.B[iLayer].r;
+				PHI = x1/R;
+			}
+			else PHI = x1/x2;
+			
+			return PHI;			
+		}
+		
     
 		void Hit::printXYZ(DetectorGeometry &g, ostream &out){
 		
