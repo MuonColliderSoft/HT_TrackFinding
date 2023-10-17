@@ -8,6 +8,72 @@
 
  extern int TrainingPhase;
  extern bool Special;
+ extern bool verbose;
+ 
+ #include "Eigen/Dense"
+ #include "NelderMeadOptimizer.h"
+ 
+	
+// global variables	
+ 	
+vector<Hit> fitHitList; // list of all hits to be used in one fit
+vector< vector <Hit> > combinations; // all hit combinations to be fitted in one candidate
+
+
+double xi_to_phi(double xi){return par.HTA_t_phi - par.HTA_t_deltaPhi + (2*par.HTA_t_deltaPhi/(double)HTA_NphiBins)*xi;}
+double xj_to_eta(double xj){return par.HTA_t_eta - par.HTA_t_deltaEta + 2*(par.HTA_t_deltaEta/(double)HTA_NetaBins)*xj;}
+double xk_to_invPt(double xk){return par.HTA_t_invPt_min + (par.HTA_t_invPt_max - par.HTA_t_invPt_min)/(double)HTA_NinvptBins*xk;}
+
+double phi_to_xi(double phi){return (phi - par.HTA_t_phi + par.HTA_t_deltaPhi)/par.HTA_t_deltaPhi*(double)HTA_NphiBins/2.;}
+double eta_to_xj(double eta){return (eta - par.HTA_t_eta + par.HTA_t_deltaEta)/par.HTA_t_deltaEta*(double)HTA_NetaBins/2.;}
+double invPt_to_xk(double invPt){return invPt/(par.HTA_t_invPt_max - par.HTA_t_invPt_min)*(double)HTA_NinvptBins;}
+
+
+
+
+double chi2Func(Eigen::Matrix<double, 5, 1> x){
+	 	   	       	
+	 double invPt = xk_to_invPt(x[0]);
+	 double eta = xj_to_eta(x[1]);
+	 double phi = xi_to_phi(x[2]);
+	 double z0 = x[3];
+	 double t0 = x[4];
+	 
+	int particleType = 2; //  pion
+
+	Track tFit(particleType, 0., 0., z0, t0, invPt, eta, phi); // specific track constructor
+/*	
+	double chi2 = 0.;
+	for(int iHit = 0; iHit != fitHitList.size(); ++iHit){
+		chi2 += tFit.hitChi2(dg, fitHitList[iHit]);
+	}
+*/
+	//fitHitList = combinations[0];// this is now assigned in fitCandidate
+	double chi2 = 0.;
+	for(int iHit = 0; iHit != fitHitList.size(); ++iHit){
+		chi2 += tFit.hitChi2(dg, fitHitList[iHit]);
+	}
+
+
+	return chi2;
+
+}// end chi2Func
+
+double chi2Funcx(const double *xx ){
+
+	Eigen::Matrix<double, 5, 1> x;
+	
+ 	x[0] = xx[0];
+  	x[1] = xx[1];
+  	x[2] = xx[2];
+ 	x[3] = xx[3];
+ 	x[4] = xx[4];
+   
+  	return chi2Func(x);
+}
+
+
+ 	
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -242,6 +308,16 @@
     // This is one element of the HT Array with parameters and accessories
            
     public:
+       	
+		int i_index;
+		int j_index;   
+		int k_index; 
+    		
+		double imeanPhi;
+		double jmeanEta;
+		double kmeanInvPt;
+		
+		bool thisCellDone = false;
                
         unsigned nBarrels = dg.nBarrels;       
         unsigned nHitLayers	; // number of layers hit for current event in this element
@@ -276,6 +352,8 @@
         // reset all hit flags in all layers of this element
         
          void reset (){
+         
+         	thisCellDone = false;
          
          	nHitLayers = 0;
         
@@ -314,29 +392,34 @@
         
              
         int fill(Hit &h, int mode){
-        
-        
-        	
+      	
 		
 			it = layerIndHitStat.find(h.layerInd);
 			if(it != layerIndHitStat.end()){
 				Hitstat stat = it->second;
+			
+				/*if(i_index == 29 && j_index == 97 && k_index == 9) {
+					Special = true;			
+					cout << "cell [" << i_index <<  "][" << j_index << "][" << k_index << "]" << endl;
+					cout << "hit "; h.print(cout);			
+				}*/
 									
 				double u0 =  h.x1 - stat.mean[0];
 				if(Special) cout << u0 << " " << stat.u0Min << " " 	<< stat.u0Max << endl;	
-				if(u0 < stat.u0Min || u0 > stat.u0Max) return -1;
+				if(u0 < stat.u0Min || u0 > stat.u0Max) {Special = false; return -1;}
 					if(Special)cout << "good u0" << endl;
 				double u1 = (h.x2 - stat.mean[1]) * stat.cosAngle - (h.t - stat.mean[2]) * stat.sinAngle;
 				if(Special) cout << u1 << " " << stat.u1Min << " " 	<< stat.u2Max << endl;		
-				if(u1 < stat.u1Min || u1 > stat.u1Max) return -2;	
+				if(u1 < stat.u1Min || u1 > stat.u1Max) {Special = false; return -2; }
 					if(Special)cout << "good u1"<< endl;
 				double u2 = (h.x2 - stat.mean[1]) * stat.sinAngle + (h.t - stat.mean[2]) * stat.cosAngle;	
 				if(Special) cout << u2 << " " << stat.u2Min << " " 	<< stat.u2Max << endl;		
-				if(u2 < stat.u2Min || u2 > stat.u2Max) return -3;	
+				if(u2 < stat.u2Min || u2 > stat.u2Max) { Special = false; return -3;}
 					if(Special)cout << "good u2"<< endl;
 						
 				if(!stat.hitLayer)++nHitLayers;
 				++(it->second.nHits);
+				Special = false;
 				return 0;
 					
 			} 
@@ -346,6 +429,221 @@
         }// end fill
         
         
+        void printCandidate(Event &event, std::ostream &out){
+        
+        	// iterate on all layers 
+			  
+			for(it = layerIndHitStat.begin(); it != layerIndHitStat.end(); ++it){ 
+			
+					// iterate on all hits in this layer
+				 
+					int nHits = (it->second).hitIDList.size();
+					for(int ih = 0; ih != nHits; ++ih){
+						Hit h = event.hitList[(it->second).hitIDList[ih]];
+						cout << "L" << it->first << " ";
+						h.print(cout);
+												
+					}
+								
+			} 
+        
+        
+        } // end printCandidate
+        
+        
+        
+        int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, double &z0, double &t0, unsigned &nLayers){
+        
+        	struct Result {
+        		double chi2;
+        		double phi;
+        		double eta;
+        		double invPt; 
+        		double z0;
+        		double t0; 
+        		unsigned nLayers;
+        	};
+        	
+        	Result bestFitRes;
+        	int bestFitComb;
+        
+        	// create list of combination of hits to be fitted
+        	
+			vector< vector <Hit> > combinations2; // all hit combinations to be fitted in one candidate
+			vector< vector <Hit> > *comb1 = &combinations;
+			vector< vector <Hit> > *comb2 = &combinations2;
+			vector< vector <Hit> > *temp;
+			vector<Hit> hitList;
+			
+			// create one single empty combination
+			
+			hitList.clear();
+			comb1->clear();
+			comb2->clear();
+			comb1->push_back(hitList);
+			
+			// iterate on all layers 
+			  
+			for(it = layerIndHitStat.begin(); it != layerIndHitStat.end(); ++it){ 
+			
+				int nHits = (it->second).hitIDList.size();
+				if(nHits == 0) continue;// skip possible empty layers
+				
+				// iterate on all previous combinations
+				int nComb = comb1->size();
+				for(int iC = 0; iC != nComb; ++iC){ 
+				
+					// iterate on all hits in this layer
+				 
+					for(int ih = 0; ih != nHits; ++ih){
+						Hit h = event.hitList[(it->second).hitIDList[ih]];
+							hitList = (*comb1)[iC];
+							hitList.push_back(h);
+							comb2->push_back(hitList);
+												
+					}
+				(*comb1)[iC].clear();						
+				}
+			
+			comb1->clear();
+			temp = comb1;
+			comb1 = comb2;
+			comb2 = temp;
+						
+			} 
+			
+			combinations = *comb1;
+			
+			//nHits = combinations[0].size();
+			int nCombs = combinations.size();
+			
+			if(verbose) cout << nCombs << " combinations" << endl;
+        	
+		
+			// Minimize with Root Minimizer
+	
+			// create minimizer giving a name and a name (optionally) for the specific
+			// algorithm
+			// possible choices are: 
+			//     minName                  algoName
+			// Minuit /Minuit2             Migrad, Simplex,Combined,Scan  (default is Migrad)
+			//  Minuit2                     Fumili2
+			//  Fumili
+			//  GSLMultiMin                ConjugateFR, ConjugatePR, BFGS, 
+			//                              BFGS2, SteepestDescent
+			//  GSLMultiFit
+			//   GSLSimAn xxx problems
+			//   Genetic
+		
+			const char * minName = "Minuit2";
+			const char *algoName = "";
+		
+			ROOT::Math::Minimizer* min = 
+			  ROOT::Math::Factory::CreateMinimizer(minName, algoName);
+			
+			// loop on all combinations for this candidate
+			
+			bool oneGoodFit = false; // did we find at least one good hit combination?
+			bool firstGoodFit = true; // is this the first good fit for min chi2?
+			
+			for(int iComb = 0; iComb != nCombs; ++iComb){ 
+			
+				fitHitList = combinations[iComb];// pick the correct hit combination for chi2Funcx
+				
+				if(verbose) {
+					cout << "combination " << iComb;			
+					cout << " - ";				
+					for(unsigned iH = 0; iH != fitHitList.size(); ++iH){
+						cout << fitHitList[iH].trackInd << " ";
+					}
+					cout << endl;
+					for(unsigned iH = 0; iH != fitHitList.size(); ++iH){
+						fitHitList[iH].print(cout);
+					}
+				}
+				
+				// set tolerance , etc...
+				min->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2 
+				min->SetMaxIterations(1000);  // for GSL 
+				min->SetTolerance(0.001);
+				min->SetPrintLevel(0);
+
+				// create function wrapper for minmizer
+				// a IMultiGenFunction type 
+				ROOT::Math::Functor f(&chi2Funcx,5); 
+				double step[5] = {0.1,0.1,0.1,0.1,0.1};	
+				double variable[5] = {kmeanInvPt,jmeanEta,imeanPhi,0.0,0.0};
+		   
+				 min->SetFunction(f);
+
+				// Set the free variables to be minimized!
+		
+				min->SetVariable(0,"invPt",variable[0], step[0]);
+				min->SetVariable(1,"Eta",variable[1], step[1]);
+				min->SetVariable(2,"Phi",variable[2], step[2]);
+				min->SetVariable(3,"z0",variable[3], step[3]);
+				min->SetVariable(4,"t0",variable[4], step[4]);
+
+				// do the minimization
+		
+				min->Minimize(); 
+		
+				const double *res = min->X();	
+				res = min->X();
+				chi2 = min->MinValue(); 
+						
+				// return parameters
+				phi = xi_to_phi(res[2]);
+				eta = xj_to_eta(res[1]);
+				invPt = xk_to_invPt(res[0]);
+				z0 = res[3];
+				t0 = res[4]; 
+				
+				if(verbose) cout << "chi2: " << chi2 << endl;
+				
+				
+		
+				// check if parameters are within cell limits
+		
+				bool OK = true;
+				//if((res[2]-i_index)<0. || (res[2]-i_index)>1.) OK = false;	
+				//if((res[1]-j_index)<0. || (res[1]-j_index)>1.) OK = false;	
+				//if((res[0]-k_index)<0. || (res[0]-k_index)>1.) OK = false;		
+	
+
+				if (OK) {
+					oneGoodFit = true;
+					if(firstGoodFit || bestFitRes.chi2 > chi2){
+						firstGoodFit = false;
+						bestFitRes.chi2 = chi2;
+						bestFitRes.phi = phi;
+						bestFitRes.eta = eta;
+						bestFitRes.invPt = invPt;
+						bestFitRes.z0 = z0;
+						bestFitRes.t0 = t0;	
+						bestFitComb = iComb;				
+					}				
+				};
+			
+			}// end loop on combinations
+			
+			if(oneGoodFit){
+				nLayers = combinations[bestFitComb].size();
+		
+				chi2 = bestFitRes.chi2;
+				phi = bestFitRes.phi;
+				eta =bestFitRes.eta;
+				invPt = bestFitRes.invPt;
+				z0 = bestFitRes.z0;
+				t0 = bestFitRes.t0;
+				
+				if(verbose) cout << "bestFitComb: " << bestFitComb << " chi2: " << chi2 << endl;
+				
+				return 0;
+			}
+			else return -1;
+	
+        }// end fitCandidate
         
     }; // end HTArrayElement
     
@@ -368,6 +666,7 @@
 		TH1D *HDeltaPhi2;
 		TH1D *HInvptTimesR; 
 		TH2I *HDeltaPhiVsInvptTimesR;
+		
 		
 		// histograms of a single HT cell content as an example
 		
@@ -408,7 +707,33 @@
                 HTArrayElement ArrElem[HTA_NphiBins][HTA_NetaBins][HTA_NinvptBins];
                 
         double signedCurvaturePerInvPt;
-      
+        
+        double getCell_Phi(int i){
+			return phiMin + ((double)i+0.5)*phiStep;
+		}
+			
+		double getCell_Eta(int j){
+			return etaMin + ((double)j+0.5)*etaStep;
+		}
+		
+		double getCell_InvPt(int k){
+			return invPtMin + ((double)k+0.5)*invPtStep;
+		}	
+				
+         
+        double get_Phi(double xi){
+			return phiMin + xi*phiStep;
+		}
+		
+		double get_Eta(double xj){
+			return etaMin + xj*etaStep;
+		}
+		
+		double get_InvPt(double xk){
+			return invPtMin + xk*invPtStep;
+		}	
+		
+		
 		HTArray(){ // constructor
 		
 			phiMin = par.HTA_t_phi - par.HTA_t_deltaPhi;
@@ -421,6 +746,18 @@
 			// constant for phi cell prediction
 			
 			signedCurvaturePerInvPt = 3.e-4*par.magneticField;
+		
+						
+			 for(int i = 0; i != NphiBins; ++i) 
+				for(int j = 0; j != NetaBins; ++j)
+					for(int k = 0; k != NinvptBins; ++k){										
+						ArrElem[i][j][k].imeanPhi = i + 0.5;										
+						ArrElem[i][j][k].jmeanEta = j + 0.5;											
+						ArrElem[i][j][k].kmeanInvPt = k + 0.5;											
+						ArrElem[i][j][k].i_index = i;										
+						ArrElem[i][j][k].j_index = j;											
+						ArrElem[i][j][k].k_index = k;	
+					}		
 		
 		}
 		
@@ -629,35 +966,12 @@
 			else return 0;	
 		}
 		
-		double getCell_Phi(int i){
-			return phiMin + ((double)i+0.5)*phiStep;
-		}
-			
-		double getCell_Eta(int j){
-			return etaMin + ((double)j+0.5)*etaStep;
-		}
-		
-		double getCell_InvPt(int k){
-			return invPtMin + ((double)k+0.5)*invPtStep;
-		}	
-				
+	
 		
 		// Train this Array with hit h coming from track t
 		
-		int train(Hit &h, Track &t){
-		
-			// find cell i,j,k in HT array from track parameters
-			
-			int i = (t.phi - phiMin)/phiStep;
-			int j = (t.eta - etaMin)/etaStep;
-			int k = (t.invPt - invPtMin)/invPtStep;
-			
-			// check boundaries - return -1 if track parameters are out of bounds
-			
-			if(i < 0 || i >= NphiBins) return -1;
-			if(j < 0 || j >= NetaBins) return -1;
-			if(k < 0 || k >= NinvptBins) return -1;
-			
+		int train(Hit &h, Track t, unsigned i, unsigned j, unsigned k){
+				
 			// train the appropriate cell
 			
 			ArrElem[i][j][k].train(h);
@@ -879,13 +1193,14 @@
 				for(unsigned iEta = 0; iEta != NetaBins; ++iEta)
 					for(unsigned iInvpt = 0; iInvpt != NinvptBins; ++iInvpt){
 						unsigned nLayers = ArrElem[iPhi][iEta][iInvpt].nHitLayers;
-						if(nLayers >= ArrElem[iPhi][iEta][iInvpt].minLayers){
-							Pars p;
-							p.iPhi = iPhi;
-							p.iEta = iEta;
-							p.iInvpt = iInvpt;
-							p.nLayers = nLayers;
-							cellCandidateList.push_back(p);					
+						if(nLayers >= (ArrElem[iPhi][iEta][iInvpt].minLayers-1))					
+							if(nLayers >= par.gen_minLayersForFit) {
+								Pars p;
+								p.iPhi = iPhi;
+								p.iEta = iEta;
+								p.iInvpt = iInvpt;
+								p.nLayers = nLayers;
+								cellCandidateList.push_back(p);					
 						}
 					}
 		    return (unsigned)cellCandidateList.size();				

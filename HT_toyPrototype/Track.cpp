@@ -7,6 +7,10 @@
 
 #include "Track.h"
 
+extern double phi_to_xi(double phi);
+extern double eta_to_xj(double eta);
+extern double invPt_to_xk(double invPt);
+
 // constructors
 
 
@@ -184,7 +188,7 @@ bool Track::xzBarrel(double yDet, double &x, double &z, double &t){
 };
 
 
-bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T){
+bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear = false){
     
     // R is the radial position of the measured hit
     // X is the distance from phi = 0 measured along the circumference
@@ -196,7 +200,10 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     
     double zDet = g.D[iDisc].z;
     
-    if(cosTheta == 0.) return false; // infinite looperßß
+    if(cosTheta == 0.) {
+    	//cout << "infinite looper" << endl;
+    	return false; // infinite looper   	
+    }
     
     //cout << zDet << " " << z0 << " " << cosTheta << endl;
     
@@ -204,16 +211,23 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     
     //if(iDisc == 19) cout << zDet << " " << z0 << " " << cosTheta << endl;
     
-    if (sMax <0.) return false; // track going in the wrong direction
+    if (sMax <0.) {
+    	//cout << "track going in wrong direction" << endl;
+    	return false; // track going in the wrong direction
+    }
     
     //if(iDisc == 19) cout << "24 passed" << endl;
     
     sMax = (zDet-z0)*tgTheta;
     
-    if(sMax > fabs(Pi/c)) return false; // looper - ignored
+    if(sMax > fabs(Pi/c)) {
+    	//cout << "looper" << endl;
+    	return false; // looper - ignored   	
+    }
+    	
     
     //T = t0 + sMax*sqrt(1.+(1./(cotTheta*cotTheta)))/beta +  g.D[iDisc].tPrec*gauss(generator_trk);
-    T = t0 + sMax*sqrt(1.+cotTheta*cotTheta)/beta +  g.D[iDisc].tPrec*gauss(generator_trk);
+    T = t0 + sMax*sqrt(1.+cotTheta*cotTheta)/beta; 
     
     
     if(fabs(c) > cMin){
@@ -234,25 +248,38 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     double r = sqrt(x*x + y*y);
     double PHI = atan2(y,x);
     
-    double errTang = g.D[iDisc].xphiPrec*gauss(generator_trk); // measurement error along PHI
-    double errRadial = g.D[iDisc].rPrec*gauss(generator_trk); // measurement error along r   
-    
-    R = r + errRadial;
-    X = R*PHI + errTang;
-    
+    if(smear){
+     
+		double errTang = g.D[iDisc].xphiPrec*gauss(generator_trk); // measurement error along PHI
+		double errRadial = g.D[iDisc].rPrec*gauss(generator_trk); // measurement error along r   
+	
+		R = r + errRadial;
+		X = R*PHI + errTang;
+		T += g.D[iDisc].tPrec*gauss(generator_trk);
+    }
+    else {
+		R = r;
+		X = R*PHI;
+    }
 
     
     // check for detector boundaries
     
-    if(R > g.D[iDisc].rMax) return false;
-    if(R < g.D[iDisc].rMin) return false;
+    if(R > g.D[iDisc].rMax) {
+    	//cout << "out of high bounds" << endl;
+    	return false;
+    }
+    if(R < g.D[iDisc].rMin) {
+    	//cout << "out of low bounds" << endl;
+    	return false;
+    }
        
     return true;
     
     
 }; // end xyDisc
 
-bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT){
+bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT, bool smear = false){
     
     // find intersection with cylindrical barrel with successive approximations using xzBarrel
     // measurement errors are included
@@ -286,10 +313,12 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
     hitPhi *= g.B[iBarrel].r; //transform angle into linear coordinate
     
     // add measurement errors
-    
-    hitPhi += g.B[iBarrel].xphiPrec*gauss(generator_trk);
-    hitZ += g.B[iBarrel].zPrec*gauss(generator_trk);
-    hitT += g.B[iBarrel].tPrec*gauss(generator_trk); 
+        
+    if(smear){
+		hitPhi += g.B[iBarrel].xphiPrec*gauss(generator_trk);
+		hitZ += g.B[iBarrel].zPrec*gauss(generator_trk);
+		hitT += g.B[iBarrel].tPrec*gauss(generator_trk); 
+    }
     
     rotate(-rotPhi);
     
@@ -300,6 +329,51 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
    
        
     return true;
+    
+};    
+
+double Track::hitChi2(DetectorGeometry &g, Hit &h){
+
+	double x1, x2, t;
+	double x1err, x2err, terr;
+	unsigned iLayer = h.iLayer;
+	bool noSmear = false;
+	
+	if(h.hitType == 'B') {
+		if(!phizBarrel(g, h.iLayer, x1, x2, t, noSmear)) cout << "phizBarrel fails " << endl;
+		x1err = g.B[iLayer].xphiPrec;
+		x2err = g.B[iLayer].zPrec;
+		terr = g.B[iLayer].tPrec;		
+	}
+	else {
+		if(!xyDisc(g, h.iLayer, x1, x2, t, noSmear)) cout << "xyDisc fails "<< endl; 
+		x1err = g.D[iLayer].xphiPrec;
+		x2err = g.D[iLayer].rPrec;
+		terr = g.D[iLayer].tPrec;
+	}
+		
+	//cout << "*** Track::hitChi2 ***" << endl;
+	//h.print(cout);
+/*	print(cout);
+	cout << " iLayer: " << iLayer << endl;
+	cout                  <<  "track: " << x1   << "	" << x2   <<"	"<< t   << endl;
+	cout << " " << h.hitType << "hit: " << h.x1 << "	" << h.x2 <<"	"<< h.t << endl;
+	*///cout << "**********************"<< endl;
+	
+	double  chi2 =  (x1-h.x1)/x1err*(x1-h.x1)/x1err; 
+			chi2 += (x2-h.x2)/x2err*(x2-h.x2)/x2err; 
+			chi2 += (t-h.t)/terr*(t-h.t)/terr;
+    return chi2; 
 };
+
+void Track::getIJK(unsigned &I, unsigned &J, unsigned &K){
+
+	I = phi_to_xi(phi);
+	J = eta_to_xj(eta);
+	K = invPt_to_xk(invPt);
+	
+	return;
+
+}; // returns indices in HTM array
 
 

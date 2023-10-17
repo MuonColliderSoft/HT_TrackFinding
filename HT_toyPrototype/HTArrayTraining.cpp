@@ -12,6 +12,13 @@
 #include "TH3D.h"
 #include "TFile.h"
 
+
+
+#include "Math/Minimizer.h"
+#include "Math/Factory.h"
+#include "Math/Functor.h"
+#include "TError.h"
+
 #include "Statistics.cpp"
 
 
@@ -65,10 +72,9 @@ int TrainingPhase = 0; // 0 = invalid
 					   
 // The following global parameters are initialized in the main function
 					   
-unsigned nEvents; // number of events to be generated for training		   
+unsigned nTracks; // number of tracks to be generated per cell for training		   
 bool Diagonalize;
 bool Summary;
-bool Special;
 
 
 
@@ -84,7 +90,7 @@ int main(){
 
 	// Parameter initialization:
 
-	nEvents = par.train_nEvents;
+	nTracks = par.train_nTracksPerCell;
 	Diagonalize = par.train_Diagonalize;
 	Summary = par.train_Summary;
 	
@@ -335,25 +341,41 @@ int main(){
 	
 	cout << "BEGIN TRAINING PHASE " << TrainingPhase << endl;
 	
-	double minPhi = 0., maxPhi = 0.;
-
-    for(unsigned iEv = 0; iEv != nEvents; ++iEv){
-    
-    	//cout << "New Event " << iEv << endl;
-    	
-    	
-    	if(nEvents >= 1e6)
-    		if(iEv && ((iEv % (int)1e5) == 0) ) {
-    			cout << iEv << "/" << nEvents << " processed events" << endl;
-    			cerr << ".";
-    	}
-    
-    		
-		Event ev(dg, 1);// one event with 1 track
-		
-		//ev.print(cout,1);
-		
+	TrackGeometry tgoriginal = tg; // make copy of original track geometry
 	
+	double phiMin = par.HTA_t_phi - par.HTA_t_deltaPhi;
+	double etaMin = par.HTA_t_eta - par.HTA_t_deltaEta;
+	double invPtmin = par.HTA_t_invPt_min;
+	
+	tg.t_deltaPhi /= (double)HTA_NphiBins;
+	tg.t_deltaEta /= (double)HTA_NetaBins;
+	
+	phiMin += tg.t_deltaPhi;
+	etaMin += tg.t_deltaEta;
+	
+	double deltaInvPt = (par.HTA_t_invPt_max - par.HTA_t_invPt_min)/(double)HTA_NinvptBins;
+	
+	double minPhi = 0., maxPhi = 0.;
+	
+// LOOP ON ALL CELLS OF HTM ARRAY ////////////////////////////////////////
+
+	 for(int i = 0; i != HTA_NphiBins; ++i){ 
+	 		cerr << " " << i;
+			for(int j = 0; j != HTA_NetaBins; ++j)
+				for(int k = 0; k != HTA_NinvptBins; ++k){			
+
+    	//cerr << "Training cell [" <<i<<"]["<<j<<"]["<<k<<"]"<< endl;
+    		
+    	
+    	///// modify tg to generate tracks only inside cell
+    	
+    	tg.t_phi = phiMin + tg.t_deltaPhi*2.*(double)i;
+    	tg.t_eta = etaMin + tg.t_deltaEta*2.*(double)j;
+    	tg.t_invPt_min = par.HTA_t_invPt_min + (double)k*deltaInvPt;
+    	tg.t_invPt_max = tg.t_invPt_min + deltaInvPt;
+
+    		
+		Event ev(dg, nTracks);// one event with nTracks tracks	
 	
 		// LOOP ON TRACKS
 		
@@ -389,7 +411,9 @@ int main(){
 				
 				// Train HT Array	/////////////////////////////////////////
 				
-				HTA.train(thisHit,thisTrack);
+				
+				
+				HTA.train(thisHit,thisTrack,i,j,k);
 				
 				/////////////////////////////////////////////////////////////
 										
@@ -434,8 +458,6 @@ int main(){
 			HitY.Fill(Y);
 			HitZ.Fill(Z);
 			
-			//if(Z < 0.) cout << "iEv = " << iEv << " iH = " << iH << " layer = " << thisHit.iLayer << " Z = " << Z << endl;
-			
 			HitZPhi.Fill(Z,Phi);
 			HitRPhi.Fill(R,Phi);
 			
@@ -468,7 +490,8 @@ int main(){
 		//ev.print(cout,1); // mode = 1 prints all hits for each track
 		//ev.printXYZ(g,cout); // prints data for Mathematica Plot
 	
-	} // end loop on events ///////////////////////////////////////////////////////////
+	}
+	} // end loop on HTM array cells ///////////////////////////////////////////////////////////
 	
 		
 	cout << "Event generation complete" << endl;
@@ -476,7 +499,7 @@ int main(){
 	// compute minimum accepted number of hits in a layer (expected value minus a number of Poisson sigmas)	
 
 	unsigned totNelements = HTA_NphiBins*HTA_NetaBins*HTA_NinvptBins;
-	double meanNhits = par.train_nEvents/(double)totNelements;
+	double meanNhits = nTracks;
 	double sigma = sqrt(meanNhits);
 	unsigned nMin = meanNhits-par.train_nSigmaCell *sigma;
 	

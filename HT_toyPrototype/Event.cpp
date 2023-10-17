@@ -6,9 +6,7 @@
 //
 
 
-    
-   
-    
+    extern bool verbose;
     
     
     class Event {
@@ -31,7 +29,9 @@
         		// find hits in all barrel detectors
         		for(unsigned iB = 0; iB != g.nBarrels; ++iB){
         			double hitPhi, hitZ, hitT;
-        			if(thisTrack.phizBarrel(g, iB, hitPhi, hitZ, hitT)){ // find hit	
+        			bool smear = true;
+        			//bool smear = false;
+        			if(thisTrack.phizBarrel(g, iB, hitPhi, hitZ, hitT, smear)){ // find hit	
         			 Hit thisHit('B', iB, hitPhi, hitZ, hitT, iT);
         			 if(!thisHit.isSeed())continue;
         			 	thisHit.ID = hitList.size();
@@ -42,8 +42,10 @@
         		
         		// find hits in all disc detectors
         		for(unsigned iD = 0; iD != g.nDiscs; ++iD){
-        			double hitPhi, hitR, hitT;
-        			if(thisTrack.xyDisc(g, iD, hitPhi, hitR, hitT)){ // find hit		
+        			double hitPhi, hitR, hitT;       			
+        			bool smear = true;       			
+        			//bool smear = false;
+        			if(thisTrack.xyDisc(g, iD, hitPhi, hitR, hitT, smear)){ // find hit		
         			 Hit thisHit('D', iD, hitPhi, hitR, hitT, iT);
         			 if(!thisHit.isSeed())continue;
         			 	thisHit.ID = hitList.size();
@@ -59,13 +61,64 @@
         	
         }// end event constructor
         
+        
+        
+        // Adds BIB hits to the event
+        
         void addBibHits(BibFileReader &bibRead, unsigned nBibHits){
+        
         	for(unsigned iH = 0; iH != nBibHits; ++iH){
         		Hit bibHit = bibRead.randomBibHit();
         		bibHit.ID = hitList.size();
         		hitList.push_back(bibHit);
         	}
-        }
+        	
+        	// shuffle hits
+        	
+        	auto rng = std::default_random_engine {};
+  			std::shuffle(std::begin(hitList), std::end(hitList), rng);
+  
+  			if(verbose) cout << "hitList.size():" << hitList.size() << endl;
+  			
+  			// redefine hit ID's
+  			
+  			unsigned IDmap[100];// max possible size 		
+  			
+  			for(unsigned iH = 0; iH != hitList.size(); ++iH){
+  				
+  				Hit thisHit = hitList[iH];
+  				unsigned trackInd = thisHit.trackInd;				
+  				if(trackInd != 0) { // not BIB hit
+  				
+  					// create IDmap from old hit ID to new hit ID
+  											
+  					unsigned IDoldmax = 0;
+					unsigned IDold = thisHit.ID;
+					//cout << "IDold: " << IDold << endl;
+					hitList[iH].ID = iH; // set new ID in hitList
+					if(IDold < 100) IDmap[IDold] = iH;
+					else cout << "*** ERROR *** IDmap overflow " << endl;
+					if(IDold > IDoldmax) IDoldmax = IDold;
+					//cout << "IDoldmax: " << IDoldmax << endl;
+				}
+							
+				hitList[iH].ID = iH; // update to new position in list
+				
+  			} // end loop on hits
+  						
+  			// set new ID in hitList inside all tracks using IDmap
+  			
+  			for(unsigned iT = 0; iT != trackList.size(); ++iT){
+  				for(unsigned iH = 0; iH != trackList[iT].hitList.size(); ++iH){
+  					trackList[iT].hitList[iH].ID = IDmap[trackList[iT].hitList[iH].ID];				
+  				}		 			
+  			}
+  			  			
+  			return;
+  			
+        }// end addBibHits
+        
+        
         
         void print(ostream &out, int mode = 0){
         

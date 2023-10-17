@@ -66,12 +66,16 @@
         // calculate coordinates of intersections of this track with detector planes
         
         bool xzBarrel(double yDet, double &x, double &z, double &t); // yDet is the position of the barrel plane (parallel to xz)
-        bool xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T); // disc plane (parallel to xy)
-        bool phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT);// hitPhi is a linear coordinate measured along phi
+        bool xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear); // disc plane (parallel to xy)
+        bool phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT, bool smear);// hitPhi is a linear coordinate measured along phi
         
         // rigidly rotate track around z
         
         void rotate(double phiRot);
+        
+        double hitChi2(DetectorGeometry &g, Hit &h);  // compute chi2 of hit with respect of this track
+        
+        void getIJK(unsigned &I, unsigned &J, unsigned &K); // returns indices in HTM array
         
         
         

@@ -10,7 +10,7 @@
 // (global variables)
 
 const static unsigned HTA_NphiBins = 50;
-const static unsigned HTA_NetaBins = 200;
+const static unsigned HTA_NetaBins = 100;
 const static unsigned HTA_NinvptBins = 10;
 		
 
@@ -33,7 +33,7 @@ public:
 	
 // number of events to be generated for training
 	
-	unsigned train_nEvents = 1e7; 
+	unsigned train_nTracksPerCell = 500; 
 	
 // Histogram files for three training phases
 
@@ -62,7 +62,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 10;
+	unsigned gen_nEvents = 1000;
 
 // number of tracks to be generated for each event
 
@@ -70,7 +70,13 @@ public:
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = 1.; // -1. == no BIB hit
+	double gen_fracBib = -1.; // -1. == no BIB hit
+	
+// perform track fitting of candidates
+
+	bool gen_TrackFit = true;
+	unsigned gen_minLayersForFit = 4;
+	double gen_chi2Cut = 45.;
 	
 // limits in phi for BIB generation
 	
@@ -79,6 +85,8 @@ public:
 	 
 	 //double gen_phia = -0.00312222; // for 100 mrad phi sector
  	 //double gen_phib = 0.406729;    //
+ 	 
+ 	 
  	 
 // print candidates for every event
 
@@ -90,7 +98,7 @@ public:
 	
 // max error for eta projection in fillMode = 1 and 2
 
-	int gen_errEta = 2;
+	int gen_errEta = 1;
 	
 // max error for phi projection in fillMode = 2
 
@@ -109,7 +117,7 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata_500mrad.txt";
+	string gen_dataFileName = "HTAdata.txt";
 	
 // data file with all Bib hits
 
@@ -118,6 +126,12 @@ public:
 // event generation histogram file
 
 	string gen_histFileName = "AAAEventGeneration.root";
+	
+	bool gen_fillHitHistograms = true; // selective histogram filling
+	
+// printing control
+
+	bool gen_verbose = false;
 
 //////////////////////////////////////////////////////////////////////// 
 // MISCELLANEA /////////////////////////////////////////////////////////
@@ -131,8 +145,8 @@ public:
 // coordinates of a single HTA cell and detector layer 
 // whose hit coordinates we want to plot in 3-D
 
-	int HTA_plotBinX = 0;
-	int HTA_plotBinY = 100;
+	int HTA_plotBinX = 25;
+	int HTA_plotBinY = 50;
 	int HTA_plotBinZ = 5;
 	int HTA_plotLay = 7;
 
