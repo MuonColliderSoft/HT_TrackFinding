@@ -44,7 +44,10 @@ std::mt19937 generator; // Mersenne Twister
 std::mt19937 generator_trk; // Mersenne Twister for track generation
 
 std::uniform_real_distribution<double> distribution(0.,1.);
-std::normal_distribution<double> gauss(0.,1.);
+//std::normal_distribution<double> gauss(0.,1.);
+
+
+#include "Gauss.h"
 
 
 #include "GlobalConstants.cpp"
@@ -537,7 +540,7 @@ int main(){
 	unsigned nEventsWithCandidates = 0;
 	unsigned nEventsWithTracks = 0;
 	
-	
+	for(int k = 0; k != 10; ++k) cout << k << " " << gauss(generator_trk) << endl;
 	
 	cout << "BEGIN EVENT GENERATION " << endl;	
 

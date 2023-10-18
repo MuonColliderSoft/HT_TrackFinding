@@ -22,6 +22,7 @@
 #include "Statistics.cpp"
 
 
+
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -40,7 +41,9 @@ using namespace std;
 std::mt19937 generator; // Mersenne Twister 
 std::mt19937 generator_trk; // Mersenne Twister for track generation
 std::uniform_real_distribution<double> distribution(0.,1.);
-std::normal_distribution<double> gauss(0.0,1.0);
+//std::normal_distribution<double> gauss(0.0,1.0);
+
+#include "Gauss.h"
 
 #include "GlobalConstants.cpp"
 
