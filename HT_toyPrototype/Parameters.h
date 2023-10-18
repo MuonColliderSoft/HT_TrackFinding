@@ -62,7 +62,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 1000;
+	unsigned gen_nEvents = 100;
 
 // number of tracks to be generated for each event
 

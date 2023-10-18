@@ -136,16 +136,6 @@ int main(){
 		cout << "Data File not found, abort." << endl;
 		return 0;
 	}
-	
-	/*
-		int n = 0;
-		for(auto it = (HTA.ArrElem[40][160][7]).layerIndHitStat.begin(); it != (HTA.ArrElem[40][160][7]).layerIndHitStat.end(); ++it){      
-        			++ n; 
-        	}  
-	
-		cout << "***** n = " << n << endl;
-	*/	
-		
 		
 	
 		ofstream outPlotFile; // file for to plot candidates
@@ -540,7 +530,6 @@ int main(){
 	unsigned nEventsWithCandidates = 0;
 	unsigned nEventsWithTracks = 0;
 	
-	for(int k = 0; k != 10; ++k) cout << k << " " << gauss(generator_trk) << endl;
 	
 	cout << "BEGIN EVENT GENERATION " << endl;	
 
