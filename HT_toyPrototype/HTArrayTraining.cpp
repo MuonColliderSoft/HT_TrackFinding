@@ -499,7 +499,7 @@ int main(){
 		
 	cout << "Event generation complete" << endl;
 
-	// compute minimum accepted number of hits in a layer (expected value minus a number of Poisson sigmas)	
+/*	// compute minimum accepted number of hits in a layer (expected value minus a number of Poisson sigmas)	
 
 	unsigned totNelements = HTA_NphiBins*HTA_NetaBins*HTA_NinvptBins;
 	double meanNhits = nTracks;
@@ -522,7 +522,7 @@ int main(){
 							else ++it;   						
 					} 
 				}
-	
+	*/
 	
 	cout << endl;
 	cout << "Phi limits for Bib distribution" << endl;

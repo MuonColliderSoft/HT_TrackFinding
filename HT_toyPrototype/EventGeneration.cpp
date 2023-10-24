@@ -209,7 +209,12 @@ int main(){
 	TH1D HnBestCellHits("HnBestCellHits","HnBestCellHits", 13, -0.5,+12.5);
 	TH1D HCellStat("HCellStat","HCellStat",21, -0.5, 20.5);
 	
+	TH1D HFitLayers("HFitLayers","HFitLayers",11, -0.5, 10.5);
 	TH1D HFitChi2("HFitChi2","HFitChi2",500, 0., 500.);
+	TH1D HFit5Chi2("HFit5Chi2","HFit5Chi2",500, 0., 500.);
+	TH1D HFit6Chi2("HFit6Chi2","HFit6Chi2",500, 0., 500.);
+	TH1D HFit7Chi2("HFit7Chi2","HFit7Chi2",500, 0., 500.);
+	TH1D HFit8Chi2("HFit8Chi2","HFit8Chi2",500, 0., 500.);
 	
 	TH1D HnFoundTracks("HnFoundTracks","HnFoundTracks",3, -0.5, 2.5);
 	
@@ -763,6 +768,24 @@ int main(){
 												
 						if(verbose) if(retCodeFit == -1) cout << " no fit" << endl;
 						
+						if( retCodeFit == 0) {
+							HFitChi2.Fill(chi2);
+							HFitLayers.Fill(nLayers);
+							switch(nLayers) {
+							  case 5 :
+								HFit5Chi2.Fill(chi2);
+								break;
+							  case 6 :
+								HFit6Chi2.Fill(chi2); 
+								break;						  		
+							  case 7 :
+								HFit7Chi2.Fill(chi2); 
+								break;
+							  case 8 :
+								HFit8Chi2.Fill(chi2);					 
+						   }
+						}
+						
 						if( (retCodeFit == 0) && (chi2 <= par.gen_chi2Cut) ) {//this is a good fit
 																			
 							foundTrack = true;	
@@ -790,7 +813,7 @@ int main(){
 								foundTracks.push_back(ft);
 						
 								if(verbose) cout << " good fit"	 << endl;					
-								HFitChi2.Fill(chi2);
+								
 							
 								int DoF = 3*nLayers - 5;			
 								if(verbose) cout << " DoF " << DoF << " chi2 " << chi2 << endl;
@@ -814,8 +837,8 @@ int main(){
 	
 		unsigned nFoundTracks = foundTracks.size();
 		HnFoundTracks.Fill(nFoundTracks);
-	
-		cout << nFoundTracks << " tracks found in this event" << endl;
+		
+		cout << nCan << " candidates and " << nFoundTracks << " tracks found in this event" << endl;
 		if(ev.trackList.size()) 
 				cout << "  track  pt:" << 1./ev.trackList[0].invPt << " eta: " << ev.trackList[0].eta 
 					<< " phi: " << ev.trackList[0].phi << " z0: " << ev.trackList[0].z0 << " t0:" << ev.trackList[0].t0 << endl;

@@ -9,11 +9,7 @@
  extern int TrainingPhase;
  extern bool Special;
  extern bool verbose;
- 
- #include "Eigen/Dense"
- #include "NelderMeadOptimizer.h"
- 
-	
+
 // global variables	
  	
 vector<Hit> fitHitList; // list of all hits to be used in one fit
@@ -31,7 +27,7 @@ double invPt_to_xk(double invPt){return invPt/(par.HTA_t_invPt_max - par.HTA_t_i
 
 
 
-double chi2Func(Eigen::Matrix<double, 5, 1> x){
+double chi2Func(const double *x){
 	 	   	       	
 	 double invPt = xk_to_invPt(x[0]);
 	 double eta = xj_to_eta(x[1]);
@@ -42,24 +38,18 @@ double chi2Func(Eigen::Matrix<double, 5, 1> x){
 	int particleType = 2; //  pion
 
 	Track tFit(particleType, 0., 0., z0, t0, invPt, eta, phi); // specific track constructor
-/*	
-	double chi2 = 0.;
-	for(int iHit = 0; iHit != fitHitList.size(); ++iHit){
-		chi2 += tFit.hitChi2(dg, fitHitList[iHit]);
-	}
-*/
-	//fitHitList = combinations[0];// this is now assigned in fitCandidate
-	double chi2 = 0.;
-	for(int iHit = 0; iHit != fitHitList.size(); ++iHit){
-		chi2 += tFit.hitChi2(dg, fitHitList[iHit]);
-	}
 
+	double chi2 = 0.;
+	for(int iHit = 0; iHit != fitHitList.size(); ++iHit){
+		chi2 += tFit.hitChi2(dg, fitHitList[iHit]);
+	}
 
 	return chi2;
 
 }// end chi2Func
 
-double chi2Funcx(const double *xx ){
+
+/*double chi2Funcx(const double *xx ){
 
 	Eigen::Matrix<double, 5, 1> x;
 	
@@ -70,7 +60,7 @@ double chi2Funcx(const double *xx ){
  	x[4] = xx[4];
    
   	return chi2Func(x);
-}
+}*/
 
 
  	
@@ -570,7 +560,7 @@ double chi2Funcx(const double *xx ){
 
 				// create function wrapper for minmizer
 				// a IMultiGenFunction type 
-				ROOT::Math::Functor f(&chi2Funcx,5); 
+				ROOT::Math::Functor f(&chi2Func,5); 
 				double step[5] = {0.1,0.1,0.1,0.1,0.1};	
 				double variable[5] = {kmeanInvPt,jmeanEta,imeanPhi,0.0,0.0};
 		   
@@ -1135,6 +1125,8 @@ double chi2Funcx(const double *xx ){
 								Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
 								thisStat->hitLayer = true;
 								thisStat->hitIDList.push_back(h.ID);
+								
+								// insert here code to build candidate list on the fly ////////////
 							
 								int deltaEta = iEtaMap - iEta;
 								HDeltaEta->Fill(deltaEta);
@@ -1193,6 +1185,7 @@ double chi2Funcx(const double *xx ){
 				for(unsigned iEta = 0; iEta != NetaBins; ++iEta)
 					for(unsigned iInvpt = 0; iInvpt != NinvptBins; ++iInvpt){
 						unsigned nLayers = ArrElem[iPhi][iEta][iInvpt].nHitLayers;
+						//if(nLayers >= (ArrElem[iPhi][iEta][iInvpt].minLayers))
 						if(nLayers >= (ArrElem[iPhi][iEta][iInvpt].minLayers-1))					
 							if(nLayers >= par.gen_minLayersForFit) {
 								Pars p;
@@ -1202,7 +1195,7 @@ double chi2Funcx(const double *xx ){
 								p.nLayers = nLayers;
 								cellCandidateList.push_back(p);					
 						}
-					}
+					}					
 		    return (unsigned)cellCandidateList.size();				
 		    			
 		} // end getCellCandidates

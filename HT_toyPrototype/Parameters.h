@@ -35,7 +35,7 @@ public:
 	
 	unsigned train_nTracksPerCell = 500; 
 	
-// Histogram files for three training phases
+// Histogram files for three training phase
 
 	string train_histFileName1 = "AAATrainingHists1.root";
 	string train_histFileName2 = "AAATrainingHists2.root";
@@ -62,7 +62,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 100;
+	unsigned gen_nEvents = 1000;
 
 // number of tracks to be generated for each event
 
@@ -75,18 +75,23 @@ public:
 // perform track fitting of candidates
 
 	bool gen_TrackFit = true;
-	unsigned gen_minLayersForFit = 4;
+	unsigned gen_minLayersForFit = 5;
 	double gen_chi2Cut = 45.;
 	
 // limits in phi for BIB generation
 	
-	 double gen_phia = -0.00216988; // for 500 mrad phi sector
-	 double gen_phib = 0.806467;    //
+	 //double gen_phia = -0.00216988; // for 500 mrad phi sector
+	 //double gen_phib = 0.806467;    //
 	 
 	 //double gen_phia = -0.00312222; // for 100 mrad phi sector
  	 //double gen_phib = 0.406729;    //
- 	 
- 	 
+ 	  	 
+ 	//double gen_phia = -0.00218965; // for 40 mrad phi sector
+ 	//double gen_phib = 0.346778;    // 	
+ 	
+ 	double gen_phia = -0.00239139; // for 524 mrad phi sector
+ 	double gen_phib = 0.830571;
+ 
  	 
 // print candidates for every event
 
@@ -117,7 +122,7 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata.txt";
+	string gen_dataFileName = "HTAdata_50_100_10_524mrad.txt";
 	
 // data file with all Bib hits
 
@@ -172,10 +177,16 @@ public:
 
 	// track parameters - default values
 
-	const double geo_def_t_phi = 0.250; // track phi mean
-	const double geo_def_t_deltaPhi = 0.250; // track delta phi
+	const double geo_def_t_phi = 0.262; // track phi mean
+	const double geo_def_t_deltaPhi = 0.262; // track delta phi
+	
+	//const double geo_def_t_phi = 0.020; // track phi mean
+	//const double geo_def_t_deltaPhi = 0.020; // track delta phi	
+	//const double geo_def_t_phi = 0.250; // track phi mean
+	//const double geo_def_t_deltaPhi = 0.250; // track delta phi
 	//const double geo_def_t_phi = 0.050; // track phi mean
 	//const double geo_def_t_deltaPhi = 0.050; // track delta phi
+	
 	const double geo_def_t_eta = 1.0; // track eta mean
 	const double geo_def_t_deltaEta = 1.0; // track delta eta
 	const double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  

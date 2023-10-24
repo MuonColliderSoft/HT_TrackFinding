@@ -13,7 +13,7 @@ GLIBS = $(ROOTGLIBS)
 
 #------------------------------------------------------------------------
 
-HDRS = Parameters.h Statistics.h Hit.h Track.h NelderMeadOptimizer.h
+HDRS = Parameters.h Statistics.h Hit.h Track.h
 INCS = BibFileReader.cpp Event.cpp DetectorGeometry.cpp TrackGeometry.cpp\
        GlobalConstants.cpp Hit.cpp HTArray.cpp Statistics.cpp Track.cpp
 
