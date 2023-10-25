@@ -210,11 +210,11 @@ int main(){
 	TH1D HCellStat("HCellStat","HCellStat",21, -0.5, 20.5);
 	
 	TH1D HFitLayers("HFitLayers","HFitLayers",11, -0.5, 10.5);
-	TH1D HFitChi2("HFitChi2","HFitChi2",500, 0., 500.);
-	TH1D HFit5Chi2("HFit5Chi2","HFit5Chi2",500, 0., 500.);
-	TH1D HFit6Chi2("HFit6Chi2","HFit6Chi2",500, 0., 500.);
-	TH1D HFit7Chi2("HFit7Chi2","HFit7Chi2",500, 0., 500.);
-	TH1D HFit8Chi2("HFit8Chi2","HFit8Chi2",500, 0., 500.);
+	TH1D HFitChi2("HFitChi2","HFitChi2",5000, 0., 5000.);
+	TH1D HFit5Chi2("HFit5Chi2","HFit5Chi2",5000, 0., 5000.);
+	TH1D HFit6Chi2("HFit6Chi2","HFit6Chi2",5000, 0., 5000.);
+	TH1D HFit7Chi2("HFit7Chi2","HFit7Chi2",5000, 0., 5000.);
+	TH1D HFit8Chi2("HFit8Chi2","HFit8Chi2",5000, 0., 5000.);
 	
 	TH1D HnFoundTracks("HnFoundTracks","HnFoundTracks",3, -0.5, 2.5);
 	
