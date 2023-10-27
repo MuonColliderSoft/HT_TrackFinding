@@ -66,8 +66,8 @@
         // calculate coordinates of intersections of this track with detector planes
         
         bool xzBarrel(double yDet, double &x, double &z, double &t); // yDet is the position of the barrel plane (parallel to xz)
-        bool xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear); // disc plane (parallel to xy)
-        bool phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT, bool smear);// hitPhi is a linear coordinate measured along phi
+        bool xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear, bool checkBoundaries); // disc plane (parallel to xy)
+        bool phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT, bool smear, bool checkBoundaries);// hitPhi is a linear coordinate measured along phi
         
         // rigidly rotate track around z
         

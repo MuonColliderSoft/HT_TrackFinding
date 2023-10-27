@@ -666,6 +666,7 @@ int main(){
 				}
 			} // end fill all hit histograms
 			
+			
 			if(thisHit.isSeed())HTA.fill(thisHit,fillMode);// use only non-vertex hits (seed hits)
 			Special = false;
 			

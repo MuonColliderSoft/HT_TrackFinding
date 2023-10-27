@@ -188,7 +188,7 @@ bool Track::xzBarrel(double yDet, double &x, double &z, double &t){
 };
 
 
-bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear = false){
+bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear = false, bool checkBoundaries = true){
     
     // R is the radial position of the measured hit
     // X is the distance from phi = 0 measured along the circumference
@@ -201,7 +201,7 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     double zDet = g.D[iDisc].z;
     
     if(cosTheta == 0.) {
-    	//cout << "infinite looper" << endl;
+    	cout << "infinite looper" << endl;
     	return false; // infinite looper   	
     }
     
@@ -209,10 +209,8 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     
     double sMax = (zDet-z0)/cosTheta; // temp definition - redefined below
     
-    //if(iDisc == 19) cout << zDet << " " << z0 << " " << cosTheta << endl;
-    
     if (sMax <0.) {
-    	//cout << "track going in wrong direction" << endl;
+    	//cout << "track going in wrong direction iDisc " << iDisc << endl;
     	return false; // track going in the wrong direction
     }
     
@@ -220,7 +218,7 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     
     sMax = (zDet-z0)*tgTheta;
     
-    if(sMax > fabs(Pi/c)) {
+    if(sMax > 2*fabs(Pi/c)) {
     	//cout << "looper" << endl;
     	return false; // looper - ignored   	
     }
@@ -262,15 +260,16 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
 		X = R*PHI;
     }
 
+	if(!checkBoundaries) return true; // 
     
     // check for detector boundaries
     
     if(R > g.D[iDisc].rMax) {
-    	//cout << "out of high bounds" << endl;
+    	//cout << "Disc " << iDisc << "out of high R bounds" << endl;
     	return false;
     }
     if(R < g.D[iDisc].rMin) {
-    	//cout << "out of low bounds" << endl;
+    	//cout << "Disc " << iDisc << "out of low R bounds" << endl;
     	return false;
     }
        
@@ -279,7 +278,7 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     
 }; // end xyDisc
 
-bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT, bool smear = false){
+bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double &hitZ, double &hitT, bool smear = false, bool checkBoundaries = true){
     
     // find intersection with cylindrical barrel with successive approximations using xzBarrel
     // measurement errors are included
@@ -292,10 +291,10 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
     rotate(rotPhi);
     double err = 1.;
     while(err > 1.e-8){
-        //cout << " X ";
         double x_;
         if(!xzBarrel(r, x_, hitZ, hitT)){
             rotate(-rotPhi);
+            cout << "xzBarrel fails. rotPhi = " << rotPhi << endl;
             return false;
         }
         else {
@@ -303,7 +302,6 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
             rotate(deltaPhi);
             rotPhi += deltaPhi;
             err = fabs(deltaPhi);
-            //cout << err;
         }
     }
     
@@ -322,15 +320,26 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
     
     rotate(-rotPhi);
     
+    if(!checkBoundaries) return true;
+    
     // check for z boundaries
     
-    if(hitZ > g.B[iBarrel].zMax) return false;
-    if(hitZ < g.B[iBarrel].zMin) return false;
+    if(hitZ > g.B[iBarrel].zMax) {
+    	//cout << " Barrel "  << iBarrel << " Zmax limit exceeded" << endl;
+    	return false;
+    	}
+    if(hitZ < g.B[iBarrel].zMin) {
+    	//cout << " Barrel "  << iBarrel << " Zmin limit exceeded" << endl;
+    	return false;
+    	}
    
        
     return true;
     
-};    
+}; 
+
+
+   
 
 double Track::hitChi2(DetectorGeometry &g, Hit &h){
 
@@ -338,15 +347,22 @@ double Track::hitChi2(DetectorGeometry &g, Hit &h){
 	double x1err, x2err, terr;
 	unsigned iLayer = h.iLayer;
 	bool noSmear = false;
+	bool checkBoundaries = false;
 	
-	if(h.hitType == 'B') {
-		if(!phizBarrel(g, h.iLayer, x1, x2, t, noSmear)) cout << "phizBarrel fails " << endl;
+	if(h.hitType == 'B'){
+		if(!phizBarrel(g, h.iLayer, x1, x2, t, noSmear, checkBoundaries)){
+			cout << "phizBarrel fails. Barrel " << iLayer << endl;
+			h.print(cout);
+		}
 		x1err = g.B[iLayer].xphiPrec;
 		x2err = g.B[iLayer].zPrec;
 		terr = g.B[iLayer].tPrec;		
 	}
 	else {
-		if(!xyDisc(g, h.iLayer, x1, x2, t, noSmear)) cout << "xyDisc fails "<< endl; 
+		if(!xyDisc(g, h.iLayer, x1, x2, t, noSmear, checkBoundaries)) {
+			cout << "xyDisc fails. Disc " << iLayer << endl; 
+			h.print(cout);
+		}
 		x1err = g.D[iLayer].xphiPrec;
 		x2err = g.D[iLayer].rPrec;
 		terr = g.D[iLayer].tPrec;
