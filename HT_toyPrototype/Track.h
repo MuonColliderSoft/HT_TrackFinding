@@ -19,6 +19,8 @@
         
         // common track initialization code
         void init(int massInd_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_);
+        void init(double mass_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_);
+        
         
               
     public:
@@ -28,6 +30,7 @@
         int ID; // sequence number or ID (cleared by constructor, user available)
         
         int massInd; //  mass: 0 = gamma, 1 = e, 2 = pi, 3 = K, 4 = p
+        double mass;
         double x0, y0, z0, t0; // origin
         double invPt, eta, phi; // signed inverse pt in GeV/c^(-1), phi [-Pi, +Pi]
         
@@ -58,6 +61,7 @@
         Track(TrackGeometry &g); // generates random track with parameters from specific TrackGeometry class instance
         
         Track(int massInd_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_); // specific track constructor
+        Track(double mass_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_);
         
         void print(std::ostream &out, int mode) ; // dumps text description of track to ostream
         

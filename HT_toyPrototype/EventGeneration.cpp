@@ -226,7 +226,7 @@ int main(){
 	TH1D HDeltaZ0("HDeltaZ0","HDeltaZ0",100, -1., +1.);
 	TH1D HDeltaT0("HDeltaT0","HDeltaT0",100, -50., +50.);
 	
-	
+	TH1D HTrackMass("HTrackMass","HTrackMass",1000,0., 2.);
 	
 	
 	TH1D HBarrelFraction("HBarrelFraction","HBarrelFraction", 11, -0.05, 1.05);HBarrelFraction.SetStats(false);
@@ -525,7 +525,8 @@ int main(){
         		double eta;
         		double invPt; 
         		double z0;
-        		double t0; 
+        		double t0;
+        		double mass; 
         		unsigned nLayers;
     };
   	
@@ -755,7 +756,7 @@ int main(){
 				if(!par.gen_TrackFit)foundTrack = false;
 				
 				else {							
-						double chi2, phi, eta, invPt, z0, t0;
+						double chi2, phi, eta, invPt, z0, t0, mass;
 						
 						if(verbose) cout << "fit candidate " << iCan << " [" << p.iPhi << "][" << p.iEta << "][" << p.iInvpt << "]" << endl;
 						
@@ -763,7 +764,7 @@ int main(){
 				
 						int nHits;				
 						int retCodeFit = HTA.ArrElem[p.iPhi][p.iEta][p.iInvpt].
-												fitCandidate(ev, chi2, phi, eta, invPt, z0, t0, nLayers);
+												fitCandidate(ev, chi2, phi, eta, invPt, z0, t0, mass, nLayers);
 												
 						if(verbose) cout << "nLayers: " << nLayers << endl;
 												
@@ -810,6 +811,7 @@ int main(){
 									ft.invPt = invPt;
 									ft.z0 = z0;
 									ft.t0 = t0;
+									ft.mass = mass;
 																						
 								foundTracks.push_back(ft);
 						
@@ -842,11 +844,11 @@ int main(){
 		cout << nCan << " candidates and " << nFoundTracks << " tracks found in this event" << endl;
 		if(ev.trackList.size()) 
 				cout << "  track  pt:" << 1./ev.trackList[0].invPt << " eta: " << ev.trackList[0].eta 
-					<< " phi: " << ev.trackList[0].phi << " z0: " << ev.trackList[0].z0 << " t0:" << ev.trackList[0].t0 << endl;
+					<< " phi: " << ev.trackList[0].phi << " z0: " << ev.trackList[0].z0 << " t0: " << ev.trackList[0].t0 << " mass: " << ev.trackList[0].mass << endl;
 					
 		for(unsigned iFT = 0; iFT != nFoundTracks; ++iFT)
 				cout << " result  pt:" << 1./foundTracks[iFT].invPt << " eta: " << foundTracks[iFT].eta << " phi: " 
-					<< foundTracks[iFT].phi << " z0: " << foundTracks[iFT].z0 << " t0:" << foundTracks[iFT].t0 << endl;					
+					<< foundTracks[iFT].phi << " z0: " << foundTracks[iFT].z0 << " t0:" << foundTracks[iFT].t0 << " mass: " << foundTracks[iFT].mass << endl;			
 								
 		
 		if(nFoundTracks == 0){
@@ -881,13 +883,15 @@ int main(){
 	
 		if(ev.trackList.size()){
 	
-			for( unsigned iT = 0; iT != nFoundTracks; ++iT){		
+			for( unsigned iT = 0; iT != nFoundTracks; ++iT){
+			
+				HTrackMass.Fill(foundTracks[iT].mass);		
 		
-			   HDeltaPhi.Fill(ev.trackList[0].phi - foundTracks[iT].phi);
-			   HDeltaEta.Fill(ev.trackList[0].eta - foundTracks[iT].eta);
-			   HDeltaInvPt.Fill(ev.trackList[0].invPt - foundTracks[iT].invPt);
-			   HDeltaZ0.Fill(ev.trackList[0].z0 - foundTracks[iT].z0);
-			   HDeltaT0.Fill(ev.trackList[0].t0 - foundTracks[iT].t0);	
+			   	HDeltaPhi.Fill(ev.trackList[0].phi - foundTracks[iT].phi);
+			   	HDeltaEta.Fill(ev.trackList[0].eta - foundTracks[iT].eta);
+			   	HDeltaInvPt.Fill(ev.trackList[0].invPt - foundTracks[iT].invPt);
+			   	HDeltaZ0.Fill(ev.trackList[0].z0 - foundTracks[iT].z0);
+			   	HDeltaT0.Fill(ev.trackList[0].t0 - foundTracks[iT].t0);	
 			}	
 	
 		}

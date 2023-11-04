@@ -62,7 +62,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 1000;
+	unsigned gen_nEvents = 100;
 
 // number of tracks to be generated for each event
 
@@ -77,6 +77,7 @@ public:
 	bool gen_TrackFit = true;
 	unsigned gen_minLayersForFit = 5;
 	double gen_chi2Cut = 45.;
+	bool gen_massFit = false;
 	
 // limits in phi for BIB generation
 	
@@ -166,8 +167,8 @@ public:
 	double geo_xphiSigmaD = 0.1;// Discs: sigma x in mm
 	double geo_zSigmaB = 0.1;// Barrels: sigma z in mm
 	double geo_rSigmaD = 0.1;// Discs: sigma R in mm
-	double geo_tSigmaB = 15.0;// Barrels: sigma t -  15 mm == 50 ps
-	double geo_tSigmaD = 15.0;// Discs: sigma t - 15 mm == 50 ps
+	double geo_tSigmaB = 15.;// Barrels: sigma t -  15 mm == 50 ps
+	double geo_tSigmaD = 15.;// Discs: sigma t - 15 mm == 50 ps
 
 
 //////////////////////////////////////////////////////////////////////// 
@@ -190,7 +191,7 @@ public:
 	const double geo_def_t_eta = 1.0; // track eta mean
 	const double geo_def_t_deltaEta = 1.0; // track delta eta
 	const double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	const double geo_def_t_invPt_min = 0.; // track invPt min Gev/c^(-1)
+	const double geo_def_t_invPt_min = 0.0; // track invPt min Gev/c^(-1)
 	const double geo_def_t_x0 = 0.0; // track mean x0
 	const double geo_def_t_y0 = 0.0; // track mean y0 
 	const double geo_def_t_z0 = 0.0; // track mean z0
@@ -220,15 +221,15 @@ public:
 	double geo_gen_t_eta = 1.0; // track eta mean
 	double geo_gen_t_deltaEta = 1.0; // track delta eta
 	double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	double geo_gen_t_invPt_min = 0.; // track invPt min Gev/c^(-1)
+	double geo_gen_t_invPt_min = 1./4.; // track invPt min Gev/c^(-1)
 	double geo_gen_t_x0 = 0.0; // track mean x0
 	double geo_gen_t_y0 = 0.0; // track mean y0 
 	double geo_gen_t_z0 = 0.0; // track mean z0
 	double geo_gen_t_t0 = 0.0; // track mean t0
 	double geo_gen_t_deltaX0 = 0.0; // track sigma x0
 	double geo_gen_t_deltaY0 = 0.0; // track sigma y0
-	double geo_gen_t_deltaZ0 = 0.0; // track sigma z0
-	double geo_gen_t_deltaT0 = 0.0; // track sigma t0 mm
+	double geo_gen_t_deltaZ0 = 1.5; // track sigma z0
+	double geo_gen_t_deltaT0 = 1.5; // track sigma t0 mm
 
 
 	// track parameters for Hough Transform Array

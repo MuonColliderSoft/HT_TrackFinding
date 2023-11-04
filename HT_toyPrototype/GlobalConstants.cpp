@@ -17,7 +17,7 @@ bool Special = false;// used in debugging
 // PARTICLE MASSES in GeV/c2
 
 static const unsigned nMasses = 5;
-double mass[] = {
+double Mass[] = {
 	0.,
 	0.000511, // electron: 1
 	0.139570, // charged pion: 2

@@ -420,7 +420,7 @@ int main(){
 				
 				/////////////////////////////////////////////////////////////
 										
-				double tx = thisHit.timeExpected(dg, mass[2], thisTrack.invPt);
+				double tx = thisHit.timeExpected(dg, Mass[2], thisTrack.invPt);
 				
 				if(thisHit.hitType == 'B') {
 					++nHitB;	

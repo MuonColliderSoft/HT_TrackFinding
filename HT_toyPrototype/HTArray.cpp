@@ -27,7 +27,7 @@ double invPt_to_xk(double invPt){return invPt/(par.HTA_t_invPt_max - par.HTA_t_i
 
 
 
-double chi2Func(const double *x){
+double xxxxchi2Func(const double *x){
 	 	   	       	
 	 double invPt = xk_to_invPt(x[0]);
 	 double eta = xj_to_eta(x[1]);
@@ -49,18 +49,27 @@ double chi2Func(const double *x){
 }// end chi2Func
 
 
-/*double chi2Funcx(const double *xx ){
+double chi2MassFunc(const double *x){
+	 	   	       	
+	 double invPt = xk_to_invPt(x[0]);
+	 double eta = xj_to_eta(x[1]);
+	 double phi = xi_to_phi(x[2]);
+	 double z0 = x[3];
+	 double t0 = x[4];
+	 double mass = x[5];
+	 
 
-	Eigen::Matrix<double, 5, 1> x;
-	
- 	x[0] = xx[0];
-  	x[1] = xx[1];
-  	x[2] = xx[2];
- 	x[3] = xx[3];
- 	x[4] = xx[4];
-   
-  	return chi2Func(x);
-}*/
+	Track tFit(mass, 0., 0., z0, t0, invPt, eta, phi); // specific track constructor
+
+	double chi2 = 0.;
+	for(int iHit = 0; iHit != fitHitList.size(); ++iHit){
+		chi2 += tFit.hitChi2(dg, fitHitList[iHit]);
+	}
+
+	return chi2;
+
+}// end chi2Func
+
 
 
  	
@@ -442,7 +451,7 @@ double chi2Func(const double *x){
         
         
         
-        int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, double &z0, double &t0, unsigned &nLayers){
+        int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, double &z0, double &t0, double &mass, unsigned &nLayers){
         
         	struct Result {
         		double chi2;
@@ -450,7 +459,8 @@ double chi2Func(const double *x){
         		double eta;
         		double invPt; 
         		double z0;
-        		double t0; 
+        		double t0;
+        		double mass; 
         		unsigned nLayers;
         	};
         	
@@ -560,12 +570,16 @@ double chi2Func(const double *x){
 
 				// create function wrapper for minmizer
 				// a IMultiGenFunction type 
-				ROOT::Math::Functor f(&chi2Func,5); 
-				double step[5] = {0.1,0.1,0.1,0.1,0.1};	
-				double variable[5] = {kmeanInvPt,jmeanEta,imeanPhi,0.0,0.0};
-		   
+				ROOT::Math::Functor f(&chi2MassFunc,6); 
+				double step[6] = {0.1,0.1,0.1,0.1,0.1,0.001};
+				double variable[6] = {kmeanInvPt,jmeanEta,imeanPhi,0.0,0.0,0.139570};
+		   		
+		   		
 				 min->SetFunction(f);
-
+				 
+				 
+				
+				 
 				// Set the free variables to be minimized!
 		
 				min->SetVariable(0,"invPt",variable[0], step[0]);
@@ -573,47 +587,57 @@ double chi2Func(const double *x){
 				min->SetVariable(2,"Phi",variable[2], step[2]);
 				min->SetVariable(3,"z0",variable[3], step[3]);
 				min->SetVariable(4,"t0",variable[4], step[4]);
-
-				// do the minimization
+				min->SetVariable(5,"mass",variable[5], step[5]);
+				
+				 // do the first minimization with  mass fixed
+				
+				min->FixVariable(5);			
 		
 				min->Minimize(); 
 		
-				const double *res = min->X();	
-				res = min->X();
-				chi2 = min->MinValue(); 
+				if(par.gen_massFit){
+				
+					// do the second minimization with free mass and t0
+				
+					min->ReleaseVariable(5);
+					min->FixVariable(0);
+					min->FixVariable(1);
+					min->FixVariable(2);
+					min->FixVariable(3);
+							
+				min->Minimize(); 
+				}
+		
+				const double *res = min->X();
 						
 				// return parameters
+				
+				chi2 = min->MinValue(); 
 				phi = xi_to_phi(res[2]);
 				eta = xj_to_eta(res[1]);
 				invPt = xk_to_invPt(res[0]);
-				z0 = res[3];
-				t0 = res[4]; 
+				z0 = res[3];				
+				t0 = res[4];
+				mass = res[5];
+				 
 				
 				if(verbose) cout << "chi2: " << chi2 << endl;
-				
-				
-		
-				// check if parameters are within cell limits
-		
-				bool OK = true;
-				//if((res[2]-i_index)<0. || (res[2]-i_index)>1.) OK = false;	
-				//if((res[1]-j_index)<0. || (res[1]-j_index)>1.) OK = false;	
-				//if((res[0]-k_index)<0. || (res[0]-k_index)>1.) OK = false;		
-	
 
-				if (OK) {
-					oneGoodFit = true;
-					if(firstGoodFit || bestFitRes.chi2 > chi2){
-						firstGoodFit = false;
-						bestFitRes.chi2 = chi2;
-						bestFitRes.phi = phi;
-						bestFitRes.eta = eta;
-						bestFitRes.invPt = invPt;
-						bestFitRes.z0 = z0;
-						bestFitRes.t0 = t0;	
-						bestFitComb = iComb;				
-					}				
-				};
+				
+				oneGoodFit = true;
+				
+				if(firstGoodFit || bestFitRes.chi2 > chi2){
+					firstGoodFit = false;
+					bestFitRes.chi2 = chi2;
+					bestFitRes.phi = phi;
+					bestFitRes.eta = eta;
+					bestFitRes.invPt = invPt;
+					bestFitRes.z0 = z0;
+					bestFitRes.t0 = t0;
+					bestFitRes.mass = mass;
+					bestFitComb = iComb;				
+									
+				}
 			
 			}// end loop on combinations
 			
@@ -626,6 +650,7 @@ double chi2Func(const double *x){
 				invPt = bestFitRes.invPt;
 				z0 = bestFitRes.z0;
 				t0 = bestFitRes.t0;
+				mass = bestFitRes.mass;
 				
 				if(verbose) cout << "bestFitComb: " << bestFitComb << " chi2: " << chi2 << endl;
 				

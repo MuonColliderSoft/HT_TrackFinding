@@ -21,9 +21,12 @@ Track::Track(TrackGeometry &g){ // constructor with parameters from specific geo
     
     // create random track parameters
     
-    int massInd_ = 2; // it's a pion 
-    //int massInd_ = 3; // it's a kaon
-	//int massInd_ = 4; // it's a proton
+     int massInd_ = 2;// it's a pion 
+     
+   // if(distribution(generator_trk) > 0.5) massInd_ = 2; // it's a pion 
+    	//else massInd_ = 3; // it's a kaon
+     
+		//else massInd_ = 4; // it's a proton
 
     double x0_ = g.t_x0 + g.t_deltaX0*gauss(generator_trk); // x at primary vertex
     double y0_ = g.t_y0 + g.t_deltaY0*gauss(generator_trk); // y at primary vertex
@@ -40,11 +43,17 @@ Track::Track(TrackGeometry &g){ // constructor with parameters from specific geo
 }; // end constructor
 
 
-// specific track constructor
+// specific track constructors
 
 Track::Track(int massInd_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_){
     
     init(massInd_, x0_, y0_, z0_ , t0_, invPt_, eta_, phi_); // initialize track
+    
+};
+
+Track::Track(double mass_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_){
+    
+    init(mass_, x0_, y0_, z0_ , t0_, invPt_, eta_, phi_); // initialize track
     
 };
 
@@ -67,17 +76,19 @@ void Track::print(std::ostream &out, int mode = 0){
 
 
 
-
-
 // common code
 
 void Track::init(int massInd_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_){
+	init(Mass[massInd_], x0_, y0_, z0_, t0_, invPt_, eta_, phi_);
+};
+
+
+	
+void Track::init(double mass_, double x0_, double y0_, double z0_, double t0_, double invPt_, double eta_, double phi_){
+      
+    hitList.clear();   
     
-    
-    hitList.clear();
-    
-    
-    massInd = massInd_;
+   // massInd = massInd_;
     
     // coordinates of primary vertex
     
@@ -89,6 +100,7 @@ void Track::init(int massInd_, double x0_, double y0_, double z0_, double t0_, d
     
     // primary parameters from constructor arguments
     
+    mass = mass_;
     invPt = invPt_;
     eta = eta_;
     phi = phi_; 
@@ -107,7 +119,7 @@ void Track::init(int massInd_, double x0_, double y0_, double z0_, double t0_, d
     	if(Pt < 0.) Pt = -Pt;
     Pz = Pt*cotTheta; // longitudinal momentum
     double P2 = Pt*Pt + Pz*Pz;
-    double E2 = P2 + mass[massInd]*mass[massInd];
+    double E2 = P2 + mass*mass;
     beta = sqrt(P2/E2);// velocity
     
     cosTheta = Pz/sqrt(P2);
