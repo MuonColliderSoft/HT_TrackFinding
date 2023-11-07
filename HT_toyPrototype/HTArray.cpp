@@ -873,23 +873,23 @@ double chi2MassFunc(const double *x){
 			
 			// check consistency of file with current HTM
 			
-			double toll = 1.e-7;
+			double toll = 1.e-5;// relative tolerance
 			
 			in >> _NphiBins >> _phiMin >> _phiStep;
 			in >> _NetaBins >> _etaMin >> _etaStep;
 			in >> _NinvptBins >> _invPtMin >>_invPtStep;
 			
 			if((_NphiBins-NphiBins) != 0) return -1;
-			if(fabs(_phiMin-phiMin) > toll) return -2;
-			if(fabs(_phiStep-phiStep) > toll) return -3;
+			if(fabs((_phiMin-phiMin)/(_phiMin+phiMin)) > toll) return -2;
+			if(fabs((_phiStep-phiStep)/(_phiStep+phiStep)) > toll) return -3;
 			
 			if((_NetaBins-NetaBins)!= 0) return -4;
-			if(fabs(_etaMin-etaMin) > toll) return -5;
-			if(fabs(_etaStep-etaStep) > toll) return -6;
+			if(fabs((_etaMin-etaMin)/(_etaMin+etaMin)) > toll) return -5;
+			if(fabs((_etaStep-etaStep)/(_etaStep+etaStep)) > toll) return -6;
 			
 			if((_NinvptBins-NinvptBins) != 0) return -7;
-			if(fabs(_invPtMin-invPtMin)> toll) return -8;
-			if(fabs(_invPtStep-invPtStep) > toll) return -9;
+			if(fabs((_invPtMin-invPtMin)/(_invPtMin+invPtMin))> toll) return -8;
+			if(fabs((_invPtStep-invPtStep)/(_invPtStep+invPtStep)) > toll) return -9;
 			
 			// read file and fill HT array
 		
