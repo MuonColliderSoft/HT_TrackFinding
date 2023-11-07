@@ -28,6 +28,7 @@
         		
         		// find hits in all barrel detectors
         		for(unsigned iB = 0; iB != g.nBarrels; ++iB){
+        			if(distribution(generator_trk) < par.geo_ineffB)continue;
         			double hitPhi, hitZ, hitT;
         			bool smear = true;
         			//bool smear = false;
@@ -42,6 +43,7 @@
         		
         		// find hits in all disc detectors
         		for(unsigned iD = 0; iD != g.nDiscs; ++iD){
+        			if(distribution(generator_trk) < par.geo_ineffD)continue;
         			double hitPhi, hitR, hitT;       			
         			bool smear = true;       			
         			//bool smear = false;

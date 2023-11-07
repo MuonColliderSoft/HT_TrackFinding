@@ -169,6 +169,9 @@ public:
 	double geo_rSigmaD = 0.1;// Discs: sigma R in mm
 	double geo_tSigmaB = 15.;// Barrels: sigma t -  15 mm == 50 ps
 	double geo_tSigmaD = 15.;// Discs: sigma t - 15 mm == 50 ps
+	
+	double geo_ineffB = 0.0;// Barrel inefficiency
+	double geo_ineffD = 0.0;// Disc inefficiency
 
 
 //////////////////////////////////////////////////////////////////////// 
