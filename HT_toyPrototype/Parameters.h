@@ -9,8 +9,8 @@
 // dimensions of the HT array
 // (global variables)
 
-const static unsigned HTA_NphiBins = 50;
-const static unsigned HTA_NetaBins = 100;
+const static unsigned HTA_NphiBins = 30;
+const static unsigned HTA_NetaBins = 90;
 const static unsigned HTA_NinvptBins = 10;
 		
 
@@ -46,10 +46,6 @@ public:
 	
 	string train_dataFileName = "HTAdata.txt";
 	
-// number of Poisson sigmas to accept as a down fluctuation of the number of hits
-// in each detector layer to be accepted for a HTA cell
-	
-	double train_nSigmaCell = 3.;
 	
 // seed random generator
 
@@ -123,7 +119,7 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata_50_100_10_524mrad.txt";
+	string gen_dataFileName = "HTAdata_30_90_10_BigEtaSlice.txt";
 	
 // data file with all Bib hits
 
@@ -151,10 +147,10 @@ public:
 // coordinates of a single HTA cell and detector layer 
 // whose hit coordinates we want to plot in 3-D
 
-	int HTA_plotBinX = 25;
-	int HTA_plotBinY = 50;
+	int HTA_plotBinX = 10;
+	int HTA_plotBinY = 40;
 	int HTA_plotBinZ = 5;
-	int HTA_plotLay = 7;
+	int HTA_plotLay = 5;
 
 
 //////////////////////////////////////////////////////////////////////// 
@@ -191,10 +187,10 @@ public:
 	//const double geo_def_t_phi = 0.050; // track phi mean
 	//const double geo_def_t_deltaPhi = 0.050; // track delta phi
 	
-	const double geo_def_t_eta = 1.0; // track eta mean
-	const double geo_def_t_deltaEta = 1.0; // track delta eta
+	const double geo_def_t_eta = 0.; // track eta mean
+	const double geo_def_t_deltaEta = 2.5; // track delta eta
 	const double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	const double geo_def_t_invPt_min = 0.0; // track invPt min Gev/c^(-1)
+	const double geo_def_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
 	const double geo_def_t_x0 = 0.0; // track mean x0
 	const double geo_def_t_y0 = 0.0; // track mean y0 
 	const double geo_def_t_z0 = 0.0; // track mean z0
