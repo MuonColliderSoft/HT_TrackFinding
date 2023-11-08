@@ -22,7 +22,7 @@ double xk_to_invPt(double xk){return par.HTA_t_invPt_min + (par.HTA_t_invPt_max 
 
 double phi_to_xi(double phi){return (phi - par.HTA_t_phi + par.HTA_t_deltaPhi)/par.HTA_t_deltaPhi*(double)HTA_NphiBins/2.;}
 double eta_to_xj(double eta){return (eta - par.HTA_t_eta + par.HTA_t_deltaEta)/par.HTA_t_deltaEta*(double)HTA_NetaBins/2.;}
-double invPt_to_xk(double invPt){return invPt/(par.HTA_t_invPt_max - par.HTA_t_invPt_min)*(double)HTA_NinvptBins;}
+double invPt_to_xk(double invPt){return (invPt - par.HTA_t_invPt_min)/(par.HTA_t_invPt_max - par.HTA_t_invPt_min)*(double)HTA_NinvptBins;}
 
 
 
