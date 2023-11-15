@@ -217,8 +217,6 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     	return false; // infinite looper   	
     }
     
-    //cout << zDet << " " << z0 << " " << cosTheta << endl;
-    
     double sMax = (zDet-z0)/cosTheta; // temp definition - redefined below
     
     if (sMax <0.) {
@@ -226,7 +224,6 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     	return false; // track going in the wrong direction
     }
     
-    //if(iDisc == 19) cout << "24 passed" << endl;
     
     sMax = (zDet-z0)*tgTheta;
     
@@ -235,8 +232,6 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     	return false; // looper - ignored   	
     }
     	
-    
-    //T = t0 + sMax*sqrt(1.+(1./(cotTheta*cotTheta)))/beta +  g.D[iDisc].tPrec*gauss(generator_trk);
     T = t0 + sMax*sqrt(1.+cotTheta*cotTheta)/beta; 
     
     

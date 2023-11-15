@@ -9,6 +9,10 @@
 // dimensions of the HT array
 // (global variables)
 
+//const static unsigned HTA_NphiBins = 30;
+//const static unsigned HTA_NetaBins = 90;
+//const static unsigned HTA_NinvptBins = 10;
+
 const static unsigned HTA_NphiBins = 30;
 const static unsigned HTA_NetaBins = 90;
 const static unsigned HTA_NinvptBins = 10;
@@ -58,7 +62,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 100;
+	unsigned gen_nEvents = 1000;
 
 // number of tracks to be generated for each event
 
@@ -83,11 +87,12 @@ public:
 	 //double gen_phia = -0.00312222; // for 100 mrad phi sector
  	 //double gen_phib = 0.406729;    //
  	  	 
- 	//double gen_phia = -0.00218965; // for 40 mrad phi sector
+ 	//double gen_phia = -0.; // for 40 mrad phi sector
  	//double gen_phib = 0.346778;    // 	
  	
- 	double gen_phia = -0.00239139; // for 524 mrad phi sector
- 	double gen_phib = 0.830571;
+ 	double gen_phia = -0.306759;// for 524 mrad phi sector
+ 	double gen_phib = 0.830405; // +- charges
+
  
  	 
 // print candidates for every event

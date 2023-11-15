@@ -17,6 +17,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "TProfile.h"
 #include "TFile.h"
 
 #include "Math/Minimizer.h"
@@ -25,6 +26,7 @@
 #include "TError.h"
 
 #include "Statistics.cpp"
+#include "makeEffGraph.cpp"
 
 
 using namespace std;
@@ -228,6 +230,23 @@ int main(){
 	TH1D HDeltaZ0("HDeltaZ0","HDeltaZ0",100, -1., +1.);
 	TH1D HDeltaT0("HDeltaT0","HDeltaT0",100, -50., +50.);
 	
+	TProfile HDPhiVsPhi("HDPhiVsPhi","HDPhiVsPhi", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
+	TProfile HDEtaVsPhi("HDEtaVsPhi","HDEtaVsPhi", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
+	TProfile HDInvPtVsPhi("HDInvPtVsPhi","HDInvPtVsPhi", 20,  par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
+	
+	TProfile HDPhiVsEta("HDPhiVsEta","HDPhiVsEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
+	TProfile HDEtaVsEta("HDEtaVsEta","HDEtaVsEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
+	TProfile HDInvPtVsEta("HDInvPtVsEta","HDInvPtVsEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
+		
+	TProfile HDPhiVsInvPt("HDPhiVsInvPt","HDPhiVsInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	TProfile HDEtaVsInvPt("HDEtaVsInvPt","HDEtaVsInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	TProfile HDInvPtVsInvPt("HDInvPtVsInvPt","HDInvPtVsInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	
+	
+	
+	
+	
+	
 	TH1D HTrackMass("HTrackMass","HTrackMass",1000,0., 2.);
 	
 	
@@ -258,9 +277,16 @@ int main(){
 	
 	TH1D HTrackZ0("HTrackZ0","HTrackZ0", 600, -300,+300); HTrackZ0.SetStats(true);
 	TH1D HTrackT0("HTrackT0","HTrackT0", 600, -300,+300); HTrackT0.SetStats(true);
-	TH1D HTrackEta("HTrackEta","HTrackEta", 700, -3.5,+3.5); HTrackEta.SetStats(true);
-	TH1D HTrackPhi("HTrackPhi","HTrackPhi", 1000, -Pi,+Pi); HTrackPhi.SetStats(true);
-	TH1D HTrackInvPt("HTrackInvPt","HTrackInvPt", 1000, -1/2.,+1/2.); HTrackInvPt.SetStats(true);
+	
+	TH1D HTrackEta("HTrackEta","HTrackEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
+	TH1D HTrackPhi("HTrackPhi","HTrackPhi", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
+	TH1D HTrackInvPt("HTrackInvPt","HTrackInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	
+	TH1D HTrackEtaEff("HTrackEtaEff","HTrackEtaEff", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
+	TH1D HTrackPhiEff("HTrackPhiEff","HTrackPhiEff", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
+	TH1D HTrackInvPtEff("HTrackInvPtEff","HTrackInvPtEff", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	
+	
 	TH2I HTrackInvPtvsPhi("HTrackInvPtvsPhi","HTrackInvPtvsPhi",1000, -Pi,+Pi,1000, -1/2.,+1/2.);HTrackInvPtvsPhi.SetStats(true);
 	
 	TH1D HTrackPz("HTrackPz","HTrackPz", 10000, -100., +100.); HTrackPz.SetStats(true);
@@ -843,6 +869,16 @@ int main(){
 		unsigned nFoundTracks = foundTracks.size();
 		HnFoundTracks.Fill(nFoundTracks);
 		
+		if((nFoundTracks>0) && (ev.trackList.size()>0)){	
+		
+			// Fill efficiency histograms 				
+		
+			Track thisTrack = ev.trackList[0];
+			HTrackEtaEff.Fill(thisTrack.eta);
+			HTrackPhiEff.Fill(thisTrack.phi);
+			HTrackInvPtEff.Fill(thisTrack.invPt);	
+		}
+		
 		cout << nCan << " candidates and " << nFoundTracks << " tracks found in this event" << endl;
 		if(ev.trackList.size()) 
 				cout << "  track  pt:" << 1./ev.trackList[0].invPt << " eta: " << ev.trackList[0].eta 
@@ -884,16 +920,42 @@ int main(){
 	// Fill parameter resolution histograms
 	
 		if(ev.trackList.size()){
-	
+		
+			double phi = ev.trackList[0].phi;
+			double eta = ev.trackList[0].eta;
+			double invPt = ev.trackList[0].invPt;
+			double z0 = ev.trackList[0].z0;
+			double t0 = ev.trackList[0].t0; 
+		
 			for( unsigned iT = 0; iT != nFoundTracks; ++iT){
-			
+		
+	
+				double DeltaPhi = phi - foundTracks[iT].phi;
+				double DeltaEta = eta - foundTracks[iT].eta;
+				double DeltaInvPt = invPt - foundTracks[iT].invPt;
+				double DeltaZ0 = z0 - foundTracks[iT].z0;
+				double DeltaT0 = t0 - foundTracks[iT].t0;
+				
 				HTrackMass.Fill(foundTracks[iT].mass);		
 		
-			   	HDeltaPhi.Fill(ev.trackList[0].phi - foundTracks[iT].phi);
-			   	HDeltaEta.Fill(ev.trackList[0].eta - foundTracks[iT].eta);
-			   	HDeltaInvPt.Fill(ev.trackList[0].invPt - foundTracks[iT].invPt);
-			   	HDeltaZ0.Fill(ev.trackList[0].z0 - foundTracks[iT].z0);
-			   	HDeltaT0.Fill(ev.trackList[0].t0 - foundTracks[iT].t0);	
+			   	HDeltaPhi.Fill(DeltaPhi);
+			   	HDeltaEta.Fill(DeltaEta);
+			   	HDeltaInvPt.Fill(DeltaInvPt);
+			   	HDeltaZ0.Fill(DeltaZ0);
+			   	HDeltaT0.Fill(DeltaT0);	
+			   	
+				HDPhiVsPhi.Fill(phi,DeltaPhi*DeltaPhi);
+				HDEtaVsPhi.Fill(phi,DeltaEta*DeltaEta);
+				HDInvPtVsPhi.Fill(phi,DeltaInvPt*DeltaInvPt);
+
+				HDPhiVsEta.Fill(eta,DeltaPhi*DeltaPhi);
+				HDEtaVsEta.Fill(eta,DeltaEta*DeltaEta);
+				HDInvPtVsEta.Fill(eta,DeltaInvPt*DeltaInvPt);
+
+				HDPhiVsInvPt.Fill(invPt,DeltaPhi*DeltaPhi);
+				HDEtaVsInvPt.Fill(invPt,DeltaEta*DeltaEta);
+				HDInvPtVsInvPt.Fill(invPt,DeltaInvPt*DeltaInvPt);
+	
 			}	
 	
 		}
@@ -922,6 +984,25 @@ int main(){
 			
 	cout << "Total number of candidates = " << candidateRate << endl;
 	cout << "Number of candidates per Collision = " << candidateRate/nEvents*rateScale << endl;
+	
+/*	
+	
+	TGraph * g_eff = makeEffGraph(HTrackEta, HTrackEtaEff);
+	
+	 // first canvas position and size
+
+		  Int_t x1 = 200;
+		  Int_t y1 = 50;
+		  Int_t width = 500;
+		  Int_t height = 500;
+
+		  TCanvas* c1 = new TCanvas("c1","c1",x1,y1,width,height);
+
+		  c1->SetGrid();
+		  c1->SetTitle("prova");
+		  g_eff->SetTitle("efficienza");
+
+		  g_eff->Draw("AP"); */
 		
 	cout << "Writing histogram file..." << endl;
 	histFile->Write(); // write histogram file

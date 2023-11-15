@@ -28,10 +28,10 @@
         		
         		// find hits in all barrel detectors
         		for(unsigned iB = 0; iB != g.nBarrels; ++iB){
+        			if(iB == g.iBoundaryBarrel) continue; // skip boundary barrel
         			if(distribution(generator_trk) < par.geo_ineffB)continue;
         			double hitPhi, hitZ, hitT;
         			bool smear = true;
-        			//bool smear = false;
         			if(thisTrack.phizBarrel(g, iB, hitPhi, hitZ, hitT, smear)){ // find hit	
         			 Hit thisHit('B', iB, hitPhi, hitZ, hitT, iT);
         			 if(!thisHit.isSeed())continue;
@@ -43,10 +43,14 @@
         		
         		// find hits in all disc detectors
         		for(unsigned iD = 0; iD != g.nDiscs; ++iD){
+        			double hitPhi, hitZ, hitT;
+        			bool smear = false;
+        			if(thisTrack.phizBarrel(g, g.iBoundaryBarrel, hitPhi, hitZ, hitT, smear)){ // find hit
+        				if(fabs(hitZ) < fabs(g.D[iD].z)) continue;
+        			}	
         			if(distribution(generator_trk) < par.geo_ineffD)continue;
-        			double hitPhi, hitR, hitT;       			
-        			bool smear = true;       			
-        			//bool smear = false;
+        			double hitR;       			
+        			smear = true;
         			if(thisTrack.xyDisc(g, iD, hitPhi, hitR, hitT, smear)){ // find hit		
         			 Hit thisHit('D', iD, hitPhi, hitR, hitT, iT);
         			 if(!thisHit.isSeed())continue;

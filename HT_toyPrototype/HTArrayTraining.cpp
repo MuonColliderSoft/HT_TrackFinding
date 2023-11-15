@@ -367,162 +367,133 @@ int main(){
 			for(int j = 0; j != HTA_NetaBins; ++j)
 				for(int k = 0; k != HTA_NinvptBins; ++k){			
 
-    	//cerr << "Training cell [" <<i<<"]["<<j<<"]["<<k<<"]"<< endl;
-    		
-    	
-    	///// modify tg to generate tracks only inside cell
-    	
-    	tg.t_phi = phiMin + tg.t_deltaPhi*2.*(double)i;
-    	tg.t_eta = etaMin + tg.t_deltaEta*2.*(double)j;
-    	tg.t_invPt_min = par.HTA_t_invPt_min + (double)k*deltaInvPt;
-    	tg.t_invPt_max = tg.t_invPt_min + deltaInvPt;
+					//cerr << "Training cell [" <<i<<"]["<<j<<"]["<<k<<"]"<< endl;
+			
+		
+					///// modify tg to generate tracks only inside cell
+		
+					tg.t_phi = phiMin + tg.t_deltaPhi*2.*(double)i;
+					tg.t_eta = etaMin + tg.t_deltaEta*2.*(double)j;
+					tg.t_invPt_min = par.HTA_t_invPt_min + (double)k*deltaInvPt;
+					tg.t_invPt_max = tg.t_invPt_min + deltaInvPt;
 
-    		
-		Event ev(dg, nTracks);// one event with nTracks tracks	
+			
+					Event ev(dg, nTracks);// one event with nTracks tracks	
 	
-		// LOOP ON TRACKS
+					// LOOP ON TRACKS
 		
-		unsigned nTracks = ev.trackList.size();
-		for(unsigned iT = 0; iT != nTracks; ++iT) { // begin loop on tracks
+					unsigned nTracks = ev.trackList.size();
+					for(unsigned iT = 0; iT != nTracks; ++iT) { // begin loop on tracks
 		
-			Track thisTrack = ev.trackList[iT];	
+						Track thisTrack = ev.trackList[iT];	
 			
 				
-			// Fill histograms of main track parameters	
+						// Fill histograms of main track parameters	
 			
-			HTrackZ0.Fill(thisTrack.z0);
-			HTrackT0.Fill(thisTrack.t0);
-			HTrackEta.Fill(thisTrack.eta);
-			HTrackPhi.Fill(thisTrack.phi);
-			HTrackInvPt.Fill(thisTrack.invPt);
-			HTrackInvPtvsPhi.Fill(thisTrack.phi,thisTrack.invPt);
+						HTrackZ0.Fill(thisTrack.z0);
+						HTrackT0.Fill(thisTrack.t0);
+						HTrackEta.Fill(thisTrack.eta);
+						HTrackPhi.Fill(thisTrack.phi);
+						HTrackInvPt.Fill(thisTrack.invPt);
+						HTrackInvPtvsPhi.Fill(thisTrack.phi,thisTrack.invPt);
 			
-			HTrackPz.Fill(thisTrack.Pz);
-			HTrackInvPz.Fill(1./thisTrack.Pz);
-			HTrackPhi0.Fill(thisTrack.phi0);
-			HTrackInvPzvsPhi0.Fill(thisTrack.phi0,1./thisTrack.Pz);
+						HTrackPz.Fill(thisTrack.Pz);
+						HTrackInvPz.Fill(1./thisTrack.Pz);
+						HTrackPhi0.Fill(thisTrack.phi0);
+						HTrackInvPzvsPhi0.Fill(thisTrack.phi0,1./thisTrack.Pz);
 	
-			// loop on hits of each track
+						// loop on hits of each track
 								
-			unsigned nHitB = 0;
-			unsigned nHitD = 0;	
-			unsigned nHits = thisTrack.hitList.size();
+						unsigned nHitB = 0;
+						unsigned nHitD = 0;	
+						unsigned nHits = thisTrack.hitList.size();
 		
-			for(unsigned iH = 0; iH != nHits; ++iH) { // begin loop on hits of each track
+						for(unsigned iH = 0; iH != nHits; ++iH) { // begin loop on hits of each track
 
-				Hit thisHit = thisTrack.hitList[iH]; /// This hit
+							Hit thisHit = thisTrack.hitList[iH]; /// This hit
 				
-				// Train HT Array	/////////////////////////////////////////
+							// Train HT Array	/////////////////////////////////////////			
 				
+							HTA.train(thisHit,thisTrack,i,j,k);
 				
-				
-				HTA.train(thisHit,thisTrack,i,j,k);
-				
-				/////////////////////////////////////////////////////////////
+							/////////////////////////////////////////////////////////////
 										
-				double tx = thisHit.timeExpected(dg, Mass[2], thisTrack.invPt);
+							double tx = thisHit.timeExpected(dg, Mass[2], thisTrack.invPt);
 				
-				if(thisHit.hitType == 'B') {
-					++nHitB;	
-					HitBTX[thisHit.iLayer]->Fill(thisHit.t - tx);
-				}
+							if(thisHit.hitType == 'B') {
+								++nHitB;	
+								HitBTX[thisHit.iLayer]->Fill(thisHit.t - tx);
+							}
 										
-				if(thisHit.hitType == 'D') {
-					++nHitD;
-					HitDTX[thisHit.iLayer]->Fill(thisHit.t - tx);
-				}
+							if(thisHit.hitType == 'D') {
+								++nHitD;
+								HitDTX[thisHit.iLayer]->Fill(thisHit.t - tx);
+							}
 						
-			} // end loop on hits
+						} // end loop on hits
 			
-			double barrelFraction = (double)nHitB/((double)nHitB + (double)nHitD);
-			HBarrelFraction.Fill(barrelFraction);
-			HNDvsNB.Fill(nHitB,nHitD);
+						double barrelFraction = (double)nHitB/((double)nHitB + (double)nHitD);
+						HBarrelFraction.Fill(barrelFraction);
+						HNDvsNB.Fill(nHitB,nHitD);
 
 			
-		} // end loop on tracks
+					} // end loop on tracks
 		
 		
-		// LOOP ON HITS
+					// LOOP ON HITS
 	
-		unsigned nHits = ev.hitList.size();
-		for(unsigned iH = 0; iH != nHits; ++iH) {
+					unsigned nHits = ev.hitList.size();
+					for(unsigned iH = 0; iH != nHits; ++iH) {
 		
-			Hit thisHit = ev.hitList[iH];
-			double X, Y, Z;
-			thisHit.XYZ(dg, X, Y, Z);
-			double R = sqrt(X*X + Y*Y);
-			double Phi = atan2(Y,X);
+						Hit thisHit = ev.hitList[iH];
+						double X, Y, Z;
+						thisHit.XYZ(dg, X, Y, Z);
+						double R = sqrt(X*X + Y*Y);
+						double Phi = atan2(Y,X);
 			
-			if(Phi < minPhi) minPhi = Phi;
-			if(Phi > maxPhi) maxPhi = Phi;
+						if(Phi < minPhi) minPhi = Phi;
+						if(Phi > maxPhi) maxPhi = Phi;
+						
+					/*	if(Phi < - Pi/2.) {
+							cout << "******* Phi is " << Phi << endl;
+							thisHit.print(cout);
+							cout << "X = " << X << " Y = " << Y << " Z = " << Z << endl;
+							cout << "R = " << R << " Phi = " << Phi << endl;
+							
+							//return 0;
+						}*/
 			
+						HitX.Fill(X);
+						HitY.Fill(Y);
+						HitZ.Fill(Z);
 			
-			HitX.Fill(X);
-			HitY.Fill(Y);
-			HitZ.Fill(Z);
+						HitZPhi.Fill(Z,Phi);
+						HitRPhi.Fill(R,Phi);
 			
-			HitZPhi.Fill(Z,Phi);
-			HitRPhi.Fill(R,Phi);
-			
-			if(thisHit.hitType == 'B') {
-				HitXYbarrel.Fill(X,Y);
-				HitRZ.Fill(Z,R);
-				HitBXZ[thisHit.iLayer]->Fill(thisHit.x1,Z);
-				HitBX[thisHit.iLayer]->Fill(thisHit.x1);
-				HitBZ[thisHit.iLayer]->Fill(thisHit.x2);
-				HitBT[thisHit.iLayer]->Fill(thisHit.t);
-				//double tx = thisHit.timeExpected(g,mass[1],)/////////////////////////
-				
-				//double xCorr = thisHit.x1 - R*(dg.phi0Center + 6.e-4 * dg.invPzCenter * Z);
-				//HitBXCorr[thisHit.iLayer]->Fill(xCorr);
-			}
-			if(thisHit.hitType == 'D') {
-				HitXYdisc.Fill(X,Y);
-				HitRZ.Fill(Z,R);
-				HitDPhiR[thisHit.iLayer]->Fill(Phi,R);
-				HitDPhi[thisHit.iLayer]->Fill(Phi);
-				HitDR[thisHit.iLayer]->Fill(R);
-				HitDT[thisHit.iLayer]->Fill(thisHit.t);
-					//if(thisHit.iLayer==10)cout << thisHit.t << "  ";////////////////////
-				
-				//double phiCorr = Phi - dg.t_phi - asin(6.e-4*dg.t_invPt_mean*R);
-				//HitDPhiCorr[thisHit.iLayer]->Fill(phiCorr);
-			}	
-		}// end loop on hits
-		
-		//ev.print(cout,1); // mode = 1 prints all hits for each track
-		//ev.printXYZ(g,cout); // prints data for Mathematica Plot
+						if(thisHit.hitType == 'B') {
+							HitXYbarrel.Fill(X,Y);
+							HitRZ.Fill(Z,R);
+							HitBXZ[thisHit.iLayer]->Fill(thisHit.x1,Z);
+							HitBX[thisHit.iLayer]->Fill(thisHit.x1);
+							HitBZ[thisHit.iLayer]->Fill(thisHit.x2);
+							HitBT[thisHit.iLayer]->Fill(thisHit.t);
+						}
+						if(thisHit.hitType == 'D') {
+							HitXYdisc.Fill(X,Y);
+							HitRZ.Fill(Z,R);
+							HitDPhiR[thisHit.iLayer]->Fill(Phi,R);
+							HitDPhi[thisHit.iLayer]->Fill(Phi);
+							HitDR[thisHit.iLayer]->Fill(R);
+							HitDT[thisHit.iLayer]->Fill(thisHit.t);
+						}	
+					}// end loop on hits
 	
-	}
+				}
 	} // end loop on HTM array cells ///////////////////////////////////////////////////////////
 	
 		
 	cout << "Event generation complete" << endl;
 
-/*	// compute minimum accepted number of hits in a layer (expected value minus a number of Poisson sigmas)	
-
-	unsigned totNelements = HTA_NphiBins*HTA_NetaBins*HTA_NinvptBins;
-	double meanNhits = nTracks;
-	double sigma = sqrt(meanNhits);
-	unsigned nMin = meanNhits-par.train_nSigmaCell *sigma;
-	
-// Fill histogram of number of hits in each HTA cell and prune poorly populated layers
-	unsigned nPruned = 0;
-	 for(int i = 0; i != HTA_NphiBins; ++i) 
-			for(int j = 0; j != HTA_NetaBins; ++j)
-				for(int k = 0; k != HTA_NinvptBins; ++k){										
-					for(auto it = HTA.ArrElem[i][j][k].layerIndHitStat.begin(); it != HTA.ArrElem[i][j][k].layerIndHitStat.end(); ){     						
-							int n = (it->second).nEntries;
-							HCellStat.Fill(n);
-							if(n < nMin){ 
-								++nPruned;
-								cout << nPruned << " cell " << i << " " << j << " " << k << " pruned layer " << it->first << " nHits " << n << endl;
-								HTA.ArrElem[i][j][k].layerIndHitStat.erase(it++);
-							}
-							else ++it;   						
-					} 
-				}
-	*/
 	
 	cout << endl;
 	cout << "Phi limits for Bib distribution" << endl;

@@ -85,11 +85,14 @@ public:
 
 	// DETECTORS	
 
-	const static unsigned nBarrels = 10;
+	const static unsigned nBarrels = 11;
 	const static unsigned nDiscs = 30;	
 
 	Barrel _B, B[nBarrels];
 	Disc _D, D[nDiscs];
+	
+	// one barrel used only as boudary for all tracks
+	const static unsigned iBoundaryBarrel = nBarrels - 1;
 
 	
 
@@ -116,6 +119,8 @@ public:
 		_B.r = 810; _B.zMax = 1260.; _B.zMin =-_B.zMax; _B.xphiPrec = xphiSigmaB; _B.zPrec = zSigmaB; _B.tPrec = tSigmaB;    B[iB++] = _B;
 		_B.r = 1150.; _B.zMax = 1260.; _B.zMin =-_B.zMax; _B.xphiPrec = xphiSigmaB; _B.zPrec = zSigmaB; _B.tPrec = tSigmaB;    B[iB++] = _B;
 		_B.r = 1510.; _B.zMax = 1260.; _B.zMin =-_B.zMax; _B.xphiPrec = xphiSigmaB; _B.zPrec = zSigmaB; _B.tPrec = tSigmaB;    B[iB++] = _B;
+		
+		_B.r = 1511.; _B.zMax = 5000.; _B.zMin =-_B.zMax; _B.xphiPrec = xphiSigmaB; _B.zPrec = zSigmaB; _B.tPrec = tSigmaB;    B[iB++] = _B;// Boundary
 		
 		
 		
