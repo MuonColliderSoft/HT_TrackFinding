@@ -230,17 +230,17 @@ int main(){
 	TH1D HDeltaZ0("HDeltaZ0","HDeltaZ0",100, -1., +1.);
 	TH1D HDeltaT0("HDeltaT0","HDeltaT0",100, -50., +50.);
 	
-	TProfile HDPhiVsPhi("HDPhiVsPhi","HDPhiVsPhi", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
-	TProfile HDEtaVsPhi("HDEtaVsPhi","HDEtaVsPhi", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
-	TProfile HDInvPtVsPhi("HDInvPtVsPhi","HDInvPtVsPhi", 20,  par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
+	TProfile HDPhiVsPhi("HDPhiVsPhi","HDPhiVsPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	TProfile HDEtaVsPhi("HDEtaVsPhi","HDEtaVsPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	TProfile HDInvPtVsPhi("HDInvPtVsPhi","HDInvPtVsPhi", 20,  par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
 	
-	TProfile HDPhiVsEta("HDPhiVsEta","HDPhiVsEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
-	TProfile HDEtaVsEta("HDEtaVsEta","HDEtaVsEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
-	TProfile HDInvPtVsEta("HDInvPtVsEta","HDInvPtVsEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
+	TProfile HDPhiVsEta("HDPhiVsEta","HDPhiVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TProfile HDEtaVsEta("HDEtaVsEta","HDEtaVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TProfile HDInvPtVsEta("HDInvPtVsEta","HDInvPtVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
 		
-	TProfile HDPhiVsInvPt("HDPhiVsInvPt","HDPhiVsInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
-	TProfile HDEtaVsInvPt("HDEtaVsInvPt","HDEtaVsInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
-	TProfile HDInvPtVsInvPt("HDInvPtVsInvPt","HDInvPtVsInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	TProfile HDPhiVsInvPt("HDPhiVsInvPt","HDPhiVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	TProfile HDEtaVsInvPt("HDEtaVsInvPt","HDEtaVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	TProfile HDInvPtVsInvPt("HDInvPtVsInvPt","HDInvPtVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
 	
 	
 	
@@ -278,13 +278,13 @@ int main(){
 	TH1D HTrackZ0("HTrackZ0","HTrackZ0", 600, -300,+300); HTrackZ0.SetStats(true);
 	TH1D HTrackT0("HTrackT0","HTrackT0", 600, -300,+300); HTrackT0.SetStats(true);
 	
-	TH1D HTrackEta("HTrackEta","HTrackEta", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
-	TH1D HTrackPhi("HTrackPhi","HTrackPhi", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
-	TH1D HTrackInvPt("HTrackInvPt","HTrackInvPt", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	TH1D HTrackEta("HTrackEta","HTrackEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TH1D HTrackPhi("HTrackPhi","HTrackPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	TH1D HTrackInvPt("HTrackInvPt","HTrackInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
 	
-	TH1D HTrackEtaEff("HTrackEtaEff","HTrackEtaEff", 20, par.geo_def_t_eta-par.geo_def_t_deltaEta, par.geo_def_t_eta+par.geo_def_t_deltaEta);
-	TH1D HTrackPhiEff("HTrackPhiEff","HTrackPhiEff", 20, par.geo_def_t_phi-par.geo_def_t_deltaPhi, par.geo_def_t_phi+par.geo_def_t_deltaPhi);
-	TH1D HTrackInvPtEff("HTrackInvPtEff","HTrackInvPtEff", 20, par.geo_def_t_invPt_min , par.geo_def_t_invPt_max);
+	TH1D HTrackEtaEff("HTrackEtaEff","HTrackEtaEff", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TH1D HTrackPhiEff("HTrackPhiEff","HTrackPhiEff", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	TH1D HTrackInvPtEff("HTrackInvPtEff","HTrackInvPtEff", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
 	
 	
 	TH2I HTrackInvPtvsPhi("HTrackInvPtvsPhi","HTrackInvPtvsPhi",1000, -Pi,+Pi,1000, -1/2.,+1/2.);HTrackInvPtvsPhi.SetStats(true);
@@ -592,9 +592,7 @@ int main(){
 				//add BIB hits		
 				ev.addBibHits(bibRead, nxBibHits);
 			}
-			 
-			 
-			 //if(iEv < 42) continue;
+			
 			 
 			 
     		vector <FitTrack> foundTracks; // tracks found in this event

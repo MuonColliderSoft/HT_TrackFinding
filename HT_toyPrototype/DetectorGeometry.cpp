@@ -95,7 +95,6 @@ public:
 	const static unsigned iBoundaryBarrel = nBarrels - 1;
 
 	
-
 	DetectorGeometry() { // default constructor
 	
 		// detector measurement errors

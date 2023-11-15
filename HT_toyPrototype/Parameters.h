@@ -182,58 +182,52 @@ public:
 
 	// track parameters - default values
 
-	const double geo_def_t_phi = 0.262; // track phi mean
-	const double geo_def_t_deltaPhi = 0.262; // track delta phi
+	 double geo_def_t_phi = 0.262; // track phi mean
+	 double geo_def_t_deltaPhi = 0.262; // track delta phi
 	
-	//const double geo_def_t_phi = 0.020; // track phi mean
-	//const double geo_def_t_deltaPhi = 0.020; // track delta phi	
-	//const double geo_def_t_phi = 0.250; // track phi mean
-	//const double geo_def_t_deltaPhi = 0.250; // track delta phi
-	//const double geo_def_t_phi = 0.050; // track phi mean
-	//const double geo_def_t_deltaPhi = 0.050; // track delta phi
-	
-	const double geo_def_t_eta = 0.; // track eta mean
-	const double geo_def_t_deltaEta = 2.5; // track delta eta
-	const double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	const double geo_def_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
-	const double geo_def_t_x0 = 0.0; // track mean x0
-	const double geo_def_t_y0 = 0.0; // track mean y0 
-	const double geo_def_t_z0 = 0.0; // track mean z0
-	const double geo_def_t_t0 = 0.0; // track mean t0
-	const double geo_def_t_deltaX0 = 0.0; // track sigma x0
-	const double geo_def_t_deltaY0 = 0.0; // track sigma y0
-	const double geo_def_t_deltaZ0 = 1.5; // track sigma z0
-	const double geo_def_t_deltaT0 = 1.5; // track sigma t0 mm
+	 double geo_def_t_eta = 0.; // track eta mean
+	 double geo_def_t_deltaEta = 2.5; // track delta eta
+	 double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
+	 double geo_def_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
+	 double geo_def_t_x0 = 0.0; // track mean x0
+	 double geo_def_t_y0 = 0.0; // track mean y0 
+	 double geo_def_t_z0 = 0.0; // track mean z0
+	 double geo_def_t_t0 = 0.0; // track mean t0
+	 double geo_def_t_deltaX0 = 0.0; // track sigma x0
+	 double geo_def_t_deltaY0 = 0.0; // track sigma y0
+	 double geo_def_t_deltaZ0 = 1.5; // track sigma z0
+	 double geo_def_t_deltaT0 = 1.5; // track sigma t0 mm
 	
 	
 	// expansion factors applied to default parameter spaces
 	// for EventGeneration(gen), HTA, and HTAtraining (train)
 	
-	const double gen_fiducial = 1.0;
-	const double HTA_fiducial = 1.0;
-	const double train_fiducial = 1.0;
+	 double gen_fiducial = 1.0;
+	 double HTA_fiducial = 1.0;
+	 double train_fiducial = 1.0;
 
 
 	// track parameters for event generation
 
-	const bool geo_gen_default = true; // apply default values?
+	 bool geo_gen_default = false; // apply default values?
 
 	// if not use the following:
 
-	double geo_gen_t_phi = 0.005; // track phi mean
-	double geo_gen_t_deltaPhi = 0.005; // track delta phi
-	double geo_gen_t_eta = 1.0; // track eta mean
-	double geo_gen_t_deltaEta = 1.0; // track delta eta
-	double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	double geo_gen_t_invPt_min = 1./4.; // track invPt min Gev/c^(-1)
-	double geo_gen_t_x0 = 0.0; // track mean x0
-	double geo_gen_t_y0 = 0.0; // track mean y0 
-	double geo_gen_t_z0 = 0.0; // track mean z0
-	double geo_gen_t_t0 = 0.0; // track mean t0
-	double geo_gen_t_deltaX0 = 0.0; // track sigma x0
-	double geo_gen_t_deltaY0 = 0.0; // track sigma y0
-	double geo_gen_t_deltaZ0 = 1.5; // track sigma z0
-	double geo_gen_t_deltaT0 = 1.5; // track sigma t0 mm
+	 double geo_gen_t_phi = 0.262; // track phi mean
+	 double geo_gen_t_deltaPhi = 0.262; // track delta phi
+	 double geo_gen_t_eta = 0.; // track eta mean
+	 double geo_gen_t_deltaEta = 2.0; // track delta eta
+	 double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
+	 double geo_gen_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
+	 double geo_gen_t_x0 = 0.0; // track mean x0
+	 double geo_gen_t_y0 = 0.0; // track mean y0 
+	 double geo_gen_t_z0 = 0.0; // track mean z0
+	 double geo_gen_t_t0 = 0.0; // track mean t0
+	 double geo_gen_t_deltaX0 = 0.0; // track sigma x0
+	 double geo_gen_t_deltaY0 = 0.0; // track sigma y0
+	 double geo_gen_t_deltaZ0 = 1.5; // track sigma z0
+	 double geo_gen_t_deltaT0 = 1.5; // track sigma t0 mm
+	
 
 
 	// track parameters for Hough Transform Array
