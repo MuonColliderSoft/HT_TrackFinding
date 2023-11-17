@@ -152,8 +152,8 @@ public:
 // coordinates of a single HTA cell and detector layer 
 // whose hit coordinates we want to plot in 3-D
 
-	int HTA_plotBinX = 10;
-	int HTA_plotBinY = 40;
+	int HTA_plotBinX = 5;
+	int HTA_plotBinY = 5;
 	int HTA_plotBinZ = 5;
 	int HTA_plotLay = 5;
 

@@ -779,7 +779,7 @@ double chi2MassFunc(const double *x){
 		void initHists(){
 			
 			HDeltaEta = new TH1D("DeltaEta","DeltaEta",21,-10.5,+10.5);
-			HDeltaPhi = new TH1D("DeltaPhi","DeltaPhi",51,-10.5,+40.5);
+			HDeltaPhi = new TH1D("DeltaPhi","DeltaPhi",61,-30.5,+30.5);
 			HDeltaPhi2 = new TH1D("DeltaPhi2","DeltaPhi2",21,-10.5,+10.5);
 			HInvptTimesR = new TH1D("InvptTimesR","InvptTimesR",1000, 0.,0.3);
 			HDeltaPhiVsInvptTimesR = new TH2I("DeltaPhiVsInvptTimesR","DeltaPhiVsInvptTimesR",100,0.,0.3,510,-10.5,+40.5);					 
@@ -1077,30 +1077,27 @@ double chi2MassFunc(const double *x){
 			int iEta2 = NetaBins;
 			int iInvpt1 = 0;
 			int iInvpt2 = NinvptBins;
-		
 			
-			
-			
-				double r,z;
-				if(h.hitType == 'B'){
-					z = h.x2;
-					r = dg.B[h.iLayer].r;	
-				}
-				else{
-					z = dg.D[h.iLayer].z;
-					r = h.x2;	
-				}		
-				double eta = asinh(z/r);
+			double r,z;
+			if(h.hitType == 'B'){
+				z = h.x2;
+				r = dg.B[h.iLayer].r;	
+			}
+			else{
+				z = dg.D[h.iLayer].z;
+				r = h.x2;	
+			}		
+			double eta = asinh(z/r);
 
-				// indexes of the hit coordinates
-						
-				int iPhiMap;
-				int iPhiMap2;
-				
-				
-				int iEtaMap; 
-				getCell_j(eta, iEtaMap);
-				
+			// indexes of the hit coordinates
+					
+			int iPhiMap;
+			int iPhiMap2;
+			
+			
+			int iEtaMap; 
+			getCell_j(eta, iEtaMap);
+			
 
 			if(mode == 1 || mode == 2){
 	
@@ -1113,21 +1110,17 @@ double chi2MassFunc(const double *x){
 				if(iEta1 > NetaBins-1) iEta1 = NetaBins - 1;
 				if(iEta2 > NetaBins) iEta2 = NetaBins;
 				
-			} // end mode = 1 or 2
+			} // end if mode = 1 or 2
 			
-				//h.print(cout);
 		
 				for(unsigned iEta = iEta1; iEta != iEta2; ++iEta){
 					for(unsigned iInvpt = iInvpt1; iInvpt != iInvpt2; ++iInvpt){
-					
-						//cout << iEta << " "<< iInvpt << endl;
 					
 						getCell_i(h.realPhi(dg), iPhiMap);
 						getCell_i(h.realPhi(dg) - 0.5*signedCurvaturePerInvPt*getCell_InvPt(iInvpt)*r, iPhiMap2);
 						
 						if(mode == 2){
 							int errPhi = par.gen_errPhi;
-							//cout << "errPhi = " << errPhi << endl;
 							iPhi1 = iPhiMap2 - errPhi;
 							iPhi2 = iPhiMap2 + errPhi +1;
 				
@@ -1138,15 +1131,14 @@ double chi2MassFunc(const double *x){
 							
 							//cout << iPhi1 << " " << iPhi2 << endl;
 				
-						} // end mode = 2
+						} // end if mode = 2
 						
 						
 					
 						for(unsigned iPhi = iPhi1; iPhi != iPhi2; ++iPhi){
-						//for(unsigned iPhi = 0; iPhi != NphiBins; ++iPhi){
 						
 							int strike = ArrElem[iPhi][iEta][iInvpt].fill(h, mode);			
-							if(strike == 0) { //cout << "strike iPhi = " << iPhi << endl;
+							if(strike == 0) { 
 								Hitstat* thisStat = &(ArrElem[iPhi][iEta][iInvpt].layerIndHitStat[h.layerInd]);
 								thisStat->hitLayer = true;
 								thisStat->hitIDList.push_back(h.ID);
@@ -1159,17 +1151,14 @@ double chi2MassFunc(const double *x){
 								int deltaPhi = iPhiMap - iPhi;
 								HDeltaPhi->Fill(deltaPhi);
 								
-								double xCoord = 0.5*signedCurvaturePerInvPt*getCell_InvPt(iInvpt)*r;
-								HInvptTimesR->Fill(xCoord);
-								HDeltaPhiVsInvptTimesR->Fill(xCoord,deltaPhi);
+								//double xCoord = 0.5*signedCurvaturePerInvPt*getCell_InvPt(iInvpt)*r;
+								//HInvptTimesR->Fill(xCoord);
+								//HDeltaPhiVsInvptTimesR->Fill(xCoord,deltaPhi);
 															
 								int deltaPhi2 = iPhiMap2 - iPhi;			
 								HDeltaPhi2->Fill(deltaPhi2);
-								
-								//cerr << iPhi << " " << iPhiMap << " " <<  iPhiMap2 << endl; // ********
-							
 									
-								}							
+								}// end if strike == 0							
 							} // end loop on phi	
 						} // end loop on pt
 				} // end loop on eta	
