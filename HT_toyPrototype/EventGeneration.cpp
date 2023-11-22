@@ -26,7 +26,6 @@
 #include "TError.h"
 
 #include "Statistics.cpp"
-#include "makeEffGraph.cpp"
 
 
 using namespace std;

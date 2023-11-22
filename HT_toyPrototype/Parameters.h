@@ -9,10 +9,6 @@
 // dimensions of the HT array
 // (global variables)
 
-//const static unsigned HTA_NphiBins = 30;
-//const static unsigned HTA_NetaBins = 90;
-//const static unsigned HTA_NinvptBins = 10;
-
 const static unsigned HTA_NphiBins = 30;
 const static unsigned HTA_NetaBins = 90;
 const static unsigned HTA_NinvptBins = 10;
@@ -99,7 +95,7 @@ public:
 
 	bool gen_printCandidates = false;
 
-// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster)	or 2 (fastest)
+// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster) or 2 (fastest)
 	
 	int gen_fillMode = 2; 
 	
