@@ -120,7 +120,9 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata_30_90_10_BigEtaSlice.txt";
+	string gen_dataFileName = "HTAdata_30_90_10_BigEtaSliceNew.txt";
+	
+	//string gen_dataFileName = "HTAdata.txt";
 	
 // data file with all Bib hits
 

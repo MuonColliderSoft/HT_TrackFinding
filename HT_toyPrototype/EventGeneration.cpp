@@ -94,6 +94,8 @@ bool PlotTracks; // create a file with data for 3-D plots of candidates
 int main(){
 
 	
+	dg.print(cout);
+
 	// parameter initialization
     nEvents = par.gen_nEvents; // Number of events to be generated
 	nTracks = par.gen_nTracks; // Number of tracks per event
@@ -248,6 +250,9 @@ int main(){
 	
 	TH1D HBarrelFraction("HBarrelFraction","HBarrelFraction", 11, -0.05, 1.05);HBarrelFraction.SetStats(false);
 	TH2D HNDvsNB("NDvsNB","NDvsNB",  13, -0.5,+12.5, 13, -0.5, +12.5); HNDvsNB.SetStats(false);
+	
+	TH1D HlayerInd("layerInd","layerInd",  51, -0.5,+50.5); HlayerInd.SetStats(false);
+	
 	
 	
 	TH1D HitX("HitX","HitX", 4000, -2000.,+2000.); HitX.SetStats(false);
@@ -605,7 +610,7 @@ int main(){
 			Track thisTrack = ev.trackList[iT];
 			
 			if(Debug) thisTrack.print(cout,1);////////////////////// debug ********************
-			//thisTrack.print(cout,0);
+			thisTrack.print(cout,1);
 			
 			// Fill histograms of main track parameters	
 			
@@ -642,6 +647,8 @@ int main(){
 				thisHit.XYZ(dg, X, Y, Z);
 				double R = sqrt(X*X + Y*Y);
 				double Phi = atan2(Y,X);
+				
+				HlayerInd.Fill(thisHit.layerInd);
 			
 			
 				HitX.Fill(X);
@@ -819,7 +826,15 @@ int main(){
 							int i = phi_to_xi(phi);
 							int j = eta_to_xj(eta);
 							int k = invPt_to_xk(invPt);
-							
+								
+								if(i >= HTA_NphiBins) i = HTA_NphiBins - 1;
+								if(j >= HTA_NetaBins) j = HTA_NetaBins - 1;
+								if(k >= HTA_NinvptBins) k = HTA_NinvptBins - 1;
+								
+								if(i < 0) i = 0;
+								if(j < 0) j = 0;
+								if(k < 0) k = 0;
+				
 							bool done =  HTA.ArrElem[i][j][k].thisCellDone;
 							
 							if(!done){ // this is executed only for one copy of duplicates

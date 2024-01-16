@@ -42,13 +42,17 @@
         		}// end loop ond barrels
         		
         		// find hits in all disc detectors
+        		
         		for(unsigned iD = 0; iD != g.nDiscs; ++iD){
+        		
         			double hitPhi, hitZ, hitT;
         			bool smear = false;
-        			if(thisTrack.phizBarrel(g, g.iBoundaryBarrel, hitPhi, hitZ, hitT, smear)){ // find hit
+        			if(thisTrack.phizBarrel(g, g.iBoundaryBarrel, hitPhi, hitZ, hitT, smear)){ // find hit in boundary barrel
         				if(fabs(hitZ) < fabs(g.D[iD].z)) continue;
-        			}	
+        			}
+        				
         			if(distribution(generator_trk) < par.geo_ineffD)continue;
+        			
         			double hitR;       			
         			smear = true;
         			if(thisTrack.xyDisc(g, iD, hitPhi, hitR, hitT, smear)){ // find hit		

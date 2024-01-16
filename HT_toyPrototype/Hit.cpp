@@ -105,8 +105,8 @@
     	bool Hit::isSeed(){
 		
 			if(layerInd >= 4 && layerInd <= 9) return true;
-			if(layerInd >= 14 && layerInd <= 24) return true;
-			if(layerInd >= 29 && layerInd <= 39) return true;
+			if(layerInd >= 15 && layerInd <= 25) return true;
+			if(layerInd >= 30 && layerInd <= 40) return true;
 			return false;
         
         }
