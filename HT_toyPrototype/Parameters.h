@@ -207,14 +207,14 @@ public:
 
 	// track parameters for event generation
 
-	 bool geo_gen_default = false; // apply default values?
+	 bool geo_gen_default = true; // apply default values?
 
 	// if not use the following:
 
 	 double geo_gen_t_phi = 0.262; // track phi mean
 	 double geo_gen_t_deltaPhi = 0.262; // track delta phi
 	 double geo_gen_t_eta = 0.; // track eta mean
-	 double geo_gen_t_deltaEta = 2.0; // track delta eta
+	 double geo_gen_t_deltaEta = 2.5; // track delta eta
 	 double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
 	 double geo_gen_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
 	 double geo_gen_t_x0 = 0.0; // track mean x0
