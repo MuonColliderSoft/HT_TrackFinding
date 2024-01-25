@@ -204,7 +204,7 @@ int main(){
 	std::poisson_distribution<unsigned> poissDist(nBibHits);
 	
 	
-	double rateScale = 8.*Pi/(HTA.phiStep*HTA.NphiBins);// includes factors 2 from charge and eta
+	double rateScale = 2.*Pi/(HTA.phiStep*HTA.NphiBins);
 	cout << "rate scale factor: " << rateScale << endl;	
 	
 	
