@@ -85,8 +85,7 @@
         	
         	// shuffle hits
         	
-        	auto rng = std::default_random_engine {};
-  			std::shuffle(std::begin(hitList), std::end(hitList), rng);
+  			std::shuffle(std::begin(hitList), std::end(hitList), generator);
   
   			if(verbose) cout << "hitList.size():" << hitList.size() << endl;
   			

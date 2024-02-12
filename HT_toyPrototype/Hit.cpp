@@ -22,7 +22,7 @@
             
 		void Hit::print(ostream &out){
 	
-		out <<  "type " << hitType << " layer: " << layerInd  << " x1: " << x1 << " x2: " << x2 << " time: " << t << " iT: " <<  trackInd << std::endl;
+		out << "ID: " << ID << " type: " << hitType << " layer: " << layerInd  << " x1: " << x1 << " x2: " << x2 << " time: " << t << " iT: " <<  trackInd << std::endl;
 	
 		}
 		
