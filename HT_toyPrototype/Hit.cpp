@@ -6,6 +6,10 @@
 //
 
 
+        Hit::Hit(char _hitType){
+        // ghost hit constructor
+        	hitType = 'G';
+        }
         
         Hit::Hit(char _hitType, int _iLayer, double _x1, double _x2, double _t, unsigned _trackInd){
 		

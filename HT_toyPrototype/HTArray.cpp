@@ -449,7 +449,15 @@ double chi2MassFunc(const double *x){
         
         } // end printCandidate
         
-        
+        //////////////////////////////////////////////////////////////////////////////////
+        // This array element has been selected as a candidate and all the hit combinations
+        // must be formed to find the best track fit. A maximum of one track is chosen
+        // on the basis of best chi square and number of hits. Combinations of hits
+        // where hits are discarded are allowed provided the minimum number of hits 
+        // required for a fit is satisfied. A combination of lesser number of hits
+        // is considered only if no combination with more hits has an acceptable chi
+        // square.                           Luciano Feb 12, 2024
+        //////////////////////////////////////////////////////////////////////////////////
         
         int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, double &z0, double &t0, double &mass, unsigned &nLayers){
         
@@ -489,6 +497,12 @@ double chi2MassFunc(const double *x){
 				int nHits = (it->second).hitIDList.size();
 				if(nHits == 0) continue;// skip possible empty layers
 				
+				
+				//define ghost hit
+				
+				Hit ghostHit('G');
+				
+				
 				// iterate on all previous combinations
 				int nComb = comb1->size();
 				for(int iC = 0; iC != nComb; ++iC){ 
@@ -496,12 +510,18 @@ double chi2MassFunc(const double *x){
 					// iterate on all hits in this layer
 				 
 					for(int ih = 0; ih != nHits; ++ih){
-						Hit h = event.hitList[(it->second).hitIDList[ih]];
+						unsigned hitID = (it->second).hitIDList[ih];
+						Hit h = event.hitList[hitID];
 							hitList = (*comb1)[iC];
 							hitList.push_back(h);
-							comb2->push_back(hitList);
-												
+							comb2->push_back(hitList);												
 					}
+				 	// add ghost hit
+				 	
+					hitList = (*comb1)[iC];
+					hitList.push_back(ghostHit);
+					comb2->push_back(hitList);	
+					
 				(*comb1)[iC].clear();						
 				}
 			
@@ -514,7 +534,6 @@ double chi2MassFunc(const double *x){
 			
 			combinations = *comb1;
 			
-			//nHits = combinations[0].size();
 			int nCombs = combinations.size();
 			
 			if(verbose) cout << nCombs << " combinations" << endl;
@@ -544,14 +563,27 @@ double chi2MassFunc(const double *x){
 			// loop on all combinations for this candidate
 			
 			bool oneGoodFit = false; // did we find at least one good hit combination?
-			bool firstGoodFit = true; // is this the first good fit for min chi2?
+			bool firstGoodFit = true; // is this the first good fit for min chi2?				
 			
 			for(int iComb = 0; iComb != nCombs; ++iComb){ 
 			
-				fitHitList = combinations[iComb];// pick the correct hit combination for chi2Funcx
+				
+				// "fitHitList" is the list of hits that will be fitted for this combination
+				
+				fitHitList.clear();
+				
+				// discard ghost hits from combination			
+				for(int i = 0; i != combinations[iComb].size(); ++i){
+					Hit thisHit = combinations[iComb][i];
+					if(thisHit.hitType != 'G') fitHitList.push_back(thisHit);
+				}
+									
+				// check for minimum number of hits	in this combination
+								
+				if(fitHitList.size() < par.gen_minLayersForFit) continue;				
 				
 				if(verbose) {
-					cout << "combination " << iComb;			
+					cout << "*combination " << iComb;			
 					cout << " - ";				
 					for(unsigned iH = 0; iH != fitHitList.size(); ++iH){
 						cout << fitHitList[iH].trackInd << " ";
@@ -561,6 +593,7 @@ double chi2MassFunc(const double *x){
 						fitHitList[iH].print(cout);
 					}
 				}
+				
 				
 				// set tolerance , etc...
 				min->SetMaxFunctionCalls(1000000); // for Minuit/Minuit2 
@@ -593,7 +626,7 @@ double chi2MassFunc(const double *x){
 				
 				min->FixVariable(5);			
 		
-				min->Minimize(); 
+			    min->Minimize(); 
 		
 				if(par.gen_massFit){
 				
@@ -607,7 +640,7 @@ double chi2MassFunc(const double *x){
 							
 				min->Minimize(); 
 				}
-		
+	
 				const double *res = min->X();
 						
 				// return parameters

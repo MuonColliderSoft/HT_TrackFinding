@@ -849,6 +849,7 @@ int main(){
 									ft.z0 = z0;
 									ft.t0 = t0;
 									ft.mass = mass;
+									ft.nLayers = nLayers;
 																						
 								foundTracks.push_back(ft);
 						
@@ -895,7 +896,8 @@ int main(){
 					
 		for(unsigned iFT = 0; iFT != nFoundTracks; ++iFT)
 				cout << " result  pt:" << 1./foundTracks[iFT].invPt << " eta: " << foundTracks[iFT].eta << " phi: " 
-					<< foundTracks[iFT].phi << " z0: " << foundTracks[iFT].z0 << " t0:" << foundTracks[iFT].t0 << " mass: " << foundTracks[iFT].mass << endl;			
+					<< foundTracks[iFT].phi << " z0: " << foundTracks[iFT].z0 << " t0:" << foundTracks[iFT].t0 
+						<< " mass: " << foundTracks[iFT].mass  << " nLayers: " << foundTracks[iFT].nLayers << " chi2: " << foundTracks[iFT].chi2 << endl;			
 								
 		
 		if(nFoundTracks == 0){

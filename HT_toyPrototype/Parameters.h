@@ -58,7 +58,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 1000;
+	unsigned gen_nEvents = 12;
 
 // number of tracks to be generated for each event
 
@@ -66,7 +66,7 @@ public:
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = -1.; // -1. == no BIB hit
+	double gen_fracBib = 1.; // -1. == no BIB hit
 	
 // perform track fitting of candidates
 
