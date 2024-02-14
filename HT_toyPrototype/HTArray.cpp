@@ -449,6 +449,12 @@ double chi2MassFunc(const double *x){
         
         } // end printCandidate
         
+        
+        static bool compareComb(vector<Hit> v1, vector<Hit> v2) {
+			
+				return v1.size() > v2.size();
+		}
+        
         //////////////////////////////////////////////////////////////////////////////////
         // This array element has been selected as a candidate and all the hit combinations
         // must be formed to find the best track fit. A maximum of one track is chosen
@@ -459,8 +465,12 @@ double chi2MassFunc(const double *x){
         // square.                           Luciano Feb 12, 2024
         //////////////////////////////////////////////////////////////////////////////////
         
+         
+        
+        
         int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, double &z0, double &t0, double &mass, unsigned &nLayers){
         
+       
         	struct Result {
         		double chi2;
         		double phi;
@@ -474,6 +484,7 @@ double chi2MassFunc(const double *x){
         	
         	Result bestFitRes;
         	int bestFitComb;
+        
         
         	// create list of combination of hits to be fitted
         	
@@ -532,12 +543,40 @@ double chi2MassFunc(const double *x){
 						
 			} 
 			
-			combinations = *comb1;
+			combinations = *comb1; // including ghost hits
 			
-			int nCombs = combinations.size();
+			int nCombs = combinations.size();		
 			
-			if(verbose) cout << nCombs << " combinations" << endl;
-        	
+			vector< vector <Hit> > finalCombinations;
+			vector <Hit> tempHitList;
+			
+			for(int iComb = 0; iComb != nCombs; ++iComb){ 
+				
+				tempHitList.clear();
+				
+				// discard ghost hits from combination			
+				for(int i = 0; i != combinations[iComb].size(); ++i){
+					Hit thisHit = combinations[iComb][i];
+					if(thisHit.hitType != 'G') tempHitList.push_back(thisHit);
+				}
+									
+				// check for minimum number of hits	in this combination
+								
+				if(tempHitList.size() >= par.gen_minLayersForFit) finalCombinations.push_back(tempHitList);		
+				
+			}
+			
+			
+			nCombs = finalCombinations.size();	// final unsorted list
+			
+			
+			
+			sort(finalCombinations.begin(),finalCombinations.end(),compareComb); 
+			
+			if(verbose) {
+				cout << nCombs << " final combinations:" << endl;
+				for(int i = 0; i != nCombs; ++i) cout << finalCombinations[i].size() << " "; cout << endl;
+        	}
 		
 			// Minimize with Root Minimizer
 	
@@ -563,27 +602,23 @@ double chi2MassFunc(const double *x){
 			// loop on all combinations for this candidate
 			
 			bool oneGoodFit = false; // did we find at least one good hit combination?
-			bool firstGoodFit = true; // is this the first good fit for min chi2?				
+			bool firstGoodFit = true; // is this the first good fit for min chi2?
+		
+					
+					
 			
 			for(int iComb = 0; iComb != nCombs; ++iComb){ 
 			
 				
 				// "fitHitList" is the list of hits that will be fitted for this combination
 				
-				fitHitList.clear();
+				fitHitList = finalCombinations[iComb];
 				
-				// discard ghost hits from combination			
-				for(int i = 0; i != combinations[iComb].size(); ++i){
-					Hit thisHit = combinations[iComb][i];
-					if(thisHit.hitType != 'G') fitHitList.push_back(thisHit);
-				}
-									
-				// check for minimum number of hits	in this combination
-								
-				if(fitHitList.size() < par.gen_minLayersForFit) continue;				
+				if(oneGoodFit && (fitHitList.size() < bestFitRes.nLayers)) break;
+							
 				
 				if(verbose) {
-					cout << "*combination " << iComb;			
+					cout << "combination " << iComb;			
 					cout << " - ";				
 					for(unsigned iH = 0; iH != fitHitList.size(); ++iH){
 						cout << fitHitList[iH].trackInd << " ";
@@ -656,6 +691,7 @@ double chi2MassFunc(const double *x){
 				
 				if(verbose) cout << "chi2: " << chi2 << endl;
 
+				if(chi2 > par.gen_chi2Cut) continue;// failed chi2
 				
 				oneGoodFit = true;
 				
@@ -668,11 +704,12 @@ double chi2MassFunc(const double *x){
 					bestFitRes.z0 = z0;
 					bestFitRes.t0 = t0;
 					bestFitRes.mass = mass;
+					bestFitRes.nLayers = fitHitList.size();
 					bestFitComb = iComb;				
 									
 				}
 			
-			}// end loop on combinations
+			}// end loop on final combinations
 			
 			if(oneGoodFit){
 				nLayers = combinations[bestFitComb].size();
