@@ -1107,14 +1107,17 @@ int main(){
 
 	TGraph * g_eff1 = makeEffGraphFromHists(&HTrackPhiEff,&HTrackPhi);	
   	g_eff1->SetTitle("efficiency vs phi");
+  	g_eff1->SetName("effVsPhi");  	
   	g_eff1->Write();
   	  
 	TGraph * g_eff2 = makeEffGraphFromHists(&HTrackEtaEff,&HTrackEta);
   	g_eff2->SetTitle("efficiency vs eta");
+  	g_eff2->SetName("effVsEta");
   	g_eff2->Write();
 
 	TGraph * g_eff3 = makeEffGraphFromHists(&HTrackInvPtEff,&HTrackInvPt);
   	g_eff3->SetTitle("efficiency vs invPt");
+  	g_eff3->SetName("effVsInvPt");
   	g_eff3->Write();
   	
   	
