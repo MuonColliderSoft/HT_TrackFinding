@@ -231,18 +231,38 @@ int main(){
 	TH1D HDeltaZ0("HDeltaZ0","HDeltaZ0",100, -1., +1.);
 	TH1D HDeltaT0("HDeltaT0","HDeltaT0",100, -50., +50.);
 	
-	TProfile HDPhiVsPhi("HDPhiVsPhi","HDPhiVsPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
-	TProfile HDEtaVsPhi("HDEtaVsPhi","HDEtaVsPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
-	TProfile HDInvPtVsPhi("HDInvPtVsPhi","HDInvPtVsPhi", 20,  par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	// normalization for resolutions as a function of track parameters
 	
-	TProfile HDPhiVsEta("HDPhiVsEta","HDPhiVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
-	TProfile HDEtaVsEta("HDEtaVsEta","HDEtaVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
-	TProfile HDInvPtVsEta("HDInvPtVsEta","HDInvPtVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TH1D HPhiResolution("HPhiResolution","HPhiResolution",20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	HPhiResolution.SetStats(false);
+	TH1D HEtaResolution("HEtaResolution","HEtaResolution",20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	HEtaResolution.SetStats(false);
+	TH1D HInvPtResolution("HInvPtResolution","HInvPtResolution",20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	HInvPtResolution.SetStats(false);	
+	
+	
+	// delta squared for resolutions as a function of track parameters
+	
+	TH1D HDPhiVsPhi("HDPhiVsPhi","HDPhiVsPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	HDPhiVsPhi.SetStats(false);
+	TH1D HDEtaVsPhi("HDEtaVsPhi","HDEtaVsPhi", 20, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	HDEtaVsPhi.SetStats(false);
+	TH1D HDInvPtVsPhi("HDInvPtVsPhi","HDInvPtVsPhi", 20,  par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
+	HDInvPtVsPhi.SetStats(false);
+	
+	TH1D HDPhiVsEta("HDPhiVsEta","HDPhiVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	HDPhiVsEta.SetStats(false);
+	TH1D HDEtaVsEta("HDEtaVsEta","HDEtaVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	HDEtaVsEta.SetStats(false);
+	TH1D HDInvPtVsEta("HDInvPtVsEta","HDInvPtVsEta", 20, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	HDInvPtVsEta.SetStats(false);
 		
-	TProfile HDPhiVsInvPt("HDPhiVsInvPt","HDPhiVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
-	TProfile HDEtaVsInvPt("HDEtaVsInvPt","HDEtaVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
-	TProfile HDInvPtVsInvPt("HDInvPtVsInvPt","HDInvPtVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
-	
+	TH1D HDPhiVsInvPt("HDPhiVsInvPt","HDPhiVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	HDPhiVsInvPt.SetStats(false);
+	TH1D HDEtaVsInvPt("HDEtaVsInvPt","HDEtaVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	HDEtaVsInvPt.SetStats(false);
+	TH1D HDInvPtVsInvPt("HDInvPtVsInvPt","HDInvPtVsInvPt", 20, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	HDInvPtVsInvPt.SetStats(false);
 	
 	
 	TH1D HTrackMass("HTrackMass","HTrackMass",1000,0., 2.);
@@ -955,6 +975,10 @@ int main(){
 			   	HDeltaZ0.Fill(DeltaZ0);
 			   	HDeltaT0.Fill(DeltaT0);	
 			   	
+			   	HPhiResolution.Fill(phi);
+			   	HEtaResolution.Fill(eta);
+			   	HInvPtResolution.Fill(invPt);
+			   	
 				HDPhiVsPhi.Fill(phi,DeltaPhi*DeltaPhi);
 				HDEtaVsPhi.Fill(phi,DeltaEta*DeltaEta);
 				HDInvPtVsPhi.Fill(phi,DeltaInvPt*DeltaInvPt);
@@ -995,6 +1019,79 @@ int main(){
 			
 	cout << "Total number of candidates = " << candidateRate << endl;
 	cout << "Number of candidates per Collision = " << candidateRate/nEvents*rateScale << endl;
+	
+	
+	// Create resolution plots as a function of track parameters
+	
+	TH1D * sumHist;
+	TH1D * nevHist;
+	
+	for(int i = 0; i != 9; ++i){
+			
+		switch(i){
+		
+			case 0:
+				sumHist = &HDPhiVsPhi;
+				nevHist = &HPhiResolution;
+				break;
+				
+			case 1:
+				sumHist = &HDEtaVsPhi;
+				nevHist = &HPhiResolution;
+				break;
+				
+			case 2:
+				sumHist = &HDInvPtVsPhi;
+				nevHist = &HPhiResolution;
+				break;
+				
+			case 3:
+				sumHist = &HDPhiVsEta;
+				nevHist = &HEtaResolution;
+				break;
+				
+			case 4:
+				sumHist = &HDEtaVsEta;
+				nevHist = &HEtaResolution;
+				break;
+				
+			case 5:
+				sumHist = &HDInvPtVsEta;
+				nevHist = &HEtaResolution;
+				break;
+				
+			case 6:
+				sumHist = &HDPhiVsInvPt;
+				nevHist = &HInvPtResolution;
+				break;
+				
+			case 7:
+				sumHist = &HDEtaVsInvPt;
+				nevHist = &HInvPtResolution;
+				break;
+						
+			case 8:
+				sumHist = &HDInvPtVsInvPt;
+				nevHist = &HInvPtResolution;
+				break;	
+		
+			}
+			unsigned nBins = sumHist->GetNbinsX();
+			unsigned nBins2 = nevHist->GetNbinsX();
+			if(nBins != nBins2) 
+				cout << "***** ERROR ***** sumHist nBins vs nevHist mismatch. Case " << i << " Efficiency plot skipped ";
+			else for(int i = 0; i != nBins+1; ++i){
+				double sumSquares = sumHist->GetBinContent(i);
+				double nev =  nevHist->GetBinContent(i);
+				double sigma2 = sumSquares/nev;
+				double sigma = sqrt(sigma2);
+				sumHist->SetBinContent (i, sigma);
+				double error = sigma/sqrt(2.*nev);		
+				sumHist->SetBinError (i, error);	 
+			}
+	
+	}
+	
 	
 /*	
 	
