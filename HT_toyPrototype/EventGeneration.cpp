@@ -12,20 +12,21 @@
 #include <list>
 #include <time.h>
 
-//#include "Eigen/Eigen"
-
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
 #include "TProfile.h"
 #include "TFile.h"
-
+#include "TGraph.h"
+#include "TGraphAsymmErrors.h"
 #include "Math/Minimizer.h"
 #include "Math/Factory.h"
 #include "Math/Functor.h"
 #include "TError.h"
 
 #include "Statistics.cpp"
+
+#include "makeEffGraphFromHists.cpp"
 
 
 using namespace std;
@@ -446,8 +447,6 @@ int main(){
 		HitBDPhi.push_back(h);	
 	}
 	
-	
-	
 	std::vector<TH1D*> HitTDR; // Track hits
 	
 	for(unsigned iD = 0; iD != nDiscs; ++iD){
@@ -520,7 +519,7 @@ int main(){
 	
 	// Define vector of 2-Dim histograms for barrel hits
 	
-	//const static unsigned nBarrels = dg.nBarrels;
+	
 	std::vector<TH2I*> HitBXZ;
 	
 	for(unsigned iB = 0; iB != nBarrels; ++iB){
@@ -535,7 +534,6 @@ int main(){
 	
 	// Define vector of 2-Dim histograms for disc hits
 	
-	//const static unsigned nDiscs = dg.nDiscs;
 	std::vector<TH2I*> HitDPhiR;
 	
 	for(unsigned iD = 0; iD != nDiscs; ++iD){
@@ -948,6 +946,7 @@ int main(){
 					}
 
 	
+	/////////////////////////////////////////////////////////////////////////////////
 	// Fill parameter resolution histograms
 	
 		if(ev.trackList.size()){
@@ -998,6 +997,7 @@ int main(){
 	
 	
 	} // end loop on events ///////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
 	
 	cout << "***************************************************" << endl;
 	cout << "EVENT GENERATION COMPLETE" << endl;
@@ -1021,6 +1021,12 @@ int main(){
 	cout << "Number of candidates per Collision = " << candidateRate/nEvents*rateScale << endl;
 	
 	
+	
+	
+	
+	
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 	// Create resolution plots as a function of track parameters
 	
 	TH1D * sumHist;
@@ -1093,24 +1099,30 @@ int main(){
 	}
 	
 	
-/*	
-	
-	TGraph * g_eff = makeEffGraph(HTrackEta, HTrackEtaEff);
-	
-	 // first canvas position and size
 
-		  Int_t x1 = 200;
-		  Int_t y1 = 50;
-		  Int_t width = 500;
-		  Int_t height = 500;
+/////////////////////////////////////////////////////////////////////////////////	
+//
+//  Create efficiency plots as a function of track parameters
+//
 
-		  TCanvas* c1 = new TCanvas("c1","c1",x1,y1,width,height);
+	TGraph * g_eff1 = makeEffGraphFromHists(&HTrackPhiEff,&HTrackPhi);	
+  	g_eff1->SetTitle("efficiency vs phi");
+  	g_eff1->Write();
+  	  
+	TGraph * g_eff2 = makeEffGraphFromHists(&HTrackEtaEff,&HTrackEta);
+  	g_eff2->SetTitle("efficiency vs eta");
+  	g_eff2->Write();
 
-		  c1->SetGrid();
-		  c1->SetTitle("prova");
-		  g_eff->SetTitle("efficienza");
+	TGraph * g_eff3 = makeEffGraphFromHists(&HTrackInvPtEff,&HTrackInvPt);
+  	g_eff3->SetTitle("efficiency vs invPt");
+  	g_eff3->Write();
+  	
+  	
 
-		  g_eff->Draw("AP"); */
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
 		
 	cout << "Writing histogram file..." << endl;
 	histFile->Write(); // write histogram file
