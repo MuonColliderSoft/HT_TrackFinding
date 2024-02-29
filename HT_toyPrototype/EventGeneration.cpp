@@ -266,7 +266,7 @@ int main(){
 	HDInvPtVsInvPt.SetStats(false);
 	
 	
-	TH1D HTrackMass("HTrackMass","HTrackMass",1000,0., 2.);
+	TH1D HTrackMass("HTrackMass","HTrackMass",100,0., 1.);
 	
 	
 	TH1D HBarrelFraction("HBarrelFraction","HBarrelFraction", 11, -0.05, 1.05);HBarrelFraction.SetStats(false);
@@ -293,7 +293,8 @@ int main(){
 	TH2D HitBRZ("HitBRZ","HitBRZ",  5000, -2500.,+2500., 1800, 0, 1800); HitBRZ.SetStats(false);
 	
 	
-	TH2I HitZPhi("HitZPhi","HitZPhi",  10000, -2500.,+2500., 10000, -1., +1.); HitZPhi.SetStats(false);
+	TH1D HitPhi("HitPhi","HitPhi", 1000, -Pi,+Pi);HitPhi.SetStats(false);
+	TH2I HitZPhi("HitZPhi","HitZPhi",  10000, -2500.,+2500., 10000, -Pi, +Pi); HitZPhi.SetStats(false);
 	TH2I HitRPhi("HitRPhi","HitRPhi",  10000, 0.,+2500., 10000, -1., +1.); HitRPhi.SetStats(false);
 	
 	
@@ -587,8 +588,9 @@ int main(){
 	cout << "BEGIN EVENT GENERATION " << endl;	
 
     for(unsigned iEv = 0; iEv != nEvents; ++iEv){
+    
     	
-	cout << "***************************************************" << endl;	
+	cout << "********************************************************************" << endl;	
 		
    			// declaring argument of time()
     		time_t my_time = time(NULL);
@@ -597,12 +599,15 @@ int main(){
     		printf("%s", ctime(&my_time));
     				
     		cout << iEv << "/" << nEvents << " processed events" << endl;
+    		
     		//if(nEvents >= 1e6)
     		//if(iEv && ((iEv % (int)100) == 0) ) cout << iEv << "/" << nEvents << " processed events" << endl;
     		
     	
+    		// create one event
     		
 			Event ev(dg, nTracks);// (geometry, nTracks)
+			
 			if(nBibHits){
 				
 				// fluctuate BIB hits			
@@ -614,7 +619,7 @@ int main(){
 			
 			 
 			 
-    		vector <FitTrack> foundTracks; // tracks found in this event
+    		vector <FitTrack> foundTracks; // tracks found in this event (now empty)
 	
 			HTA.reset(); // clear all hits from HT Array
 	
@@ -627,8 +632,7 @@ int main(){
 			
 			Track thisTrack = ev.trackList[iT];
 			
-			if(Debug) thisTrack.print(cout,1);////////////////////// debug ********************
-			thisTrack.print(cout,1);
+			thisTrack.print(cout,1); // print track with all its hits
 			
 			// Fill histograms of main track parameters	
 			
@@ -672,6 +676,7 @@ int main(){
 				HitX.Fill(X);
 				HitY.Fill(Y);
 				HitZ.Fill(Z);
+				HitPhi.Fill(Phi);
 				HitZPhi.Fill(Z,Phi);
 				HitRPhi.Fill(R,Phi);
 			
@@ -715,11 +720,15 @@ int main(){
 			} // end fill all hit histograms
 			
 			
+			/// FILL HTA ARRAY FOR PATTERN REGOGNITION ///////////////////////////////////
+			
 			if(thisHit.isSeed())HTA.fill(thisHit,fillMode);// use only non-vertex hits (seed hits)
 			Special = false;
 			
 				
 		}// end loop on hits
+		
+		
 		
 		if(Debug) cout << endl;
 		
@@ -780,7 +789,6 @@ int main(){
 			if(nCan) ++nEventsWithCandidates;
 			
 			if(verbose) cout << "Event " << iEv << ": "<< nCan << " Candidates" << endl;
-			//cout << "Number of Events with candidates = " << nEventsWithCandidates << "/" << iEv+1 << endl;
 					
 			if(verbose) if(par.gen_printCandidates) HTA.printCellCandidateList(cout);
 			
@@ -789,6 +797,8 @@ int main(){
 				outPlotFile << "Event " << iEv << " ";
 				HTA.writeCellCandidateList(outPlotFile, ev.hitList);
 			}
+			
+			cout << "Loop on candidates" << endl;
 				
 			bool foundTrack = false;
 			
@@ -817,7 +827,7 @@ int main(){
 												
 						if(verbose) if(retCodeFit == -1) cout << " no fit" << endl;
 						
-						if( retCodeFit == 0) {
+						if(retCodeFit == 0) {
 							HFitChi2.Fill(chi2);
 							HFitLayers.Fill(nLayers);
 							switch(nLayers) {
