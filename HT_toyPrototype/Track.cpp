@@ -202,17 +202,20 @@ bool Track::xzBarrel(double yDet, double &x, double &z, double &t){
 
 bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double &T, bool smear = false, bool checkBoundaries = true){
     
+	// Finds the intersection of this track with disc iDisc (g.D[iDisc])
+	// returns the position of the hit as R and X or false if no intersection
+    //
     // R is the radial position of the measured hit
     // X is the distance from phi = 0 measured along the circumference
     // measurement errors are included
     
     double x,y; // cartesian coordinates of the hit
     
-    // zDet is the position in z of the disc (parallel to xy)s
+    // zDet is the position in z of the disc (which is parallel to xy)
     
     double zDet = g.D[iDisc].z;
     
-    if(cosTheta == 0.) {
+    if(cosTheta == 0.) { // track is at 90 degrees
     	cout << "infinite looper" << endl;
     	return false; // infinite looper   	
     }
@@ -253,14 +256,23 @@ bool Track::xyDisc(DetectorGeometry &g, int iDisc, double &X, double &R, double 
     double r = sqrt(x*x + y*y);
     double PHI = atan2(y,x);
     
+   
     if(smear){
-     
+     	
 		double errTang = g.D[iDisc].xphiPrec*gauss(generator_trk); // measurement error along PHI
-		double errRadial = g.D[iDisc].rPrec*gauss(generator_trk); // measurement error along r   
-	
+		double errRadial = g.D[iDisc].rPrec*gauss(generator_trk); // measurement error along r 
+					  
 		R = r + errRadial;
-		X = R*PHI + errTang;
+		X = r*PHI + errTang;
 		T += g.D[iDisc].tPrec*gauss(generator_trk);
+		
+	/*	 
+		 cout << "***Find hit in Disc " << iDisc +11 <<  endl;
+   		 cout << "   R: " << r << " + " << errRadial << " X: " << r*PHI << "+ " << errTang << " T: " 
+   		 	<< T << " + "  << g.D[iDisc].tPrec*gauss(generator_trk) << endl;
+   		 	cout << "   R: " << R  << " X: " << X << " T: " << T << endl;
+	*/	
+		
     }
     else {
 		R = r;
@@ -358,7 +370,7 @@ double Track::hitChi2(DetectorGeometry &g, Hit &h){
 	
 	if(h.hitType == 'B'){
 		if(!phizBarrel(g, h.iLayer, x1, x2, t, noSmear, checkBoundaries)){
-			cout << "phizBarrel fails. Barrel " << iLayer << endl;
+			cout << "phizBarrel fails fitting. Barrel " << iLayer << endl;
 			h.print(cout);
 		}
 		x1err = g.B[iLayer].xphiPrec;
@@ -367,7 +379,7 @@ double Track::hitChi2(DetectorGeometry &g, Hit &h){
 	}
 	else {
 		if(!xyDisc(g, h.iLayer, x1, x2, t, noSmear, checkBoundaries)) {
-			cout << "xyDisc fails. Disc " << iLayer << endl; 
+			cout << "xyDisc fails fitting. Disc " << iLayer << endl; 
 			h.print(cout);
 		}
 		x1err = g.D[iLayer].xphiPrec;
