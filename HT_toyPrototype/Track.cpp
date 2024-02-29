@@ -313,7 +313,7 @@ bool Track::phizBarrel(DetectorGeometry &g, int iBarrel, double &hitPhi, double 
         double x_;
         if(!xzBarrel(r, x_, hitZ, hitT)){
             rotate(-rotPhi);
-            cout << "xzBarrel fails. rotPhi = " << rotPhi << endl;
+            cout << "xzBarrel fails on barrel " << iBarrel << ".  rotPhi = " << rotPhi << endl;
             return false;
         }
         else {

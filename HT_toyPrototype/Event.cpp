@@ -41,15 +41,24 @@
         			}	
         		}// end loop ond barrels
         		
+        		
+        		
         		// find hits in all disc detectors
         		
-        		for(unsigned iD = 0; iD != g.nDiscs; ++iD){
         		
-        			double hitPhi, hitZ, hitT;
-        			bool smear = false;
-        			if(thisTrack.phizBarrel(g, g.iBoundaryBarrel, hitPhi, hitZ, hitT, smear)){ // find hit in boundary barrel
-        				if(fabs(hitZ) < fabs(g.D[iD].z)) continue;
-        			}
+        		// check for hit in boundary barrel
+        		
+        		double hitPhi, hitZ, hitT;
+        		bool smear = false;        		
+        		bool hitBoundary = thisTrack.phizBarrel(g, g.iBoundaryBarrel, hitPhi, hitZ, hitT, smear);
+        		
+        	       		
+        		for(unsigned iD = 0; iD != g.nDiscs; ++iD){ // loops on all discs
+        		
+        			
+        			// if found hit in boundary barrel skips all discs beyond that point in z (positive and negative)
+        				if( hitBoundary && (fabs(hitZ) < fabs(g.D[iD].z)) ) continue;
+        			
         				
         			if(distribution(generator_trk) < par.geo_ineffD)continue;
         			
