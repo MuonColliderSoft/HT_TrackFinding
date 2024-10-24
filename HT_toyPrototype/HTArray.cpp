@@ -640,7 +640,7 @@ double chi2MassFunc(const double *x){
 				// a IMultiGenFunction type 
 				ROOT::Math::Functor f(&chi2MassFunc,6); 
 				double step[6] = {0.1,0.1,0.1,0.1,0.1,0.001};
-				double variable[6] = {kmeanInvPt,jmeanEta,imeanPhi,0.0,0.0,0.139570};
+				double variable[6] = {kmeanInvPt,jmeanEta,imeanPhi,0.,0.,0.139570};
 		   		
 		   		
 				 min->SetFunction(f);

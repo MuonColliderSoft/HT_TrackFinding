@@ -9,9 +9,9 @@
 // dimensions of the HT array
 // (global variables)
 
-const static unsigned HTA_NphiBins = 30;
-const static unsigned HTA_NetaBins = 90;
-const static unsigned HTA_NinvptBins = 10;
+const static unsigned HTA_NphiBins = 15;
+const static unsigned HTA_NetaBins = 360;
+const static unsigned HTA_NinvptBins = 6;
 		
 
 class Parameters {
@@ -73,7 +73,8 @@ public:
 	bool gen_TrackFit = true;
 	unsigned gen_minLayersForFit = 5;
 	double gen_chi2Cut = 45.;
-	bool gen_massFit = false;
+	bool gen_massFit = true;
+	double gen_massFitMaxP = 3.; // GeV/c
 	
 // limits in phi for BIB generation
 	
@@ -120,7 +121,8 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata_30_90_10_BigEtaSliceNew.txt";
+	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew.txt";
+	//string gen_dataFileName = "HTAdata_15_360_12_BigEtaSliceNew-Pt_1p5.txt";
 	
 	//string gen_dataFileName = "HTAdata.txt";
 	
@@ -131,6 +133,7 @@ public:
 // event generation histogram file
 
 	string gen_histFileName = "AAAEventGeneration.root";
+	//string gen_histFileName = "AAAAParticleIDTests.root";
 	
 	bool gen_fillHitHistograms = true; // selective histogram filling
 	
@@ -162,15 +165,22 @@ public:
 
 	// detector measurement errors
 
-	double geo_xphiSigmaB = 0.1;// Barrels: sigma x in mm
-	double geo_xphiSigmaD = 0.1;// Discs: sigma x in mm
+	double geo_xphiSigmaB = 0.01;// Barrels: sigma x in mm
+	double geo_xphiSigmaD = 0.01;// Discs: sigma x in mm
 	double geo_zSigmaB = 0.1;// Barrels: sigma z in mm
 	double geo_rSigmaD = 0.1;// Discs: sigma R in mm
-	double geo_tSigmaB = 15.;// Barrels: sigma t -  15 mm == 50 ps
-	double geo_tSigmaD = 15.;// Discs: sigma t - 15 mm == 50 ps
 	
-	double geo_ineffB = 0.0;// Barrel inefficiency
-	double geo_ineffD = 0.0;// Disc inefficiency
+	double geo_tSigmaB = 18.;// Barrels: sigma t -  18 mm == 60 ps
+	double geo_tSigmaD = 18.;// Discs: sigma t - 18 mm == 60 ps
+	
+	//double geo_tSigmaB = 3.;// Barrels: sigma t -  3 mm == 10 ps
+	//double geo_tSigmaD = 3.;// Discs: sigma t - 3 mm == 10 ps
+	
+	//double geo_tSigmaB = 0.3;// Barrels: sigma t -  0.3 mm == 1 ps
+	//double geo_tSigmaD = 0.3;// Discs: sigma t - 0.3 mm == 1 ps
+	
+	double geo_ineffB = 0.01;// Barrel inefficiency
+	double geo_ineffD = 0.01;// Disc inefficiency
 
 
 //////////////////////////////////////////////////////////////////////// 
@@ -198,7 +208,7 @@ public:
 	
 	
 	// expansion factors applied to default parameter spaces
-	// for EventGeneration(gen), HTA, and HTAtraining (train)
+	// for EventGeneration(gen), HTA, and HTA training (train)
 	
 	 double gen_fiducial = 1.0;
 	 double HTA_fiducial = 1.0;
@@ -214,9 +224,9 @@ public:
 	 double geo_gen_t_phi = 0.262; // track phi mean
 	 double geo_gen_t_deltaPhi = 0.262; // track delta phi
 	 double geo_gen_t_eta = 0.; // track eta mean
-	 double geo_gen_t_deltaEta = 2.5; // track delta eta
-	 double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	 double geo_gen_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
+	 double geo_gen_t_deltaEta = 2.0; // track delta eta
+	 double geo_gen_t_invPt_max = 1./1.5; // track invPt max Gev/c^(-1)  
+	 double geo_gen_t_invPt_min = 1./3.0; // track invPt min Gev/c^(-1)
 	 double geo_gen_t_x0 = 0.0; // track mean x0
 	 double geo_gen_t_y0 = 0.0; // track mean y0 
 	 double geo_gen_t_z0 = 0.0; // track mean z0
@@ -239,7 +249,7 @@ public:
 	double HTA_t_eta = 1.0; // track eta mean
 	double HTA_t_deltaEta = 1.0; // track delta eta
 	double HTA_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	double HTA_t_invPt_min = 0.; // track invPt min Gev/c^(-1)
+	double HTA_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
 	double HTA_t_x0 = 0.0; // track mean x0
 	double HTA_t_y0 = 0.0; // track mean y0 
 	double HTA_t_z0 = 0.0; // track mean z0
@@ -261,7 +271,7 @@ public:
 	double geo_train_t_eta = 1.0; // track eta mean
 	double geo_train_t_deltaEta = 1.0; // track delta eta
 	double geo_train_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	double geo_train_t_invPt_min = 0.; // track invPt min Gev/c^(-1)
+	double geo_train_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
 	double geo_train_t_x0 = 0.0; // track mean x0
 	double geo_train_t_y0 = 0.0; // track mean y0 
 	double geo_train_t_z0 = 0.0; // track mean z0

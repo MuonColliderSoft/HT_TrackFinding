@@ -13,6 +13,7 @@
 #include <time.h>
 
 #include "TH1D.h"
+#include "TCanvas.h"
 #include "TH2D.h"
 #include "TH3D.h"
 #include "TProfile.h"
@@ -371,6 +372,12 @@ int main(){
 	TH1D HTrackEta("HTrackEta","HTrackEta", NchanEff, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
 	TH1D HTrackPhi("HTrackPhi","HTrackPhi", NchanEff, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
 	TH1D HTrackInvPt("HTrackInvPt","HTrackInvPt", NchanEff, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+
+	TH1D HTrackNhitsVsEta("HTrackNhitsVsEta","HTrackNhitsVsEta", NchanEff, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TH1D HTrackNhitsVsInvPt("HTrackNhitsVsInvPt","HTrackNhitsVsInvPt", NchanEff, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	TH1D HTrackNhits2VsEta("HTrackNhits2VsEta","HTrackNhits2VsEta", NchanEff, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
+	TH1D HTrackNhits2VsInvPt("HTrackNhits2VsInvPt","HTrackNhits2VsInvPt", NchanEff, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	
 	
 	TH1D HTrackEtaEff("HTrackEtaEff","HTrackEtaEff", NchanEff, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
 	TH1D HTrackPhiEff("HTrackPhiEff","HTrackPhiEff", NchanEff, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
@@ -715,6 +722,14 @@ int main(){
 			HTrackPhi0.Fill(thisTrack.phi0);
 			HTrackInvPzvsPhi0.Fill(thisTrack.phi0,1./thisTrack.Pz);
 			
+			// average number of hits vs. eta and pt
+			
+			unsigned numHits = thisTrack.hitList.size();
+				HTrackNhitsVsEta.Fill(thisTrack.eta,(double)numHits);
+				HTrackNhits2VsEta.Fill(thisTrack.eta,(double)(numHits*numHits));
+				HTrackNhitsVsInvPt.Fill(thisTrack.invPt,(double)numHits);
+				HTrackNhits2VsInvPt.Fill(thisTrack.invPt,(double)(numHits*numHits));					
+			
 		}
 	
 		
@@ -959,7 +974,7 @@ int main(){
 									<< " phi: " << ev.trackList[0].phi << " z0: " << ev.trackList[0].z0 << " t0:" << ev.trackList[0].t0 << endl;
 							}// end trick to eliminate duplicates
 													
-						}// end if retCodeFit
+						}// end this is a good fit (retcode and chi2)
 								
 					}// end if TrackFit							
 								
@@ -1049,8 +1064,10 @@ int main(){
 				double D4Phi = D2Phi*D2Phi;
 				double D4Eta = D2Eta*D2Eta;
 				double D4Pt  = D2Pt*D2Pt;
-										
-				HTrackMass.Fill(foundTracks[iT].mass);		
+				
+				double P = fabs(sinh(eta)/invPt); // momentum
+				if(P <= par.gen_massFitMaxP) 						
+					HTrackMass.Fill(foundTracks[iT].mass);		
 		
 			   	HDeltaPhi.Fill(DPhi);
 			   	HDeltaEta.Fill(DEta);
@@ -1142,8 +1159,8 @@ int main(){
 	
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-	// Create resolution plots as a function of track parameters
-	
+// Create resolution plots as a function of track parameters
+{	
 	
 	TH1D * nevHist;
 	TH1D * sumHist;
@@ -1265,13 +1282,14 @@ int main(){
 			}
 	
 	}
-	
+}// end create resolution plots
 	
 
 /////////////////////////////////////////////////////////////////////////////////	
 //
 //  Create efficiency plots as a function of track parameters
 //
+{
 
 	TGraph * g_eff1 = makeEffGraphFromHists(&HTrackPhiEff,&HTrackPhi);	
   	g_eff1->SetTitle("efficiency vs phi");
@@ -1288,7 +1306,80 @@ int main(){
   	g_eff3->SetName("effVsInvPt");
   	g_eff3->Write();
   	
+} // end create efficiency plots 
+
+
+/////////////////////////////////////////////////////////////////////////////////	
+//
+//  Create plots of the average number of hits per track as a function of eta and PT
+//
+{
+
+// --------- Eta------------------------------------------------------------------- 
+  {
+	TH1D * nevHist;
+	TH1D * sumHist;
+	TH1D * sum2Hist;
+	
+	nevHist  = &HTrackEta;
+	sumHist  = &HTrackNhitsVsEta;
+	sum2Hist  = &HTrackNhits2VsEta;
+		
+	unsigned nBins0 = nevHist->GetNbinsX();	
+	unsigned nBins1 = sumHist->GetNbinsX();		
+	unsigned nBins2 = sum2Hist->GetNbinsX();						
+
+	if((nBins0 != nBins1)||(nBins0 != nBins2))
+		cout << "***** ERROR ***** nBins mismatch. Nhits vs. eta plot skipped ";
+	
+	else for(int i = 1; i != nBins0+1; ++i){		
+		double nev =  nevHist->GetBinContent(i);
+		if((unsigned)nev == 0) sumHist->SetBinContent(i,0.);
+		else{
+			double sum = sumHist->GetBinContent(i);
+			double mean = sum/nev;
+			sumHist->SetBinContent(i,mean);
+			double sum2 = sum2Hist->GetBinContent(i);
+			double err = sqrt(sum2/nev - mean*mean);
+			sumHist->SetBinError(i,err);
+		}
+	}
+  } // end number oh hits as a function of eta
+  
+// --------- PT------------------------------------------------------------------- 
+	
+  {
+	TH1D * nevHist;
+	TH1D * sumHist;
+	TH1D * sum2Hist;
+	
+	nevHist  = &HTrackInvPt;
+	sumHist  = &HTrackNhitsVsInvPt;
+	sum2Hist  = &HTrackNhits2VsInvPt;
+		
+	unsigned nBins0 = nevHist->GetNbinsX();	
+	unsigned nBins1 = sumHist->GetNbinsX();		
+	unsigned nBins2 = sum2Hist->GetNbinsX();						
+
+	if((nBins0 != nBins1)||(nBins0 != nBins2))
+		cout << "***** ERROR ***** nBins mismatch. Nhits vs. PT plot skipped ";
+	
+	else for(int i = 1; i != nBins0+1; ++i){		
+		double nev =  nevHist->GetBinContent(i);
+		if((unsigned)nev == 0) sumHist->SetBinContent(i,0.);
+		else{
+			double sum = sumHist->GetBinContent(i);
+			double mean = sum/nev;
+			sumHist->SetBinContent(i,mean);
+			double sum2 = sum2Hist->GetBinContent(i);
+			double err = sqrt(sum2/nev - mean*mean);
+			sumHist->SetBinError(i,err);
+		}
+	}
+  } // end hits as a function of pt
   	
+
+} // end plots of the average number of hits
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////

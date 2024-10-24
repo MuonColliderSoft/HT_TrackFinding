@@ -23,10 +23,9 @@ Track::Track(TrackGeometry &g){ // constructor with parameters from specific geo
     
      int massInd_ = 2;// it's a pion 
      
-   // if(distribution(generator_trk) > 0.5) massInd_ = 2; // it's a pion 
-    	//else massInd_ = 3; // it's a kaon
-     
-		//else massInd_ = 4; // it's a proton
+    //if(distribution(generator_trk) > 0.5) massInd_ = 3; // it's a kaon at 50% probability
+         
+		//massInd_ = 4; // it's a proton
 
     double x0_ = g.t_x0 + g.t_deltaX0*gauss(generator_trk); // x at primary vertex
     double y0_ = g.t_y0 + g.t_deltaY0*gauss(generator_trk); // y at primary vertex
@@ -118,9 +117,12 @@ void Track::init(double mass_, double x0_, double y0_, double z0_, double t0_, d
     Pt = 1./invPt; // transverse momentum
     	if(Pt < 0.) Pt = -Pt;
     Pz = Pt*cotTheta; // longitudinal momentum
+
     double P2 = Pt*Pt + Pz*Pz;
     double E2 = P2 + mass*mass;
     beta = sqrt(P2/E2);// velocity
+    
+    P = sqrt(P2);
     
     cosTheta = Pz/sqrt(P2);
     

@@ -37,6 +37,7 @@
         // derived parameters
         
         double Pz; // longitudinal component of momentum
+        double P; // momentum
         double phi0; // phi coordinate of particle at z = 0
         
         double Pt, E;
