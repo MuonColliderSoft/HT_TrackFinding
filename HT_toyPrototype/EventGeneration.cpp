@@ -327,6 +327,40 @@ int main(){
 	
 	
 	
+	////////////////////////////////////////////////////////////////////
+		
+	// PT resolutions vs. abs eta and PT
+			
+	////////////////////////////////////////////////////////////////////
+	
+	
+	unsigned NchanAbsRes = 20; // number of channels for PT resolutions as a function of Abs eta and PT
+	
+	double maxAbsEtaRes = 2.;
+	double maxAbsInvPt = 1./3.;
+
+	TH1D HAbsEtaN("HAbsEtaN","HAbsEtaN", NchanAbsRes, 0.,maxAbsEtaRes);
+	HAbsEtaN.SetStats(false);
+	TH1D HAbsInvPtN("HAbsInvPtN","HAbsInvPtN", NchanAbsRes, 0., maxAbsInvPt);
+	HAbsInvPtN.SetStats(false);
+	
+	TH1D HBiasInvPtVsAbsEta("HBiasInvPtVsAbsEta","HBiasInvPtVsAbsEta", NchanAbsRes, 0., maxAbsEtaRes);
+	HBiasInvPtVsAbsEta.SetStats(false);
+	TH1D HBiasInvPtVsAbsInvPt("HBiasInvPtVsAbsInvPt","HBiasInvPtVsAbsInvPt", NchanAbsRes, 0., maxAbsInvPt);
+	HBiasInvPtVsAbsInvPt.SetStats(false);	
+	
+	TH1D HSigmaInvPtVsAbsEta("HSigmaInvPtVsAbsEta","HSigmaInvPtVsAbsEta", NchanAbsRes, 0., maxAbsEtaRes);
+	HSigmaInvPtVsEta.SetStats(false);
+	TH1D HSigmaInvPtVsAbsInvPt("HSigmaInvPtVsAbsInvPt","HSigmaInvPtVsAbsInvPt", NchanAbsRes, 0., maxAbsInvPt);
+	HSigmaInvPtVsAbsInvPt.SetStats(false);
+
+	TH1D HD4InvPtVsAbsEta("HD4InvPtVsAbsEta","HD4InvPtVsAbsEta", NchanAbsRes,  0., maxAbsEtaRes);
+	HD4InvPtVsAbsEta.SetStats(false);
+	TH1D HD4InvPtVsAbsInvPt("HD4InvPtVsAbsInvPt","HD4InvPtVsAbsInvPt", NchanAbsRes, 0., maxAbsInvPt);
+	HD4InvPtVsAbsInvPt.SetStats(false);
+	
+
+	
 	
 	
 	TH1D HTrackMass("HTrackMass","HTrackMass",100,0., 1.);
@@ -382,6 +416,18 @@ int main(){
 	TH1D HTrackEtaEff("HTrackEtaEff","HTrackEtaEff", NchanEff, par.geo_gen_t_eta-par.geo_gen_t_deltaEta, par.geo_gen_t_eta+par.geo_gen_t_deltaEta);
 	TH1D HTrackPhiEff("HTrackPhiEff","HTrackPhiEff", NchanEff, par.geo_gen_t_phi-par.geo_gen_t_deltaPhi, par.geo_gen_t_phi+par.geo_gen_t_deltaPhi);
 	TH1D HTrackInvPtEff("HTrackInvPtEff","HTrackInvPtEff", NchanEff, par.geo_gen_t_invPt_min , par.geo_gen_t_invPt_max);
+	
+	
+		
+	unsigned NchanAbsEff = 20; // number of channels for efficiency as a function of Abs eta and PT
+	double maxAbsEtaEff = 2.5; // max abs eta for efficiency plots
+		
+	TH1D HTrackAbsEta("HTrackAbsEta","HTrackAbsEta", NchanAbsEff,0.,maxAbsEtaEff); 
+	TH1D HTrackAbsInvPt("HTrackAbsInvPt","HTrackAbsInvPt", NchanAbsEff, 0., maxAbsInvPt);
+
+	TH1D HTrackAbsEtaEff("HTrackAbsEtaEff","HTrackAbsEtaEff", NchanAbsEff ,0.,maxAbsEtaEff); 
+	TH1D HTrackAbsInvPtEff("HTrackAbsInvPtEff","HTrackAbsInvPtEff", NchanAbsEff, 0., maxAbsInvPt);
+
 	
 	
 	TH2I HTrackInvPtvsPhi("HTrackInvPtvsPhi","HTrackInvPtvsPhi",1000, -Pi,+Pi,1000, -1/2.,+1/2.);HTrackInvPtvsPhi.SetStats(true);
@@ -706,15 +752,17 @@ int main(){
 			
 			Track thisTrack = ev.trackList[iT];
 			
-			thisTrack.print(cout,1); // print track with all its hits
+			//thisTrack.print(cout,0); // print track 
 			
 			// Fill histograms of main track parameters	
 			
 			HTrackZ0.Fill(thisTrack.z0);
 			HTrackT0.Fill(thisTrack.t0);
 			HTrackEta.Fill(thisTrack.eta);
+			HTrackAbsEta.Fill(fabs(thisTrack.eta));
 			HTrackPhi.Fill(thisTrack.phi);
 			HTrackInvPt.Fill(thisTrack.invPt);
+			HTrackAbsInvPt.Fill(fabs(thisTrack.invPt));
 			HTrackInvPtvsPhi.Fill(thisTrack.phi,thisTrack.invPt);
 			
 			HTrackPz.Fill(thisTrack.Pz);
@@ -995,8 +1043,10 @@ int main(){
 		
 			Track thisTrack = ev.trackList[0];
 			HTrackEtaEff.Fill(thisTrack.eta);
+			HTrackAbsEtaEff.Fill(fabs(thisTrack.eta));
 			HTrackPhiEff.Fill(thisTrack.phi);
-			HTrackInvPtEff.Fill(thisTrack.invPt);	
+			HTrackInvPtEff.Fill(thisTrack.invPt);
+			HTrackAbsInvPtEff.Fill(fabs(thisTrack.invPt));	
 		}
 		
 		cout << nCan << " candidates and " << nFoundTracks << " tracks found in this event" << endl;
@@ -1119,6 +1169,23 @@ int main(){
 				HD4PhiVsInvPt.Fill(invPt,D4Phi);
 				HD4EtaVsInvPt.Fill(invPt,D4Eta);
 				HD4InvPtVsInvPt.Fill(invPt,D4Pt);
+				
+				// histograms as a function of abs eta and PT
+	
+				double absEta = fabs(eta);
+				double absInvPt = fabs(invPt);
+	
+				HAbsEtaN.Fill(absEta);
+				HAbsInvPtN.Fill(absInvPt);
+	
+				HBiasInvPtVsAbsEta.Fill(absEta,DPt);
+				HBiasInvPtVsAbsInvPt.Fill(absInvPt, DPt);
+	
+				HSigmaInvPtVsAbsEta.Fill(absEta, D2Pt);
+				HSigmaInvPtVsAbsInvPt.Fill(absInvPt, D2Pt);
+				
+				HD4InvPtVsAbsEta.Fill(absEta, D4Pt);
+				HD4InvPtVsAbsInvPt.Fill(absInvPt, D4Pt);
 	
 	
 	
@@ -1167,7 +1234,7 @@ int main(){
 	TH1D * sum2Hist;
 	TH1D * sum4Hist;
 	
-	for(int iCase = 0; iCase != 9; ++iCase){
+	for(int iCase = 0; iCase != 11; ++iCase){
 			
 		switch(iCase){
 		
@@ -1233,6 +1300,20 @@ int main(){
 				sum2Hist = &HSigmaInvPtVsInvPt;
 				sum4Hist = &HD4InvPtVsInvPt;
 				break;	
+										
+			case 9:
+				nevHist  = &HAbsInvPtN;
+				sumHist  = &HBiasInvPtVsAbsInvPt;
+				sum2Hist = &HSigmaInvPtVsAbsInvPt;
+				sum4Hist = &HD4InvPtVsAbsInvPt;
+				break;	
+							
+			case 10:
+				nevHist  = &HAbsEtaN;
+				sumHist  = &HBiasInvPtVsAbsEta;
+				sum2Hist = &HSigmaInvPtVsAbsEta;
+				sum4Hist = &HD4InvPtVsAbsEta;
+				break;	
 		
 			}
 			
@@ -1242,7 +1323,7 @@ int main(){
 			unsigned nBins4 = sum4Hist->GetNbinsX();
 			
 			if((nBins0 != nBins1)||(nBins0 != nBins2)||(nBins0 != nBins4))
-				cout << "***** ERROR ***** nBins mismatch. Case " << iCase << " Efficiency plots skipped ";
+				cout << "***** ERROR ***** nBins mismatch. Case " << iCase << " Resolution plots skipped ";
 			
 			else for(int i = 1; i != nBins0+1; ++i){
 			
@@ -1305,6 +1386,18 @@ int main(){
   	g_eff3->SetTitle("efficiency vs invPt");
   	g_eff3->SetName("effVsInvPt");
   	g_eff3->Write();
+  	  	  	  
+	TGraph * g_eff4 = makeEffGraphFromHists(&HTrackAbsEtaEff,&HTrackAbsEta);
+  	g_eff4->SetTitle("efficiency vs abs eta");
+  	g_eff4->SetName("effVsAbsEta");
+  	g_eff4->Write();
+
+	TGraph * g_eff5 = makeEffGraphFromHists(&HTrackAbsInvPtEff,&HTrackAbsInvPt);
+  	g_eff5->SetTitle("efficiency vs abs invPt");
+  	g_eff5->SetName("effVsAbsInvPt");
+  	g_eff5->Write();
+  	
+  	
   	
 } // end create efficiency plots 
 

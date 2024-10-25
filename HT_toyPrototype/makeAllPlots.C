@@ -26,12 +26,15 @@ with their contents.
 
 	// Histogram files //////////////////////////////////////////////////////
 		
-		string histFileNameFullEff = "AAAEventGenerationFullEff.root";
-		string histFileName1pcIneff = "AAAEventGeneration1pcIneff.root";
+		string histFileNameFullEff = "AAAEventGeneration10KFullEffEta2.5.root";
+		string histFileName1pcIneff = "AAAEventGeneration10K1pcIneffEta2.5.root";		
+		string histFileNameFullEffEta2 = "AAAEventGeneration10KFullEffEta2.root";
+		string histFileName1pcIneffEta2 = "AAAEventGeneration10K1pcIneffEta2.root";
 		string histFileName60ps = "AAAAParticleIDTests60ps.root";
 		string histFileName10ps = "AAAAParticleIDTests10ps.root";
 		string histFileName1ps = "AAAAParticleIDTests1ps.root";
 		string histFileNameChi2 = "AAA10KEventGeneration.root";
+		string histFileNameHiStatChi2 = "AAAEventGeneration_15_360_6-Pt_3p0-HitIneff_0p01-xphiErr_10um-2M.root";
 		
 	/////////////////////////////////////////////////////////////////////////		
 
@@ -233,6 +236,7 @@ with their contents.
 		TGraph * graphStar;
 		TGraph * graphStar1pcIneff;
 		TH1D * histStar;
+		TH1D * histStar2;
 		string plotName;
 		string plotTitle;
 		
@@ -250,8 +254,41 @@ with their contents.
 		if (!histFile1pcIneff) {cout << " histogram file " << histFileName1pcIneff << " not found" << endl;
 						return;
 						}
+	
+		TFile *histFileFullEffEta2 = new TFile(histFileNameFullEffEta2.c_str());
+		if (!histFileFullEffEta2) {cout << " histogram file " << histFileNameFullEffEta2 << " not found" << endl;
+						return;
+						}
+			
+		TFile *histFile1pcIneffEta2 = new TFile(histFileName1pcIneffEta2.c_str());
+		if (!histFile1pcIneffEta2) {cout << " histogram file " << histFileName1pcIneffEta2 << " not found" << endl;
+						return;
+						}
 						
 		
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	NUMBER OF HITS VS. ETA
+//
+//////////////////////////////////////////////////////////////////////////////////////
+	
+		plotName = "HTrackNhitsVsEta";
+		plotTitle = "Number of hits vs eta";
+					
+		
+			getCanvas(canvasStar);
+			getHist(histFileFullEff, plotName, histStar);
+			setStyleResHist (histStar, plotName, plotTitle, canvasStar);			
+			histStar->GetYaxis()->SetRangeUser(3.,9.);
+			histStar->GetXaxis()->SetTitle("eta");
+			histStar->GetYaxis()->SetTitle("Nhits");	
+			histStar->GetXaxis()->CenterTitle(true);
+			histStar->GetYaxis()->CenterTitle(true);			
+			histStar->SetStats(0);
+			histStar->Draw(); 
+								
+			PrintHist (histStar, plotName, plotTitle, canvasStar);
+			
 	
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -289,7 +326,7 @@ with their contents.
 		
 //////////////////////////////////////////////////////////////////////////////////////
 //
-//	EFFICIENCY VS. 1/PT
+//	EFFICIENCY VS. 1/PT (eta range = [-2, +2])
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -301,7 +338,7 @@ with their contents.
 		plotTitle = "Efficiency vs 1/PT";
 			
 			getCanvas(canvasStar);
-			getGraph(histFileFullEff, plotName, graphStar);				
+			getGraph(histFileFullEffEta2, plotName, graphStar);				
 			setStyleEffGraph (graphStar, plotName, plotTitle, canvasStar);	
 			graphStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
 			graphStar->GetYaxis()->SetTitle("efficiency");	
@@ -309,7 +346,7 @@ with their contents.
 			graphStar->GetYaxis()->CenterTitle(true);
 			graphStar->Draw("AP"); 
 			
-			getGraph(histFile1pcIneff, plotName, graphStar1pcIneff);	
+			getGraph(histFile1pcIneffEta2, plotName, graphStar1pcIneff);	
 			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);						
 			graphStar1pcIneff->Draw("PSAME");
 					
@@ -342,7 +379,7 @@ with their contents.
 			
 //////////////////////////////////////////////////////////////////////////////////////
 //
-//	PT RESOLUTION VS. 1/PT
+//	PT RESOLUTION VS. 1/PT (eta range = [-2, +2])
 //
 //////////////////////////////////////////////////////////////////////////////////////
 											
@@ -350,7 +387,7 @@ with their contents.
 		plotTitle = "sigmaPT/PT^2 Vs. 1/PT";
 		
 			getCanvas(canvasStar);
-			getHist(histFileFullEff, plotName, histStar);
+			getHist(histFileFullEffEta2, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
 			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
@@ -359,6 +396,119 @@ with their contents.
 			histStar->Draw();
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
+			
+			
+						
+		
+	
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	EFFICIENCY VS. ABS(ETA)
+//
+//////////////////////////////////////////////////////////////////////////////////////
+
+	// This is actually the superposition of two plots: one with single hit efficiency
+	// of 100% (from histFileFullEff) and one with single hit efficiency of 99% (from
+	// histFile1pcIneff)
+		
+		plotName = "effVsAbsEta";
+		plotTitle = "Efficiency vs abs(eta)";
+					
+			getCanvas(canvasStar);
+			getGraph(histFileFullEff, plotName, graphStar);	
+			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
+			graphStar->GetXaxis()->SetTitle("eta");
+			graphStar->GetYaxis()->SetTitle("efficiency");	
+			graphStar->GetXaxis()->CenterTitle(true);
+			graphStar->GetYaxis()->CenterTitle(true);
+			graphStar->Draw("AP"); 
+			
+			getGraph(histFile1pcIneff, plotName, graphStar1pcIneff);	
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);				
+			graphStar1pcIneff->Draw("PSAME");
+			
+			auto legend2 = new TLegend(0.2,0.2);
+   			legend2->AddEntry(graphStar,"Single hit full eff","lep");
+   			legend2->AddEntry(graphStar1pcIneff,"Single hit 1% ineff","lep");
+   			legend2->Draw();	
+   			
+   			PrintGraph (graphStar1pcIneff, plotName, plotTitle, canvasStar);
+		
+		
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	EFFICIENCY VS. ABS(1/PT) (eta range = [-2, +2])
+//
+//////////////////////////////////////////////////////////////////////////////////////
+
+	// This is actually the superposition of two plots: one with single hit efficiency
+	// of 100% (from histFileFullEff) and one with single hit efficiency of 99% (from
+	// histFile1pcIneff)
+		
+		plotName = "effVsAbsInvPt";
+		plotTitle = "Efficiency vs abs(1/PT)";
+			
+			getCanvas(canvasStar);
+			getGraph(histFileFullEffEta2, plotName, graphStar);				
+			setStyleEffGraph (graphStar, plotName, plotTitle, canvasStar);	
+			graphStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			graphStar->GetYaxis()->SetTitle("efficiency");	
+			graphStar->GetXaxis()->CenterTitle(true);
+			graphStar->GetYaxis()->CenterTitle(true);
+			graphStar->Draw("AP"); 
+			
+			getGraph(histFile1pcIneffEta2, plotName, graphStar1pcIneff);	
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);						
+			graphStar1pcIneff->Draw("PSAME");
+					
+			legend = new TLegend(0.2,0.2);
+   			legend->AddEntry(graphStar,"Single hit full eff","lep");
+   			legend->AddEntry(graphStar1pcIneff,"Single hit 1% ineff","lep");
+   			legend->Draw();
+   			
+   			PrintGraph (graphStar1pcIneff, plotName, plotTitle, canvasStar);
+  
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	PT RESOLUTION VS. ABS(ETA)
+//
+//////////////////////////////////////////////////////////////////////////////////////
+								
+		plotName = "HSigmaInvPtVsAbsEta";
+		plotTitle = "sigmaPT/PT^2 Vs. abs(Eta)";
+		
+			getCanvas(canvasStar);
+			getHist(histFileFullEff, plotName, histStar);
+			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
+			histStar->GetXaxis()->SetTitle("eta");
+			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->CenterTitle(true);
+			histStar->GetYaxis()->CenterTitle(true);
+			histStar->Draw(); 
+								
+			PrintHist (histStar, plotName, plotTitle, canvasStar);
+			
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	PT RESOLUTION VS. ABS(1/PT) (eta range = [-2, +2])
+//
+//////////////////////////////////////////////////////////////////////////////////////
+											
+		plotName = "HSigmaInvPtVsAbsInvPt";
+		plotTitle = "sigmaPT/PT^2 Vs. abs(1/PT)";
+		
+			getCanvas(canvasStar);
+			getHist(histFileFullEffEta2, plotName, histStar);
+			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
+			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->CenterTitle(true);
+			histStar->GetYaxis()->CenterTitle(true);
+			histStar->Draw();
+			 				
+			PrintHist (histStar, plotName, plotTitle, canvasStar);
+		
+
 		
 			
 //////////////////////////////////////////////////////////////////////////////////////
@@ -506,30 +656,6 @@ with their contents.
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
 			
-			
-							
-			plotName = "HitTXYdisc";
-			plotTitle = "X-Y Detector Layout";
-		
-			getCanvas(canvasStar);
-			getHist(histFileFullEff, plotName, histStar);
-			histStar->SetTitle("");	
-			histStar->SetMarkerStyle(8);						
-			histStar->SetMarkerSize(1.5);
-			//histStar->SetLineColor(1);
-			//histStar->SetMinimum(0.);
-			histStar->SetMarkerStyle(8);						
-			histStar->SetMarkerSize(0.05);
-			histStar->GetXaxis()->SetTitle("X (mm)");
-			histStar->GetYaxis()->SetTitle("Y (mm)");	
-			histStar->GetXaxis()->CenterTitle(true);
-			histStar->GetYaxis()->CenterTitle(true);
-			histStar->GetXaxis()->SetRangeUser(0.,+1500.);
-			histStar->GetYaxis()->SetRangeUser(-1000.,+1500.);
-			histStar->Draw();
-			 				
-			PrintHist (histStar, plotName, plotTitle, canvasStar);
-			
 	
 								
 //////////////////////////////////////////////////////////////////////////////////////
@@ -665,6 +791,11 @@ with their contents.
 		if (!histFileChi2) {cout << " histogram file " << histFileNameChi2 << " not found" << endl;
 						return;
 						}
+							
+		TFile *histFileHiStatChi2 = new TFile(histFileNameHiStatChi2.c_str());
+		if (!histFileHiStatChi2) {cout << " histogram file " << histFileNameHiStatChi2 << " not found" << endl;
+						return;
+						}
 		
 		plotName = "HFitChi2";
 		plotTitle = "Fit Chi Squared";
@@ -672,11 +803,11 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFileChi2, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetRangeUser(0.,50.);
+			histStar->GetXaxis()->SetRangeUser(0.,100.);
 			histStar->GetXaxis()->SetTitle("Chi2");
-			//histStar->SetStats(1);
-			//gStyle->SetOptStat("r");
 			histStar->Draw();
+			getHist(histFileHiStatChi2, plotName, histStar2);
+			histStar2->Draw("SAME");
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
 					

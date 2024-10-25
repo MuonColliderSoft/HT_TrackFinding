@@ -73,7 +73,7 @@ public:
 	bool gen_TrackFit = true;
 	unsigned gen_minLayersForFit = 5;
 	double gen_chi2Cut = 45.;
-	bool gen_massFit = true;
+	bool gen_massFit = false;
 	double gen_massFitMaxP = 3.; // GeV/c
 	
 // limits in phi for BIB generation
@@ -121,7 +121,8 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew.txt";
+	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-LongBarrel.txt";
+	//string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew.txt";
 	//string gen_dataFileName = "HTAdata_15_360_12_BigEtaSliceNew-Pt_1p5.txt";
 	
 	//string gen_dataFileName = "HTAdata.txt";
@@ -179,8 +180,8 @@ public:
 	//double geo_tSigmaB = 0.3;// Barrels: sigma t -  0.3 mm == 1 ps
 	//double geo_tSigmaD = 0.3;// Discs: sigma t - 0.3 mm == 1 ps
 	
-	double geo_ineffB = 0.01;// Barrel inefficiency
-	double geo_ineffD = 0.01;// Disc inefficiency
+	double geo_ineffB = 0.0;// Barrel inefficiency
+	double geo_ineffD = 0.0;// Disc inefficiency
 
 
 //////////////////////////////////////////////////////////////////////// 
@@ -225,8 +226,8 @@ public:
 	 double geo_gen_t_deltaPhi = 0.262; // track delta phi
 	 double geo_gen_t_eta = 0.; // track eta mean
 	 double geo_gen_t_deltaEta = 2.0; // track delta eta
-	 double geo_gen_t_invPt_max = 1./1.5; // track invPt max Gev/c^(-1)  
-	 double geo_gen_t_invPt_min = 1./3.0; // track invPt min Gev/c^(-1)
+	 double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
+	 double geo_gen_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
 	 double geo_gen_t_x0 = 0.0; // track mean x0
 	 double geo_gen_t_y0 = 0.0; // track mean y0 
 	 double geo_gen_t_z0 = 0.0; // track mean z0
