@@ -56,13 +56,15 @@ with their contents.
 
 		// first canvas position and size
 
-		static int canv_x = 50;
-		static int canv_y = 50;
-		static int canv_width = 500;
-		static int canv_height = 400;
+		static int canv_x = 20;
+		static int canv_y = 20;
+		static int canv_width = 1000;
+		static int canv_height = 800;
 		
-		int verticalShift = 40; // vertical increment of canvas position
+		int verticalShift = 0; // vertical increment of canvas position
+		int horizontalShift = 20; // horizontal increment of canvas position
 		
+		canv_x += horizontalShift;
 		canv_y += verticalShift;
 				
 		++indCanvas;
@@ -233,6 +235,7 @@ with their contents.
 	
 		
 		TCanvas * canvasStar;
+		TCanvas * canvasStar2;
 		TGraph * graphStar;
 		TGraph * graphStar1pcIneff;
 		TH1D * histStar;
@@ -286,9 +289,8 @@ with their contents.
 			histStar->GetYaxis()->CenterTitle(true);			
 			histStar->SetStats(0);
 			histStar->Draw(); 
-								
+										
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
-			
 	
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -484,6 +486,7 @@ with their contents.
 			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
+			histStar->SetStats(0);
 			histStar->Draw(); 
 								
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
