@@ -30,8 +30,10 @@ with their contents.
 		string histFileName1pcIneff = "AAAEventGeneration10K1pcIneffEta2.5.root";		
 		string histFileNameFullEffEta2 = "AAAEventGeneration10KFullEffEta2.root";
 		string histFileName1pcIneffEta2 = "AAAEventGeneration10K1pcIneffEta2.root";
-		string histFileName60ps = "AAAAParticleIDTests60ps.root";
-		string histFileName10ps = "AAAAParticleIDTests10ps.root";
+		string histFileName1pcIneffEta2BIBx1 = "AAAEventGeneration10K1pcIneffEta2-1xBIB.root";
+		string histFileName60ps = "AAAEventGeneration_massFit_60ps.root";
+		string histFileName20ps = "AAAEventGeneration_massFit_20ps.root";
+		string histFileName10ps = "AAAEventGeneration_massFit_10ps.root";
 		string histFileName1ps = "AAAAParticleIDTests1ps.root";
 		string histFileNameChi2 = "AAA10KEventGeneration.root";
 		string histFileNameHiStatChi2 = "AAAEventGeneration_15_360_6-Pt_3p0-HitIneff_0p01-xphiErr_10um-2M.root";
@@ -151,7 +153,7 @@ with their contents.
 	void setStyleResHist (TH1D * histStar, string plotName, string plotTitle, TCanvas * canvasStar) {
 
 		canvasStar->SetGrid();
-		
+		histStar->SetStats(0);
 		histStar->SetTitle("");	
 		histStar->SetMarkerStyle(8);						
 		histStar->SetMarkerSize(1.5);
@@ -269,6 +271,11 @@ with their contents.
 						}
 						
 		
+		TFile *histFile1pcIneffEta2BIBx1 = new TFile(histFileName1pcIneffEta2BIBx1.c_str());
+		if (!histFile1pcIneffEta2BIBx1) {cout << " histogram file " << histFileName1pcIneffEta2BIBx1 << " not found" << endl;
+						return;
+						}
+						
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //	NUMBER OF HITS VS. ETA
@@ -399,9 +406,7 @@ with their contents.
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
 			
-			
-						
-		
+				
 	
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -510,6 +515,120 @@ with their contents.
 			histStar->Draw();
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
+		
+  
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	PT RESOLUTION VS. ABS(ETA) BIB x1
+//
+//////////////////////////////////////////////////////////////////////////////////////
+								
+		plotName = "HSigmaInvPtVsAbsEta";
+		plotTitle = "sigmaPT/PT^2 Vs. abs(Eta BIBx1)";
+		
+			getCanvas(canvasStar);
+			getHist(histFile1pcIneffEta2, plotName, histStar);
+			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
+			histStar->GetXaxis()->SetTitle("eta");
+			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->CenterTitle(true);
+			histStar->GetYaxis()->CenterTitle(true);
+			histStar->Draw(); 
+		
+			getHist(histFile1pcIneffEta2BIBx1, plotName, histStar2);				
+			histStar2->SetTitle("");				
+			histStar2->SetMarkerStyle(4);						
+			histStar2->SetMarkerSize(1.5);
+			histStar2->Draw("SAME"); 
+								
+			PrintHist (histStar, plotName, plotTitle, canvasStar);
+			
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	PT RESOLUTION VS. ABS(1/PT) (eta range = [-2, +2]) BIB x1
+//
+//////////////////////////////////////////////////////////////////////////////////////
+											
+		plotName = "HSigmaInvPtVsAbsInvPt";
+		plotTitle = "sigmaPT/PT^2 Vs. abs(1/PT) BIBx1";
+		
+			getCanvas(canvasStar);
+			getHist(histFile1pcIneffEta2, plotName, histStar);
+			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
+			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->CenterTitle(true);
+			histStar->GetYaxis()->CenterTitle(true);
+			histStar->Draw();
+			
+			getHist(histFile1pcIneffEta2BIBx1, plotName, histStar2);
+			histStar2->SetTitle("");				
+			histStar2->SetMarkerStyle(4);						
+			histStar2->SetMarkerSize(1.5);
+			histStar2->Draw("SAME"); 
+			 				
+			PrintHist (histStar, plotName, plotTitle, canvasStar);
+		
+
+ 
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	EFFICIENCY VS. ABS(ETA) BIB x1
+//
+//////////////////////////////////////////////////////////////////////////////////////
+								
+		plotName = "effVsAbsEta";
+		plotTitle = "Efficiency Vs. abs(Eta BIBx1)";
+					
+			getCanvas(canvasStar);
+			getGraph(histFile1pcIneffEta2, plotName, graphStar);	
+			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
+			graphStar->GetXaxis()->SetTitle("eta");
+			graphStar->GetYaxis()->SetTitle("efficiency");	
+			graphStar->GetXaxis()->CenterTitle(true);
+			graphStar->GetYaxis()->CenterTitle(true);
+			graphStar->Draw("AP"); 
+			
+			getGraph(histFile1pcIneffEta2BIBx1, plotName, graphStar1pcIneff);	
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);				
+			graphStar1pcIneff->Draw("PSAME");
+			
+			auto legend3 = new TLegend(0.2,0.2);
+   			legend3->AddEntry(graphStar,"no BIB","lep");
+   			legend3->AddEntry(graphStar1pcIneff,"with BIB","lep");
+   			legend3->Draw();	
+   			
+   			PrintGraph (graphStar1pcIneff, plotName, plotTitle, canvasStar);
+		
+				
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	EFFICIENCY VS. ABS(1/PT) (eta range = [-2, +2]) BIB x1
+//
+//////////////////////////////////////////////////////////////////////////////////////
+											
+		plotName = "effVsAbsInvPt";
+		plotTitle = "Efficiency Vs. abs(1/PT) BIBx1";
+		
+			getCanvas(canvasStar);
+			getGraph(histFile1pcIneffEta2, plotName, graphStar);	
+			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
+			graphStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			graphStar->GetYaxis()->SetTitle("efficiency");	
+			graphStar->GetXaxis()->CenterTitle(true);
+			graphStar->GetYaxis()->CenterTitle(true);
+			graphStar->Draw("AP"); 
+			
+			getGraph(histFile1pcIneffEta2BIBx1, plotName, graphStar1pcIneff);	
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);				
+			graphStar1pcIneff->Draw("PSAME");
+			
+			auto legend4 = new TLegend(0.2,0.2);
+   			legend4->AddEntry(graphStar,"no BIB","lep");
+   			legend4->AddEntry(graphStar1pcIneff,"with BIB","lep");
+   			legend4->Draw();	
+   			
+   			PrintGraph (graphStar1pcIneff, plotName, plotTitle, canvasStar);
 		
 
 		
@@ -726,6 +845,11 @@ with their contents.
 						return;
 						}
 			
+		TFile *histFile20ps = new TFile(histFileName20ps.c_str());
+		if (!histFile20ps) {cout << " histogram file " << histFileName20ps << " not found" << endl;
+						return;
+						}
+			
 		TFile *histFile10ps = new TFile(histFileName10ps.c_str());
 		if (!histFile10ps) {cout << " histogram file " << histFileName10ps << " not found" << endl;
 						return;
@@ -743,7 +867,7 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFile60ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetRangeUser(0.05,0.8);
+			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
 			histStar->GetXaxis()->SetTitle("mass (GeV)");
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
@@ -753,12 +877,27 @@ with their contents.
 			
 		
 		plotName = "HTrackMass";
+		plotTitle = "Mass Distribution 20ps";
+				
+			getCanvas(canvasStar);
+			getHist(histFile20ps, plotName, histStar);
+			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
+			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
+			histStar->GetXaxis()->SetTitle("mass (GeV)");
+			histStar->SetStats(0);
+			//gStyle->SetOptStat("r");
+			histStar->Draw();
+			 				
+			PrintHist (histStar, plotName + "20ps", plotTitle, canvasStar);
+			
+			
+		plotName = "HTrackMass";
 		plotTitle = "Mass Distribution 10ps";
 				
 			getCanvas(canvasStar);
 			getHist(histFile10ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetRangeUser(0.05,0.8);
+			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
 			histStar->GetXaxis()->SetTitle("mass (GeV)");
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
@@ -773,7 +912,7 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFile1ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetRangeUser(0.05,0.8);
+			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
 			histStar->GetXaxis()->SetTitle("mass (GeV)");
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");

@@ -223,6 +223,18 @@ int main(){
 	TH1D HFit7Chi2("HFit7Chi2","HFit7Chi2",5000, 0., 5000.);
 	TH1D HFit8Chi2("HFit8Chi2","HFit8Chi2",5000, 0., 5000.);
 	
+	
+	TH1D HFitLayersAll("HFitLayersAll","HFitLayersAll",11, -0.5, 10.5);
+	TH1D HFitChi2All("HFitChi2All","HFitChi2All",5000, 0., 5000.);
+	TH1D HFit5Chi2All("HFit5Chi2All","HFit5Chi2All",5000, 0., 5000.);
+	TH1D HFit6Chi2All("HFit6Chi2All","HFit6Chi2All",5000, 0., 5000.);
+	TH1D HFit7Chi2All("HFit7Chi2All","HFit7Chi2All",5000, 0., 5000.);
+	TH1D HFit8Chi2All("HFit8Chi2All","HFit8Chi2All",5000, 0., 5000.);
+	
+	
+	
+	
+	
 	TH1D HnFoundTracks("HnFoundTracks","HnFoundTracks",3, -0.5, 2.5);
 	
 	
@@ -957,21 +969,23 @@ int main(){
 												
 						if(verbose) if(retCodeFit == -1) cout << " no fit" << endl;
 						
+					
+						
 						if(retCodeFit == 0) {
-							HFitChi2.Fill(chi2);
-							HFitLayers.Fill(nLayers);
+							HFitChi2All.Fill(chi2);
+							HFitLayersAll.Fill(nLayers);
 							switch(nLayers) {
 							  case 5 :
-								HFit5Chi2.Fill(chi2);
+								HFit5Chi2All.Fill(chi2);
 								break;
 							  case 6 :
-								HFit6Chi2.Fill(chi2); 
+								HFit6Chi2All.Fill(chi2); 
 								break;						  		
 							  case 7 :
-								HFit7Chi2.Fill(chi2); 
+								HFit7Chi2All.Fill(chi2); 
 								break;
 							  case 8 :
-								HFit8Chi2.Fill(chi2);					 
+								HFit8Chi2All.Fill(chi2);					 
 						   }
 						}
 						
@@ -1010,6 +1024,26 @@ int main(){
 									ft.nLayers = nLayers;
 																						
 								foundTracks.push_back(ft);
+
+								// Fill chi2 histograms for accepted tracks
+
+								HFitChi2.Fill(chi2);
+								HFitLayers.Fill(nLayers);
+								switch(nLayers) {
+								  case 5 :
+									HFit5Chi2.Fill(chi2);
+									break;
+								  case 6 :
+									HFit6Chi2.Fill(chi2); 
+									break;						  		
+								  case 7 :
+									HFit7Chi2.Fill(chi2); 
+									break;
+								  case 8 :
+									HFit8Chi2.Fill(chi2);					 
+							   }
+						
+								
 						
 								if(verbose) cout << " good fit"	 << endl;					
 								
