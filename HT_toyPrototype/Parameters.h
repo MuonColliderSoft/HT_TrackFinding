@@ -180,8 +180,8 @@ public:
 	//double geo_tSigmaB = 0.3;// Barrels: sigma t -  0.3 mm == 1 ps
 	//double geo_tSigmaD = 0.3;// Discs: sigma t - 0.3 mm == 1 ps
 	
-	double geo_ineffB = 0.1;// Barrel inefficiency
-	double geo_ineffD = 0.1;// Disc inefficiency
+	double geo_ineffB = 0.01;// Barrel inefficiency
+	double geo_ineffD = 0.01;// Disc inefficiency
 
 
 //////////////////////////////////////////////////////////////////////// 
