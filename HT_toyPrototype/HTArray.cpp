@@ -691,7 +691,7 @@ double chi2MassFunc(const double *x){
 				
 				if(verbose) cout << "chi2: " << chi2 << endl;
 
-				//if(chi2 > par.gen_chi2Cut) continue;// failed chi2
+				if(chi2 > par.gen_chi2Cut) continue;// failed chi2
 				
 				oneGoodFit = true;
 				
