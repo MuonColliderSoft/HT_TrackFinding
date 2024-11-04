@@ -468,7 +468,8 @@ double chi2MassFunc(const double *x){
          
         
         
-        int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, double &z0, double &t0, double &mass, unsigned &nLayers){
+        int fitCandidate(Event &event, double &chi2, double &phi, double &eta, double &invPt, 
+        			double &z0, double &t0, double &mass, unsigned &nLayers, vector <Hit> &goodFitHitList){
         
        
         	struct Result {
@@ -721,6 +722,9 @@ double chi2MassFunc(const double *x){
 				z0 = bestFitRes.z0;
 				t0 = bestFitRes.t0;
 				mass = bestFitRes.mass;
+				goodFitHitList = combinations[bestFitComb];
+				
+				//cout << (*goodFitHitListStarStar)->size() << "------------------------------" << endl;
 				
 				if(verbose) cout << "bestFitComb: " << bestFitComb << " chi2: " << chi2 << endl;
 				

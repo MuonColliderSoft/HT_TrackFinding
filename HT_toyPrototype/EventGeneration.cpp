@@ -410,6 +410,8 @@ int main(){
 	TH1D HTrackZ0("HTrackZ0","HTrackZ0", 600, -300,+300); HTrackZ0.SetStats(true);
 	TH1D HTrackT0("HTrackT0","HTrackT0", 600, -300,+300); HTrackT0.SetStats(true);
 	
+	TH1D HTrackP("HTrackP","HTrackP", 1000, 0.,10.); HTrackP.SetStats(true);
+	
 	
 	
 	unsigned NchanEff = 20; // number of channels for efficiency as a function of track parameters
@@ -440,7 +442,16 @@ int main(){
 	TH1D HTrackAbsEtaEff("HTrackAbsEtaEff","HTrackAbsEtaEff", NchanAbsEff ,0.,maxAbsEtaEff); 
 	TH1D HTrackAbsInvPtEff("HTrackAbsInvPtEff","HTrackAbsInvPtEff", NchanAbsEff, 0., maxAbsInvPt);
 
+	// fraction of BIB hits vs eta and PT
 	
+	TH1D HHitAbsEta("HHitAbsEta","HHitAbsEta", NchanAbsEff,0.,maxAbsEtaEff); 
+	TH1D HHitAbsInvPt("HHitAbsInvPt","HHitAbsInvPt", NchanAbsEff, 0., maxAbsInvPt);
+
+	TH1D HHitAbsEtaBIB("HHitAbsEtaBIB","HHitAbsEtaBIB", NchanAbsEff ,0.,maxAbsEtaEff); 
+	TH1D HHitAbsInvPtBIB("HHitAbsInvPtBIB","HHitAbsInvPtBIB", NchanAbsEff, 0., maxAbsInvPt);
+
+
+
 	
 	TH2I HTrackInvPtvsPhi("HTrackInvPtvsPhi","HTrackInvPtvsPhi",1000, -Pi,+Pi,1000, -1/2.,+1/2.);HTrackInvPtvsPhi.SetStats(true);
 	
@@ -940,7 +951,7 @@ int main(){
 				HTA.writeCellCandidateList(outPlotFile, ev.hitList);
 			}
 			
-			cout << "Loop on candidates" << endl;
+			//cout << "Loop on candidates" << endl;
 				
 			bool foundTrack = false;
 			
@@ -961,15 +972,18 @@ int main(){
 						
 						if(verbose) HTA.ArrElem[p.iPhi][p.iEta][p.iInvpt].printCandidate(ev, cout);		
 				
-						int nHits;				
+						int nHits;							
+						vector<Hit> goodFitHitList;	
+								
 						int retCodeFit = HTA.ArrElem[p.iPhi][p.iEta][p.iInvpt].
-												fitCandidate(ev, chi2, phi, eta, invPt, z0, t0, mass, nLayers);
-												
+												fitCandidate(ev, chi2, phi, eta, invPt, z0, t0, mass, nLayers, goodFitHitList);
+							
+							
+						//cout << (*hitListStarStar)->size() << "****************************" << endl;
+																
 						if(verbose) cout << "nLayers: " << nLayers << endl;
 												
-						if(verbose) if(retCodeFit == -1) cout << " no fit" << endl;
-						
-					
+						if(verbose) if(retCodeFit == -1) cout << " no fit" << endl;					
 						
 						if(retCodeFit == 0) {
 							HFitChi2All.Fill(chi2);
@@ -1042,6 +1056,38 @@ int main(){
 								  case 8 :
 									HFit8Chi2.Fill(chi2);					 
 							   }
+							   
+							   
+						// loop on the hits of this good track	
+						
+						//cout << "Nhits: " <<  goodFitHitList.size() << endl;
+							   							
+						for(int iHit = 0; iHit != goodFitHitList.size(); ++iHit){
+						/*	cout << "-----> " <<iHit << " " 
+								<< goodFitHitList[iHit].hitType << " " 
+								<< goodFitHitList[iHit].iLayer << " " 
+								<< goodFitHitList[iHit].trackInd << " " 
+								<< ft.eta << " " 
+								<< ft.invPt 
+								<< endl;
+						*/		
+							double feta = fabs(ft.eta);
+							double finvPt = fabs(ft.invPt);
+								
+							if(goodFitHitList[iHit].trackInd  == 0){
+								// BIB hit		
+								HHitAbsEtaBIB.Fill(feta); 
+								HHitAbsInvPtBIB.Fill(finvPt);					
+								HHitAbsEta.Fill(feta); 
+								HHitAbsInvPt.Fill(finvPt);
+							}
+							else{
+								// good hit
+								HHitAbsEta.Fill(feta); 
+								HHitAbsInvPt.Fill(finvPt);					
+							}
+							
+						} // end loop on hits of this good track	 
 						
 								
 						
@@ -1083,13 +1129,13 @@ int main(){
 			HTrackAbsInvPtEff.Fill(fabs(thisTrack.invPt));	
 		}
 		
-		cout << nCan << " candidates and " << nFoundTracks << " tracks found in this event" << endl;
+		if(verbose) cout << nCan << " candidates and " << nFoundTracks << " tracks found in this event" << endl;
 		if(ev.trackList.size()) 
-				cout << "  track  pt:" << 1./ev.trackList[0].invPt << " eta: " << ev.trackList[0].eta 
+				if(verbose)cout << "  track  pt:" << 1./ev.trackList[0].invPt << " eta: " << ev.trackList[0].eta 
 					<< " phi: " << ev.trackList[0].phi << " z0: " << ev.trackList[0].z0 << " t0: " << ev.trackList[0].t0 << " mass: " << ev.trackList[0].mass << endl;
 					
 		for(unsigned iFT = 0; iFT != nFoundTracks; ++iFT)
-				cout << " result  pt:" << 1./foundTracks[iFT].invPt << " eta: " << foundTracks[iFT].eta << " phi: " 
+				if(verbose)cout << " result  pt:" << 1./foundTracks[iFT].invPt << " eta: " << foundTracks[iFT].eta << " phi: " 
 					<< foundTracks[iFT].phi << " z0: " << foundTracks[iFT].z0 << " t0:" << foundTracks[iFT].t0 
 						<< " mass: " << foundTracks[iFT].mass  << " nLayers: " << foundTracks[iFT].nLayers << " chi2: " << foundTracks[iFT].chi2 << endl;			
 								
@@ -1149,7 +1195,10 @@ int main(){
 				double D4Eta = D2Eta*D2Eta;
 				double D4Pt  = D2Pt*D2Pt;
 				
-				double P = fabs(sinh(eta)/invPt); // momentum
+			
+				double P = fabs(sqrt(1.+ sinh(eta)*sinh(eta))/invPt); // momentum
+				if(verbose)cout << "pt " <<  1./invPt << " eta  " << eta << " P  " << P << endl;
+				HTrackP.Fill(P);
 				if(P <= par.gen_massFitMaxP) 						
 					HTrackMass.Fill(foundTracks[iT].mass);		
 		
@@ -1435,6 +1484,26 @@ int main(){
   	
 } // end create efficiency plots 
 
+
+
+/////////////////////////////////////////////////////////////////////////////////	
+//
+//  Create plots of BIB fraction in fitted track hits
+//
+{
+
+	TGraph * g_eff1 = makeEffGraphFromHists(&HHitAbsEtaBIB,&HHitAbsEta);	
+  	g_eff1->SetTitle("BIB fraction vs eta");
+  	g_eff1->SetName("BIBVsEta");  	
+  	g_eff1->Write();
+  	  
+	TGraph * g_eff2 = makeEffGraphFromHists(&HHitAbsInvPtBIB,&HHitAbsInvPt);
+  	g_eff2->SetTitle("BIB fraction vs invPt");
+  	g_eff2->SetName("BIBVsInvPt");
+  	g_eff2->Write();
+  	
+} // end create BIB fraction plots
+	
 
 /////////////////////////////////////////////////////////////////////////////////	
 //

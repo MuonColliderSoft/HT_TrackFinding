@@ -26,15 +26,19 @@ with their contents.
 
 	// Histogram files //////////////////////////////////////////////////////
 		
-		string histFileNameFullEff = "AAAEventGeneration10KFullEffEta2.5.root";
-		string histFileName1pcIneff = "AAAEventGeneration10K1pcIneffEta2.5.root";		
-		string histFileNameFullEffEta2 = "AAAEventGeneration10KFullEffEta2.root";
-		string histFileName1pcIneffEta2 = "AAAEventGeneration10K1pcIneffEta2.root";
-		string histFileName1pcIneffEta2BIBx1 = "AAAEventGeneration10K1pcIneffEta2-1xBIB.root";
-		string histFileName60ps = "AAAEventGeneration_massFit_60ps.root";
-		string histFileName20ps = "AAAEventGeneration_massFit_20ps.root";
-		string histFileName10ps = "AAAEventGeneration_massFit_10ps.root";
-		string histFileName1ps = "AAAAParticleIDTests1ps.root";
+		string histFileNameFullEff = "AAAEventGeneration_15_360_6-HitIneff_0p00-eta_2p5-10k.root";
+		string histFileName1pcIneff = "AAAEventGeneration_15_360_6-HitIneff_0p01-eta_2p5-10k.root";		
+		string histFileNameFullEffEta2 = "AAAEventGeneration_15_360_6-HitIneff_0p00-eta_2p0-10k.root";
+		string histFileName1pcIneffEta2 = "AAAEventGeneration_15_360_6-HitIneff_0p01-eta_2p0-10k.root";
+		
+		//string histFileName1pcIneffEta2BIBx1 = "AAAEventGeneration_15_360_6-HitIneff_0p01-eta_2p0-BIB-10k.root";
+		string histFileName1pcIneffEta2BIBx1 = "AAAEventGeneration_15_360_6-HitIneff_0p01-eta_2p0-2xBIB-10k.root";
+		
+		//string histFileName60ps = "AAAEventGeneration_massFit_60ps.root";
+		//string histFileName20ps = "AAAEventGeneration_massFit_20ps.root";
+		//string histFileName10ps = "AAAEventGeneration_massFit_10ps.root";
+		//string histFileName1ps = "AAAAParticleIDTests1ps.root";
+		
 		string histFileNameChi2 = "AAA10KEventGeneration.root";
 		string histFileNameHiStatChi2 = "AAAEventGeneration_15_360_6-Pt_3p0-HitIneff_0p01-xphiErr_10um-2M.root";
 		
@@ -124,6 +128,8 @@ with their contents.
 		graphStar->SetMaximum(1.);
 		graphStar->SetMinimum(0.95);
 		
+			graphStar->GetYaxis()->SetTitleOffset(1.4);	
+		
 		return;		
 	}
 	
@@ -142,6 +148,8 @@ with their contents.
 		graphStar->SetMarkerSize(1.5);
 		graphStar->SetMaximum(1.);
 		
+			graphStar->GetYaxis()->SetTitleOffset(1.4);	
+		
 		return;		
 	}
 	
@@ -159,6 +167,8 @@ with their contents.
 		histStar->SetMarkerSize(1.5);
 		histStar->SetLineColor(1);
 		histStar->SetMinimum(0.);
+		
+			histStar->GetYaxis()->SetTitleOffset(1.4);	
 		
 		return;		
 	}
@@ -179,6 +189,8 @@ with their contents.
 		histStar->SetMarkerSize(1.5);
 		histStar->SetLineColor(1);
 		histStar->SetMinimum(0.);
+		
+			histStar->GetYaxis()->SetTitleOffset(1.4);	
 		
 		return;		
 	}
@@ -290,8 +302,8 @@ with their contents.
 			getHist(histFileFullEff, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);			
 			histStar->GetYaxis()->SetRangeUser(3.,9.);
-			histStar->GetXaxis()->SetTitle("eta");
-			histStar->GetYaxis()->SetTitle("Nhits");	
+			histStar->GetXaxis()->SetTitle("#eta");
+			histStar->GetYaxis()->SetTitle("<Nhits>");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);			
 			histStar->SetStats(0);
@@ -315,14 +327,16 @@ with their contents.
 			getCanvas(canvasStar);
 			getGraph(histFileFullEff, plotName, graphStar);	
 			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
-			graphStar->GetXaxis()->SetTitle("eta");
-			graphStar->GetYaxis()->SetTitle("efficiency");	
 			graphStar->GetXaxis()->CenterTitle(true);
 			graphStar->GetYaxis()->CenterTitle(true);
+			graphStar->GetXaxis()->SetTitle("#eta");
+			graphStar->GetYaxis()->SetTitle("efficiency");
 			graphStar->Draw("AP"); 
 			
 			getGraph(histFile1pcIneff, plotName, graphStar1pcIneff);	
-			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);				
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);		
+			
+								
 			graphStar1pcIneff->Draw("PSAME");
 			
 			auto legend = new TLegend(0.2,0.2);
@@ -348,16 +362,19 @@ with their contents.
 			
 			getCanvas(canvasStar);
 			getGraph(histFileFullEffEta2, plotName, graphStar);				
-			setStyleEffGraph (graphStar, plotName, plotTitle, canvasStar);	
-			graphStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
-			graphStar->GetYaxis()->SetTitle("efficiency");	
+			setStyleEffGraph (graphStar, plotName, plotTitle, canvasStar);
+			graphStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
+			graphStar->GetYaxis()->SetTitle("efficiency");
 			graphStar->GetXaxis()->CenterTitle(true);
 			graphStar->GetYaxis()->CenterTitle(true);
+										
 			graphStar->Draw("AP"); 
 			
 			getGraph(histFile1pcIneffEta2, plotName, graphStar1pcIneff);	
-			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);						
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);	
+										
 			graphStar1pcIneff->Draw("PSAME");
+			
 					
 			legend = new TLegend(0.2,0.2);
    			legend->AddEntry(graphStar,"Single hit full eff","lep");
@@ -378,8 +395,8 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFileFullEff, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetTitle("eta");
-			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->SetTitle("#eta");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->Draw(); 
@@ -398,8 +415,8 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFileFullEffEta2, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
-			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->Draw();
@@ -424,14 +441,15 @@ with their contents.
 			getCanvas(canvasStar);
 			getGraph(histFileFullEff, plotName, graphStar);	
 			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
-			graphStar->GetXaxis()->SetTitle("eta");
+			graphStar->GetXaxis()->SetTitle("|#eta|");
 			graphStar->GetYaxis()->SetTitle("efficiency");	
 			graphStar->GetXaxis()->CenterTitle(true);
 			graphStar->GetYaxis()->CenterTitle(true);
 			graphStar->Draw("AP"); 
 			
 			getGraph(histFile1pcIneff, plotName, graphStar1pcIneff);	
-			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);				
+			setStyleEffGraphSup (graphStar1pcIneff, plotName, plotTitle, canvasStar);
+								
 			graphStar1pcIneff->Draw("PSAME");
 			
 			auto legend2 = new TLegend(0.2,0.2);
@@ -458,7 +476,7 @@ with their contents.
 			getCanvas(canvasStar);
 			getGraph(histFileFullEffEta2, plotName, graphStar);				
 			setStyleEffGraph (graphStar, plotName, plotTitle, canvasStar);	
-			graphStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			graphStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
 			graphStar->GetYaxis()->SetTitle("efficiency");	
 			graphStar->GetXaxis()->CenterTitle(true);
 			graphStar->GetYaxis()->CenterTitle(true);
@@ -487,8 +505,8 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFileFullEff, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetTitle("eta");
-			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->SetTitle("|#eta|");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->SetStats(0);
@@ -508,8 +526,8 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFileFullEffEta2, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
-			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->Draw();
@@ -529,8 +547,8 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFile1pcIneffEta2, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetTitle("eta");
-			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->SetTitle("|#eta|");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->Draw(); 
@@ -540,8 +558,14 @@ with their contents.
 			histStar2->SetMarkerStyle(4);						
 			histStar2->SetMarkerSize(1.5);
 			histStar2->Draw("SAME"); 
+					
+			auto legend5 = new TLegend(0.2,0.2);
+   			legend5->AddEntry(graphStar,"no BIB","lep");
+   			legend5->AddEntry(graphStar1pcIneff,"with BIB","lep");
+   			legend5->Draw();	
+   		
 								
-			PrintHist (histStar, plotName, plotTitle, canvasStar);
+			PrintHist (histStar, plotName + "BIB", plotTitle, canvasStar);
 			
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -555,8 +579,8 @@ with their contents.
 			getCanvas(canvasStar);
 			getHist(histFile1pcIneffEta2, plotName, histStar);
 			setStyleResHist (histStar, plotName, plotTitle, canvasStar);
-			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
-			histStar->GetYaxis()->SetTitle("sigmaPT/PT^2 (GeV/c-1)");	
+			histStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->Draw();
@@ -565,9 +589,18 @@ with their contents.
 			histStar2->SetTitle("");				
 			histStar2->SetMarkerStyle(4);						
 			histStar2->SetMarkerSize(1.5);
+			
+			histStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
+			histStar->GetYaxis()->SetTitle("#sigma_{P_{T}} /(P_{T}) ^{2}   [GeV/c^{-1}]");
+			
 			histStar2->Draw("SAME"); 
+			
+			auto legend6 = new TLegend(0.2,0.2);
+   			legend6->AddEntry(graphStar,"no BIB","lep");
+   			legend6->AddEntry(graphStar1pcIneff,"with BIB","lep");
+   			legend6->Draw();
 			 				
-			PrintHist (histStar, plotName, plotTitle, canvasStar);
+			PrintHist (histStar, plotName + "BIB", plotTitle, canvasStar);
 		
 
  
@@ -583,7 +616,7 @@ with their contents.
 			getCanvas(canvasStar);
 			getGraph(histFile1pcIneffEta2, plotName, graphStar);	
 			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
-			graphStar->GetXaxis()->SetTitle("eta");
+			graphStar->GetXaxis()->SetTitle("|#eta|");
 			graphStar->GetYaxis()->SetTitle("efficiency");	
 			graphStar->GetXaxis()->CenterTitle(true);
 			graphStar->GetYaxis()->CenterTitle(true);
@@ -598,7 +631,7 @@ with their contents.
    			legend3->AddEntry(graphStar1pcIneff,"with BIB","lep");
    			legend3->Draw();	
    			
-   			PrintGraph (graphStar1pcIneff, plotName, plotTitle, canvasStar);
+   			PrintGraph (graphStar1pcIneff, plotName + "BIB", plotTitle, canvasStar);
 		
 				
 //////////////////////////////////////////////////////////////////////////////////////
@@ -613,7 +646,7 @@ with their contents.
 			getCanvas(canvasStar);
 			getGraph(histFile1pcIneffEta2, plotName, graphStar);	
 			setStyleEffGraph(graphStar, plotName, plotTitle, canvasStar);
-			graphStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			graphStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
 			graphStar->GetYaxis()->SetTitle("efficiency");	
 			graphStar->GetXaxis()->CenterTitle(true);
 			graphStar->GetYaxis()->CenterTitle(true);
@@ -628,7 +661,7 @@ with their contents.
    			legend4->AddEntry(graphStar1pcIneff,"with BIB","lep");
    			legend4->Draw();	
    			
-   			PrintGraph (graphStar1pcIneff, plotName, plotTitle, canvasStar);
+   			PrintGraph (graphStar1pcIneff, plotName + "BIB", plotTitle, canvasStar);
 		
 
 		
@@ -676,7 +709,7 @@ with their contents.
 			getHist(histFileFullEff, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetRangeUser(-20,+20);
-			histStar->GetXaxis()->SetTitle("eta");
+			histStar->GetXaxis()->SetTitle("#eta");
 			histStar->Draw();
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
@@ -702,7 +735,7 @@ with their contents.
 			getHist(histFileFullEff, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetRangeUser(-20,+20);
-			histStar->GetXaxis()->SetTitle("1/PT (GeV/c-1)");
+			histStar->GetXaxis()->SetTitle("1/PT [GeV/c^{-1}]");
 			histStar->Draw();
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
@@ -757,7 +790,8 @@ with their contents.
 //
 //////////////////////////////////////////////////////////////////////////////////////
 		
-						
+/*		Now done manually
+				
 			plotName = "HitTRZ";
 			plotTitle = "R-Z Detector Layout";
 		
@@ -771,15 +805,16 @@ with their contents.
 			histStar->SetMarkerStyle(8);						
 			histStar->SetMarkerSize(0.05);
 			histStar->GetXaxis()->SetTitle("Z (mm)");
-			histStar->GetYaxis()->SetTitle("R (mm)");	
+			histStar->GetYaxis()->SetTitle("R (mm)");
+			histStar->GetYaxis()->SetTitleOffset(1.4);	
 			histStar->GetXaxis()->CenterTitle(true);
 			histStar->GetYaxis()->CenterTitle(true);
 			histStar->Draw();
 			 				
 			PrintHist (histStar, plotName, plotTitle, canvasStar);
 			
-	
-								
+*/	
+							
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //	TIME VS BIB FRACTION
@@ -830,7 +865,7 @@ with their contents.
 			
 		PrintGraph (g_trec, plotName, plotTitle, canvasStar);
 		
-				
+/*				
 				
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -856,7 +891,7 @@ with their contents.
 						}
 									
 		TFile *histFile1ps = new TFile(histFileName1ps.c_str());
-		if (!histFile10ps) {cout << " histogram file " << histFileName1ps << " not found" << endl;
+		if (!histFile1ps) {cout << " histogram file " << histFileName1ps << " not found" << endl;
 						return;
 						}
 						
@@ -920,7 +955,7 @@ with their contents.
 			 				
 			PrintHist (histStar, plotName + "1ps", plotTitle, canvasStar);
 			
-					
+	*/				
 			
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -948,6 +983,7 @@ with their contents.
 			histStar->GetXaxis()->SetRangeUser(0.,100.);
 			histStar->GetXaxis()->SetTitle("Chi2");
 			histStar->Draw();
+			
 			getHist(histFileHiStatChi2, plotName, histStar2);
 			histStar2->Draw("SAME");
 			 				

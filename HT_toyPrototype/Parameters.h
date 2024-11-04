@@ -58,7 +58,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 1000;
+	unsigned gen_nEvents = 10;
 
 // number of tracks to be generated for each event
 
@@ -73,7 +73,7 @@ public:
 	bool gen_TrackFit = true;
 	unsigned gen_minLayersForFit = 5;
 	double gen_chi2Cut = 45.;
-	bool gen_massFit = false;
+	bool gen_massFit = true;
 	double gen_massFitMaxP = 3.; // GeV/c
 	
 // limits in phi for BIB generation
@@ -133,6 +133,7 @@ public:
 	
 // event generation histogram file
 
+	//string gen_histFileName = "AAAEventGeneration_massFit_10ps.root";
 	string gen_histFileName = "AAAEventGeneration.root";
 	//string gen_histFileName = "AAAAParticleIDTests.root";
 	
@@ -197,7 +198,7 @@ public:
 	 double geo_def_t_eta = 0.; // track eta mean
 	 double geo_def_t_deltaEta = 2.5; // track delta eta
 	 double geo_def_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	 double geo_def_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
+	 double geo_def_t_invPt_min = -1./3; // track invPt min Gev/c^(-1)
 	 double geo_def_t_x0 = 0.0; // track mean x0
 	 double geo_def_t_y0 = 0.0; // track mean y0 
 	 double geo_def_t_z0 = 0.0; // track mean z0
@@ -221,13 +222,13 @@ public:
 	 bool geo_gen_default = true; // apply default values?
 
 	// if not use the following:
-
+		// momentum range for mass plots
 	 double geo_gen_t_phi = 0.262; // track phi mean
 	 double geo_gen_t_deltaPhi = 0.262; // track delta phi
 	 double geo_gen_t_eta = 0.; // track eta mean
 	 double geo_gen_t_deltaEta = 2.0; // track delta eta
-	 double geo_gen_t_invPt_max = 1./3.; // track invPt max Gev/c^(-1)  
-	 double geo_gen_t_invPt_min = -1./3.; // track invPt min Gev/c^(-1)
+	 double geo_gen_t_invPt_max = 1./1.5; // track invPt max Gev/c^(-1)  
+	 double geo_gen_t_invPt_min = 1./3.; // track invPt min Gev/c^(-1)
 	 double geo_gen_t_x0 = 0.0; // track mean x0
 	 double geo_gen_t_y0 = 0.0; // track mean y0 
 	 double geo_gen_t_z0 = 0.0; // track mean z0
