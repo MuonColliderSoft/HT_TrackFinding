@@ -713,7 +713,7 @@ double chi2MassFunc(const double *x){
 			}// end loop on final combinations
 			
 			if(oneGoodFit){
-				nLayers = combinations[bestFitComb].size();
+				nLayers = finalCombinations[bestFitComb].size();
 		
 				chi2 = bestFitRes.chi2;
 				phi = bestFitRes.phi;
@@ -722,9 +722,7 @@ double chi2MassFunc(const double *x){
 				z0 = bestFitRes.z0;
 				t0 = bestFitRes.t0;
 				mass = bestFitRes.mass;
-				goodFitHitList = combinations[bestFitComb];
-				
-				//cout << (*goodFitHitListStarStar)->size() << "------------------------------" << endl;
+				goodFitHitList = finalCombinations[bestFitComb];
 				
 				if(verbose) cout << "bestFitComb: " << bestFitComb << " chi2: " << chi2 << endl;
 				

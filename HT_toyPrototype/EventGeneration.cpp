@@ -977,10 +977,7 @@ int main(){
 								
 						int retCodeFit = HTA.ArrElem[p.iPhi][p.iEta][p.iInvpt].
 												fitCandidate(ev, chi2, phi, eta, invPt, z0, t0, mass, nLayers, goodFitHitList);
-							
-							
-						//cout << (*hitListStarStar)->size() << "****************************" << endl;
-																
+																			
 						if(verbose) cout << "nLayers: " << nLayers << endl;
 												
 						if(verbose) if(retCodeFit == -1) cout << " no fit" << endl;					
@@ -1056,44 +1053,9 @@ int main(){
 								  case 8 :
 									HFit8Chi2.Fill(chi2);					 
 							   }
-							   
-							   
-						// loop on the hits of this good track	
-						
-						//cout << "Nhits: " <<  goodFitHitList.size() << endl;
-							   							
-						for(int iHit = 0; iHit != goodFitHitList.size(); ++iHit){
-						/*	cout << "-----> " <<iHit << " " 
-								<< goodFitHitList[iHit].hitType << " " 
-								<< goodFitHitList[iHit].iLayer << " " 
-								<< goodFitHitList[iHit].trackInd << " " 
-								<< ft.eta << " " 
-								<< ft.invPt 
-								<< endl;
-						*/		
-							double feta = fabs(ft.eta);
-							double finvPt = fabs(ft.invPt);
-								
-							if(goodFitHitList[iHit].trackInd  == 0){
-								// BIB hit		
-								HHitAbsEtaBIB.Fill(feta); 
-								HHitAbsInvPtBIB.Fill(finvPt);					
-								HHitAbsEta.Fill(feta); 
-								HHitAbsInvPt.Fill(finvPt);
-							}
-							else{
-								// good hit
-								HHitAbsEta.Fill(feta); 
-								HHitAbsInvPt.Fill(finvPt);					
-							}
-							
-						} // end loop on hits of this good track	 
-						
-								
-						
+					
 								if(verbose) cout << " good fit"	 << endl;					
-								
-							
+												
 								int DoF = 3*nLayers - 5;			
 								if(verbose) cout << " DoF " << DoF << " chi2 " << chi2 << endl;
 								if(verbose) cout << " result  pt:" << 1./invPt << " eta: " << eta << " phi: " << phi << " z0: " << z0 << " t0:" << t0 << endl;					

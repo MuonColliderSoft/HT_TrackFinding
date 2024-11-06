@@ -26,10 +26,10 @@ with their contents.
 
 	// Histogram files //////////////////////////////////////////////////////
 		
-		string histFileName60ps = "AAAEventGeneration_massFit_60ps.root";
-		string histFileName20ps = "AAAEventGeneration_massFit_20ps.root";
-		string histFileName10ps = "AAAEventGeneration_massFit_10ps.root";
-		string histFileName1ps = "AAAEventGeneration_massFit_1ps.root";
+		string histFileName60ps = "AAAEventGeneration_15_360_12-massFit_60ps-40k.root";
+		string histFileName20ps = "AAAEventGeneration_15_360_12-massFit_20ps-40k.root";
+		string histFileName10ps = "AAAEventGeneration_15_360_12-massFit_10ps-40k.root";
+		string histFileName1ps = "AAAEventGeneration_15_360_12-massFit_01ps-40k.root";
 		
 	/////////////////////////////////////////////////////////////////////////		
 
@@ -282,6 +282,10 @@ with their contents.
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();
+			
+			auto legend = new TLegend(0.1,0.8,0.3,0.9);			
+   			legend->AddEntry((TObject*)0, "Time resolution 60ps", "");
+   			legend->Draw();	
 			 				
 			PrintHist (histStar, plotName + "60ps", plotTitle, canvasStar);
 			
@@ -296,7 +300,13 @@ with their contents.
 			histStar->GetXaxis()->SetTitle("mass (GeV)");
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
-			histStar->Draw();
+			histStar->Draw();			
+			
+			legend = new TLegend(0.1,0.8,0.3,0.9);			
+   			legend->AddEntry((TObject*)0, "Time resolution 20ps", "");
+   			legend->Draw();	
+			 				
+	
 			 				
 			PrintHist (histStar, plotName + "20ps", plotTitle, canvasStar);
 			
@@ -312,6 +322,12 @@ with their contents.
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();
+			
+			legend = new TLegend(0.1,0.8,0.3,0.9);			
+   			legend->AddEntry((TObject*)0, "Time resolution 10ps", "");
+   			legend->Draw();	
+			 				
+	
 			 				
 			PrintHist (histStar, plotName + "10ps", plotTitle, canvasStar);
 			
@@ -327,6 +343,12 @@ with their contents.
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();
+			
+			legend = new TLegend(0.1,0.8,0.3,0.9);			
+   			legend->AddEntry((TObject*)0, "Time resolution 1ps", "");
+   			legend->Draw();	
+			 				
+	
 			 				
 			PrintHist (histStar, plotName + "1ps", plotTitle, canvasStar);
 			

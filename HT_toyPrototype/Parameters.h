@@ -73,7 +73,7 @@ public:
 	bool gen_TrackFit = true;
 	unsigned gen_minLayersForFit = 5;
 	double gen_chi2Cut = 45.;
-	bool gen_massFit = true;
+	bool gen_massFit = false;
 	double gen_massFitMaxP = 3.; // GeV/c
 	
 // limits in phi for BIB generation
@@ -94,7 +94,7 @@ public:
  	 
 // print candidates for every event
 
-	bool gen_printCandidates = false;
+	bool gen_printCandidates = true;
 
 // optimization mode for HTA fill = 0 (safe and slow) or 1 (faster) or 2 (fastest)
 	
