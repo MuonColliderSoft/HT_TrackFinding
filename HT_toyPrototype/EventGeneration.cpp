@@ -24,6 +24,7 @@
 #include "Math/Factory.h"
 #include "Math/Functor.h"
 #include "TError.h"
+#include "TApplication.h"
 
 #include "Statistics.cpp"
 
@@ -1053,6 +1054,45 @@ int main(){
 								  case 8 :
 									HFit8Chi2.Fill(chi2);					 
 							   }
+							   
+							   			   
+						// loop on the hits of this good track	
+						
+						//cout << "Nhits: " <<  goodFitHitList.size() << endl;
+							   							
+						for(int iHit = 0; iHit != goodFitHitList.size(); ++iHit){
+							if(verbose){
+								cout << "-----> " <<iHit << " " 
+								<< goodFitHitList[iHit].hitType << " " 
+								<< goodFitHitList[iHit].iLayer << " " 
+								<< goodFitHitList[iHit].trackInd << " " 
+								<< ft.eta << " " 
+								<< ft.invPt 
+								<< endl;
+							}
+								
+							double feta = fabs(ft.eta);
+							double finvPt = fabs(ft.invPt);
+								
+							if(goodFitHitList[iHit].trackInd  == 0){
+								// BIB hit		
+								HHitAbsEtaBIB.Fill(feta); 
+								HHitAbsInvPtBIB.Fill(finvPt);					
+								HHitAbsEta.Fill(feta); 
+								HHitAbsInvPt.Fill(finvPt);
+							}
+							else{
+								// good hit
+								HHitAbsEta.Fill(feta); 
+								HHitAbsInvPt.Fill(finvPt);					
+							}
+							
+						} // end loop on hits of this good track	 
+						
+						
+							   
+							   
+									   
 					
 								if(verbose) cout << " good fit"	 << endl;					
 												
@@ -1547,7 +1587,22 @@ int main(){
 	cout << "Writing histogram file..." << endl;
 	histFile->Write(); // write histogram file
 	
+/*	
+int argc; 
+char **argv;
+
+ TApplication app("app",&argc, argv);
+ TCanvas* c1, c2;
+ 
+  c1 = new TCanvas("c1","c1",0,0,800,1250);
+  HFitChi2.Draw();
 	
+	gPad->Update();
+    //gPad->WaitPrimitive();
+
+	app.Run();
+	
+*/
 	
 	return 0;		
 	
