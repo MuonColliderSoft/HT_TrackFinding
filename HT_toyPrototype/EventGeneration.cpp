@@ -1587,22 +1587,77 @@ int main(){
 	cout << "Writing histogram file..." << endl;
 	histFile->Write(); // write histogram file
 	
-/*	
-int argc; 
-char **argv;
 
- TApplication app("app",&argc, argv);
- TCanvas* c1, c2;
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+// Display a few histograms
+
+	int argc; 
+	char **argv;
+
+	TApplication theApp("App", &argc, argv);
  
-  c1 = new TCanvas("c1","c1",0,0,800,1250);
-  HFitChi2.Draw();
+	TH1* histStar[5];
 	
-	gPad->Update();
-    //gPad->WaitPrimitive();
+	// here are the histograms to be displayed
 
-	app.Run();
+	histStar[0] = &HFitChi2;
+	histStar[1] = &HFit5Chi2;
+	histStar[2] = &HFit6Chi2;
+	histStar[3] = &HFit7Chi2;
+   
+	int canv_x = 20;
+	int canv_y = 20;
+	int canv_width = 1000;
+	int canv_height = 800;
+
+	int verticalShift = 30; // vertical increment of canvas position
+	int horizontalShift = 0; // horizontal increment of canvas position
 	
-*/
+	int indCanvas = 0;
+
+	canv_x += horizontalShift;
+	canv_y += verticalShift;		
+	++indCanvas;
+	string canvasName0 = "c"+ std::to_string(indCanvas); //synthesize canvas name		
+	TCanvas* canvasStar0 = new TCanvas(canvasName0.c_str(),histStar[0]->GetTitle(),canv_x,canv_y,canv_width,canv_height);	
+	histStar[0]->Draw();
+	canvasStar0->Update();
+		
+	canv_x += horizontalShift;
+	canv_y += verticalShift;		
+	++indCanvas;
+	string canvasName1 = "c"+ std::to_string(indCanvas); //synthesize canvas name		
+	TCanvas* canvasStar1 = new TCanvas(canvasName1.c_str(),histStar[1]->GetTitle(),canv_x,canv_y,canv_width,canv_height);	
+	histStar[1]->Draw();
+	canvasStar1->Update();
+		
+	canv_x += horizontalShift;
+	canv_y += verticalShift;		
+	++indCanvas;
+	string canvasName2 = "c"+ std::to_string(indCanvas); //synthesize canvas name		
+	TCanvas* canvasStar2 = new TCanvas(canvasName2.c_str(),histStar[2]->GetTitle(),canv_x,canv_y,canv_width,canv_height);	
+	histStar[2]->Draw();
+	canvasStar2->Update();
+		
+	canv_x += horizontalShift;
+	canv_y += verticalShift;		
+	++indCanvas;
+	string canvasName3 = "c"+ std::to_string(indCanvas); //synthesize canvas name		
+	TCanvas* canvasStar3 = new TCanvas(canvasName3.c_str(),histStar[3]->GetTitle(),canv_x,canv_y,canv_width,canv_height);	
+	histStar[3]->Draw();
+	canvasStar3->Update();
+	
+	theApp.Run();
+
+	
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+	
+	
 	
 	return 0;		
 	
