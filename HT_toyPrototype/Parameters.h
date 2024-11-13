@@ -56,9 +56,13 @@ public:
 // EVENT GENERATION SECTION  ///////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////// 
 
+// Draw plots on the screen at end of job
+
+	bool gen_drawPlots = true;
+
 // Number of events to be generated for simulation
 
-	unsigned gen_nEvents = 10;
+	unsigned gen_nEvents = 100;
 
 // number of tracks to be generated for each event
 
@@ -66,7 +70,7 @@ public:
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = -1.; // -1. == no BIB hit
+	double gen_fracBib = 1.; // -1. == no BIB hit
 	
 // perform track fitting of candidates
 
@@ -121,9 +125,9 @@ public:
 	
 // data file from where HT array is initialized from
 
-	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-LongBarrel.txt";
+	//string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-LongBarrel.txt";
 	//string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew.txt";
-	//string gen_dataFileName = "HTAdata_15_360_12_BigEtaSliceNew-Pt_1p5.txt";
+	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-TimeRes_120ps_Vertex.txt";
 	
 	//string gen_dataFileName = "HTAdata.txt";
 	
@@ -133,8 +137,9 @@ public:
 	
 // event generation histogram file
 
-	//string gen_histFileName = "AAAEventGeneration_massFit_10ps.root";
 	string gen_histFileName = "AAAEventGeneration.root";
+	//string gen_histFileName = "AAAEventGeneration_massFit_10ps.root";
+	//string gen_histFileName = "AAA1nsecEventGeneration.root";
 	//string gen_histFileName = "AAAAParticleIDTests.root";
 	
 	bool gen_fillHitHistograms = true; // selective histogram filling
@@ -172,8 +177,14 @@ public:
 	double geo_zSigmaB = 0.1;// Barrels: sigma z in mm
 	double geo_rSigmaD = 0.1;// Discs: sigma R in mm
 	
-	double geo_tSigmaB = 18.;// Barrels: sigma t -  18 mm == 60 ps
-	double geo_tSigmaD = 18.;// Discs: sigma t - 18 mm == 60 ps
+	//double geo_tSigmaB = 300.;// Barrels: sigma t -  300 mm == 1000 ps
+	//double geo_tSigmaD = 300;// Discs: sigma t - 300 mm == 1000 ps
+		
+	double geo_tSigmaB = 36.;// Barrels: sigma t -  36 mm == 120 ps
+	double geo_tSigmaD = 36.;// Discs: sigma t - 36 mm == 120 ps
+
+	//double geo_tSigmaB = 18.;// Barrels: sigma t -  18 mm == 60 ps
+	//double geo_tSigmaD = 18.;// Discs: sigma t - 18 mm == 60 ps
 	
 	//double geo_tSigmaB = 3.;// Barrels: sigma t -  3 mm == 10 ps
 	//double geo_tSigmaD = 3.;// Discs: sigma t - 3 mm == 10 ps
