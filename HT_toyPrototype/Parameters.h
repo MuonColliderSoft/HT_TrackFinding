@@ -58,7 +58,7 @@ public:
 
 // Draw plots on the screen at end of job
 
-	bool gen_drawPlots = true;
+	bool gen_drawPlots = false;
 
 // Number of events to be generated for simulation
 
