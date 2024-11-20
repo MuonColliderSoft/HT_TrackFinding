@@ -70,7 +70,7 @@ public:
 	
 // fraction of BIB to be generated
 
-	double gen_fracBib = 1.; // -1. == no BIB hit
+	double gen_fracBib = -1.; // -1. == no BIB hit
 	
 // perform track fitting of candidates
 
@@ -102,7 +102,7 @@ public:
 
 // optimization mode for HTA fill = 0 (safe and slow) or 1 (faster) or 2 (fastest)
 	
-	int gen_fillMode = 2; 
+	int gen_fillMode = 0; 
 	
 // max error for eta projection in fillMode = 1 and 2
 
@@ -125,9 +125,9 @@ public:
 	
 // data file from where HT array is initialized from
 
-	//string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-LongBarrel.txt";
+	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-LongBarrel.txt";
 	//string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew.txt";
-	string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-TimeRes_120ps_Vertex.txt";
+	//string gen_dataFileName = "HTAdata_15_360_6_BigEtaSliceNew-Pt_3p0-TimeRes_120ps_Vertex.txt";
 	
 	//string gen_dataFileName = "HTAdata.txt";
 	
@@ -137,7 +137,7 @@ public:
 	
 // event generation histogram file
 
-	string gen_histFileName = "AAAEventGeneration.root";
+	string gen_histFileName = "AAAFillMode0EventGeneration.root";
 	//string gen_histFileName = "AAAEventGeneration_massFit_10ps.root";
 	//string gen_histFileName = "AAA1nsecEventGeneration.root";
 	//string gen_histFileName = "AAAAParticleIDTests.root";
@@ -180,11 +180,11 @@ public:
 	//double geo_tSigmaB = 300.;// Barrels: sigma t -  300 mm == 1000 ps
 	//double geo_tSigmaD = 300;// Discs: sigma t - 300 mm == 1000 ps
 		
-	double geo_tSigmaB = 36.;// Barrels: sigma t -  36 mm == 120 ps
-	double geo_tSigmaD = 36.;// Discs: sigma t - 36 mm == 120 ps
+	//double geo_tSigmaB = 36.;// Barrels: sigma t -  36 mm == 120 ps
+	//double geo_tSigmaD = 36.;// Discs: sigma t - 36 mm == 120 ps
 
-	//double geo_tSigmaB = 18.;// Barrels: sigma t -  18 mm == 60 ps
-	//double geo_tSigmaD = 18.;// Discs: sigma t - 18 mm == 60 ps
+	double geo_tSigmaB = 18.;// Barrels: sigma t -  18 mm == 60 ps
+	double geo_tSigmaD = 18.;// Discs: sigma t - 18 mm == 60 ps
 	
 	//double geo_tSigmaB = 3.;// Barrels: sigma t -  3 mm == 10 ps
 	//double geo_tSigmaD = 3.;// Discs: sigma t - 3 mm == 10 ps
