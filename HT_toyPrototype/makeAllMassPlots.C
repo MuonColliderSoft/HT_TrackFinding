@@ -278,12 +278,14 @@ with their contents.
 			getHist(histFile60ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
-			histStar->GetXaxis()->SetTitle("mass (GeV)");
+			histStar->GetXaxis()->SetTitle("mass [GeV]");
+			histStar->GetXaxis()->SetTitleSize(0.05);
+			histStar->GetXaxis()->SetTitleOffset(0.8);
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();
 			
-			auto legend = new TLegend(0.1,0.8,0.3,0.9);			
+			auto legend = new TLegend(0.691, 0.776, 0.892, 0.877);			
    			legend->AddEntry((TObject*)0, "Time resolution 60ps", "");
    			legend->Draw();	
 			 				
@@ -297,12 +299,14 @@ with their contents.
 			getHist(histFile20ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
-			histStar->GetXaxis()->SetTitle("mass (GeV)");
+			histStar->GetXaxis()->SetTitle("mass [GeV]");
+			histStar->GetXaxis()->SetTitleSize(0.05);
+			histStar->GetXaxis()->SetTitleOffset(0.8);
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();			
 			
-			legend = new TLegend(0.1,0.8,0.3,0.9);			
+			legend = new TLegend(0.691, 0.776, 0.892, 0.877);			
    			legend->AddEntry((TObject*)0, "Time resolution 20ps", "");
    			legend->Draw();	
 			 				
@@ -318,12 +322,14 @@ with their contents.
 			getHist(histFile10ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
-			histStar->GetXaxis()->SetTitle("mass (GeV)");
+			histStar->GetXaxis()->SetTitle("mass [GeV]");
+			histStar->GetXaxis()->SetTitleSize(0.05);
+			histStar->GetXaxis()->SetTitleOffset(0.8);
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();
 			
-			legend = new TLegend(0.1,0.8,0.3,0.9);			
+			legend = new TLegend(0.691, 0.776, 0.892, 0.877);			
    			legend->AddEntry((TObject*)0, "Time resolution 10ps", "");
    			legend->Draw();	
 			 				
@@ -339,12 +345,14 @@ with their contents.
 			getHist(histFile1ps, plotName, histStar);
 			setStyleDistHist (histStar, plotName, plotTitle, canvasStar);
 			histStar->GetXaxis()->SetRangeUser(0.01,0.8);
-			histStar->GetXaxis()->SetTitle("mass (GeV)");
+			histStar->GetXaxis()->SetTitle("mass [GeV]");
+			histStar->GetXaxis()->SetTitleSize(0.05);
+			histStar->GetXaxis()->SetTitleOffset(0.8);
 			histStar->SetStats(0);
 			//gStyle->SetOptStat("r");
 			histStar->Draw();
 			
-			legend = new TLegend(0.1,0.8,0.3,0.9);			
+			legend = new TLegend(0.691, 0.776, 0.892, 0.877);			
    			legend->AddEntry((TObject*)0, "Time resolution 1ps", "");
    			legend->Draw();	
 			 				
