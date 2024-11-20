@@ -102,7 +102,7 @@ public:
 
 // optimization mode for HTA fill = 0 (safe and slow) or 1 (faster) or 2 (fastest)
 	
-	int gen_fillMode = 0; 
+	int gen_fillMode = 2; 
 	
 // max error for eta projection in fillMode = 1 and 2
 
@@ -137,7 +137,7 @@ public:
 	
 // event generation histogram file
 
-	string gen_histFileName = "AAAFillMode0EventGeneration.root";
+	string gen_histFileName = "AAAEventGeneration.root";
 	//string gen_histFileName = "AAAEventGeneration_massFit_10ps.root";
 	//string gen_histFileName = "AAA1nsecEventGeneration.root";
 	//string gen_histFileName = "AAAAParticleIDTests.root";
