@@ -4,7 +4,7 @@
 
 To check out only the FullSimulation package:
 ```
-git clone --filter=blob:none --no-checkout https://github.com/MuonColliderSoft/HT_TrackFinding.git
+git clone --filter=blob:none --no-checkout git@github.com:MuonColliderSoft/HT_TrackFinding.git
 cd HT_TrackFinding
 git sparse-checkout init --cone
 git sparse-checkout set HT_FullSimulation
