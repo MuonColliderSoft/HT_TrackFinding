@@ -40,13 +40,18 @@ public:
 
 	bool train_WriteFiles = false;
 	
+	// build a map from Hit.CellID to a list of HTA elements
+	//(done at TrainingPhase = 1)
+	
+	bool makeCellMap = true;
+	
 // At the end of training, a summary of results is printed
 
  	bool train_Summary = false;	
 	
 // Minimum number of tracks to be used to train each cell of the array
 	
-	const static unsigned train_nTracksPerCell = 100; 
+	const static unsigned train_nTracksPerCell = 100; // still used???
 	
 // Histogram files for three training phases
 
@@ -102,7 +107,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned reco_nEvents = 100;
+	unsigned reco_nEvents = 10;
 
 // number of tracks to be generated for each event
 
@@ -110,7 +115,7 @@ public:
 	
 // Background events to be generated
 
-	double reco_backGnd = -1.; // -1. == no BIB hit
+	double reco_backGnd = 1000.; // -1. = no BIB ; 
 	
 // perform track fitting of candidates
 
@@ -126,9 +131,9 @@ public:
 
 	bool reco_printCandidates = true;
 
-// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster) or 2 (fastest)
+// optimization mode for HTA fill = 0 (safe and slow) or 1 (faster, using cellMap)
 	
-	int reco_fillMode = 0; 
+	int reco_fillMode = 1; 
 			
 // create a file with data to 3D plot track candidates
 // this file is the input for PlotTracks
@@ -146,7 +151,7 @@ public:
 	
 // data file with all Bib hits
 
-	string reco_bibFileName = "BIBdata.txt";
+	string reco_bibFileName = "ntu_bkg_hits_phim22-52-1evt.root";
 	
 // Reconstruction histogram file
 

@@ -21,6 +21,16 @@
     
     };
     
+    
+    int  CellIDtoSystem(int CellID) {
+    
+ 
+		  const unsigned int system = (unsigned) ( CellID & 0x1f );
+  
+  		return system;
+    
+    };
+    
  #endif //MDHT_CELLIDTOLAYER_H  
         
       

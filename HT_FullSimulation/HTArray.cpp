@@ -12,6 +12,7 @@
 
 #include "TrackReader.h"
 #include "Event.cpp"
+#include "CellMap.cpp"
 
 /// global variables	
  
@@ -633,6 +634,11 @@ double chi2Function(const double *x){
        
         int fill(Hit &h){
       	
+	// Quick sanity prints (remove or guard with a debug flag later)
+    //std::cerr << "DEBUG: fill() called. layerIndHitStat addr=" << &layerIndHitStat
+             // << " size=" << layerIndHitStat.size()
+              //<< " h.CellID=" << h.CellID << " h.ID=" << h.ID << "\n";
+
 		
 			it = layerIndHitStat.find(h.CellID);
 			if(it != layerIndHitStat.end()){
@@ -651,7 +657,7 @@ double chi2Function(const double *x){
 				if(u2 < stat.u2Min || u2 > stat.u2Max) { Special = false; return -3;}
 					if(Special)cout << "good u2"<< endl;
 						
-				
+				//cout << "filled CellID " << h.CellID << " to cell: " << i_index << "," << j_index << "," << k_index << endl;
 				const unsigned int layerInd = CellIDtoLayer(h.CellID);
 				
 				//if(hitList[layer].size() == 0) ++nHitLayers;
@@ -697,7 +703,7 @@ double chi2Function(const double *x){
         int fitCandidate(vector<Hit> * allHits, double &chi2, double &phi, double &eta, double &invPt, 
         			double &z0, double &t0, double &beta, unsigned &nLayers, vector <long int> &goodFitHitList){
         			
-        if(verbose) cout << "fitCandidate " << i_index << " " << j_index << " " << k_index << endl;
+        if(true) cout << "fitCandidate " << i_index << " " << j_index << " " << k_index << endl;
      
         	struct Result {
         		double chi2;
@@ -731,12 +737,22 @@ double chi2Function(const double *x){
 			
 			// iterate on all layers 
 			
+			//cout << "iterate on layers begin" << endl;
+			
 			//map<int, vector<long int>>::iterator it;
-         	for(auto it = layerIndHitIDList.begin(); it != layerIndHitIDList.end(); ++it){ 
+			
+			//int iLoop = 0;
+			
+         	for(auto it = layerIndHitIDList.begin(); it != layerIndHitIDList.end(); ++it){
+         	 
+         	     //cout << "iLoop = " << ++iLoop << endl;
          	     
         		vector<long int>* hitIDList = &(it->second);  
     		
 				int nHits = hitIDList->size();
+				
+				//cout << "nHits = "<< nHits << endl;
+				
 				if(nHits == 0) continue;// skip possible empty layers
 				
 				
@@ -745,9 +761,16 @@ double chi2Function(const double *x){
 				long int ghostHitID = -1;
 				
 				
+			
+				
 				// iterate on all previous combinations
 				int nComb = comb1->size();
+				
+					//cout << "iterate on prev combinations begin: " << nComb << endl;
+					
 				for(int iC = 0; iC != nComb; ++iC){ 
+				
+					//cout << "iC = " << iC << endl;
 				
 					// iterate on all hits in this layer
 				 
@@ -765,6 +788,8 @@ double chi2Function(const double *x){
 					
 				(*comb1)[iC].clear();						
 				}
+				
+				//cout << "iterate on prev combinations end" << endl;
 			
 			comb1->clear();
 			temp = comb1;
@@ -772,6 +797,8 @@ double chi2Function(const double *x){
 			comb2 = temp;
 						
 			} 
+			
+			//cout << "iterate on layers end" << endl;
 			
 			combinations = *comb1; // including ghost hits
 			
@@ -799,6 +826,7 @@ double chi2Function(const double *x){
 				
 			}
 			
+			//cout << "final combinations" << endl;
 			
 			nCombs = finalCombinations.size();	// final unsorted list
 			
@@ -1017,7 +1045,7 @@ double chi2Function(const double *x){
 
 
     
-    class HTArray {
+class HTArray {
                
     // This is the whole Hough Transform Array with parameters and accessories
   
@@ -1029,6 +1057,12 @@ double chi2Function(const double *x){
     	// Hits in this vector are referred by index
     	
     	vector<Hit> allHits;
+    	
+    	// Maps CellID to a vector of cells that must be filled
+    	// Read from file in constructor
+    	// Created by HTArrayTraining.cpp
+    	
+    	CellMap cellMap;
     	
     	
     	// some histograms of inside quantities
@@ -1136,6 +1170,8 @@ double chi2Function(const double *x){
 ////////////////////////////////////////////////////////////////////////////////////////
 
 		HTArray(){ // constructor
+		
+			cellMap = readMapBinary("CellMap_30M.dat");
 		
 			phiMin = par.HTA_t_phi - par.HTA_t_deltaPhi;
 			phiStep = 2*par.HTA_t_deltaPhi/double(NphiBins);
@@ -1488,67 +1524,96 @@ double chi2Function(const double *x){
 	
 ////////////////////////////////////////////////////////////////////////////////////////
 				
-	int fill(Hit &h){
-	
-	
-	
-			// add this hit to the pool of hits for this event;
-			
-			h.ID = allHits.size();
-			allHits.push_back(h);
-		
-			int iPhi1 = 0;
-			int iPhi2 = NphiBins;
-			int iEta1 = 0;
-			int iEta2 = NetaBins;
-			int iInvpt1 = 0;
-			int iInvpt2 = NinvptBins;
+int fill(Hit &h, int mode = 0){
 
+	// add this hit to the pool of hits for this event;
+	
+	h.ID = allHits.size();
+	allHits.push_back(h);
+	
+	if(mode == 0){
+
+		int iPhi1 = 0;
+		int iPhi2 = NphiBins;
+		int iEta1 = 0;
+		int iEta2 = NetaBins;
+		int iInvpt1 = 0;
+		int iInvpt2 = NinvptBins;
+
+
+		for(int iInvpt = iInvpt1; iInvpt != iInvpt2; ++iInvpt){
+	
+			// indexes of the hit coordinates
 		
-			for(int iInvpt = iInvpt1; iInvpt != iInvpt2; ++iInvpt){
+			int iPhiMap;
+			int iPhiMap2;			
+			int iEtaMap; 
+			int iEtaMapCorr;				
+				
+		
+				for(int iEta = iEta1; iEta != iEta2; ++iEta){
 			
-				// indexes of the hit coordinates
+					for(int iPhi = iPhi1; iPhi != iPhi2; ++iPhi){
 				
-				int iPhiMap;
-				int iPhiMap2;			
-				int iEtaMap; 
-				int iEtaMapCorr;				
-						
-				
-					for(int iEta = iEta1; iEta != iEta2; ++iEta){
+						int strike = ArrElem[iPhi][iEta][iInvpt].fill(h);
 					
-						for(int iPhi = iPhi1; iPhi != iPhi2; ++iPhi){
-						
-							int strike = ArrElem[iPhi][iEta][iInvpt].fill(h);
-							
-												
-							if(strike == 0) { 
-				
+										
+						if(strike == 0) { 
 		
-								// insert here code to build candidate list on the fly ////////////
+
+							// insert here code to build candidate list on the fly ////////////
+					
+							int deltaEta = iEtaMap - iEta;
+							int deltaEtaCorr = iEtaMapCorr - iEta;
+						
+							HDeltaEta->Fill(deltaEta);
+							HDeltaEtaCorrected->Fill(deltaEtaCorr);
+													
+							int deltaPhi = iPhiMap - iPhi;
+							HDeltaPhi->Fill(deltaPhi);
+													
+							int deltaPhi2 = iPhiMap2 - iPhi;			
+							HDeltaPhi2->Fill(deltaPhi2);
 							
-								int deltaEta = iEtaMap - iEta;
-								int deltaEtaCorr = iEtaMapCorr - iEta;
-								
-								HDeltaEta->Fill(deltaEta);
-								HDeltaEtaCorrected->Fill(deltaEtaCorr);
-															
-								int deltaPhi = iPhiMap - iPhi;
-								HDeltaPhi->Fill(deltaPhi);
-															
-								int deltaPhi2 = iPhiMap2 - iPhi;			
-								HDeltaPhi2->Fill(deltaPhi2);
-									
-								}// end if strike == 0	
-														
-							} // end loop on phi	
-						} // end loop on eta
-				} // end loop on pt	
+							}// end if strike == 0	
+												
+						} // end loop on phi	
+					} // end loop on eta
+			} // end loop on pt	
+	}
+	
+	else{ // mode = 1
+	
+		// Find the given key
+	
+		unsigned key = h.CellID;
+		auto it = cellMap.find(key);
+		if (it == cellMap.end()) return 0; // no key: this hit is ignored
+
+	//cout << "key = " << key << endl;
+
+		std::vector<Cell> cells(it->second.begin(), it->second.end());
+		
+		//cout << "key = " << key << " num of cells = " << cells.size() << endl;
+
+		// Loop over all cells stored for this key
+		for (Cell c : cells) {
+			int i, j, k;
+			std::tie(i, j, k) = IndexCodec::decompress(c);
+
+			// Do your work here with i, j, k
+			//std::cout << "Decoded cell: (" << i << "," << j << "," << k << ")\n";
+			int strike = ArrElem[i][j][k].fill(h);
 			
 			
-			return 0;
+		}
+	}
+
+	
 			
-		}// end fill
+	return 0;
+			
+}// end fill
 		
 			
 		
@@ -1664,7 +1729,7 @@ double chi2Function(const double *x){
   
 
         
-    }; // end HTArray
+}; // end HTArray
          
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////

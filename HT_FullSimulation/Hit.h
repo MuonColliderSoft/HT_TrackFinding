@@ -10,7 +10,6 @@
 //  Modified for use with Muon Collider code April 3 2025
 //
 
-#include <iostream>
 
     class Hit {
     
@@ -50,8 +49,8 @@
         	
         Hit(char hitType); 
         
-		void print(std::ostream &out); 
-		void write(std::ostream &out);
+		void print(ostream &out); 
+		void write(ostream &out);
 		
 		
 		bool isSeed();

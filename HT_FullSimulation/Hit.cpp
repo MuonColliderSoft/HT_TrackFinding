@@ -56,7 +56,7 @@
         
 ////////////////////////////////////////////////////////////////////////////////////// 
   
-		void Hit::print(std::ostream &out){
+		void Hit::print(ostream &out){
 	
 		out << " ID " << ID << " type: " << hitType << " CellID: " << CellID 
 			<< " layerInd: " << layerInd  << " trackInd: " << trackInd 
@@ -70,7 +70,7 @@
 		
 ////////////////////////////////////////////////////////////////////////////////////// 
 		
-		void Hit::write(std::ostream &out){
+		void Hit::write(ostream &out){
 	
 			out << hitType << " " << CellID << " " << layerInd  << " " << trackInd << " " 
 				<< x1 << " " << x2 << " " << t  << " " 
@@ -81,13 +81,10 @@
 ////////////////////////////////////////////////////////////////////////////////////// 
     
     	bool Hit::isSeed(){
-    	
     		return true;
-		
-			if(layerInd >= 4 && layerInd <= 9) return true;
-			if(layerInd >= 15 && layerInd <= 25) return true;
-			if(layerInd >= 30 && layerInd <= 40) return true;
-			
+
+    		const unsigned int system = (unsigned) ( CellID & 0x1f ); 		 
+    		if(system >= 3) return true;
 			return false;
         
         }

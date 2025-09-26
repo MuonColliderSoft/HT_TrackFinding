@@ -1,0 +1,1 @@
+clang++ -Wall -Wextra -DUSE_ROOT $(root-config --cflags) -o DumpMapStats DumpMapStats.cpp $(root-config --libs)

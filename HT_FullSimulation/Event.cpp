@@ -53,7 +53,7 @@ extern std::mt19937 generator; // Mersenne Twister
         		     		     	
         		for(int iH = 0; iH != (int)thisTrack.hitList.size(); ++iH){
         			//thisTrack.hitList[iH].ID = hitList.size(); // set hit ID
-        			thisTrack.hitList[iH].trackInd = iT; // set hit trackInd
+        			//thisTrack.hitList[iH].trackInd = iT; // set hit trackInd
         			hitList.push_back(thisTrack.hitList[iH]); // add this hit to hitList
         			
         		} // end loop on hits of this track
@@ -72,7 +72,7 @@ extern std::mt19937 generator; // Mersenne Twister
         	if(verbose) cout << "generate background" << endl;
 			
 				// Adds BIB hits to hitList for this event
-			
+				if(backGnd > bibRead.size()) backGnd = bibRead.size();
 				for(unsigned iH = 0; iH != backGnd; ++iH){
 					Hit bibHit = bibRead.randomBibHit();
 					bibHit.ID = hitList.size();

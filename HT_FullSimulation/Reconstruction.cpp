@@ -34,15 +34,17 @@ using namespace std;
 #include "Statistics.cpp"
 #include "makeEffGraphFromHists.cpp"
 #include "Parameters.h"
+#include "CellIDtoLayer.h"
 #include "Hit.cpp"
 #include "Track.cpp"
-#include "BibFileReader.cpp"
 #include "HTArray.cpp"
 #include "TMath.h"
 #include "TTree.h"
 #include "TrackReader.h"
+#include "BibFileReader.cpp"
 #include "Event.cpp"
 #include "HTAmapper.h"
+#include "CellMap.cpp"
 
 
 double Pi = 3.14159;
@@ -97,7 +99,7 @@ bool Special = false;
 unsigned nEvents; // Number of events to be generated
 unsigned nTracks; // Number of tracks per event
 long int backGnd; // Number of background events to be simulated
-int fillMode; // optimization mode for HTA fill
+//int fillMode; // optimization mode for HTA fill
 bool PlotTracks; // create a file with data for 3-D plots of candidates		
 
 
@@ -109,7 +111,7 @@ int main(){
     nEvents = par.reco_nEvents; // Number of events to be generated
 	nTracks = par.reco_nTracks; // Number of tracks per event
 	backGnd = par.reco_backGnd; // Number of background events to be simulated
-	fillMode = par.reco_fillMode; // optimization mode for HTA fill
+	int fillMode = par.reco_fillMode; // optimization mode for HTA fill
 	PlotTracks = par.reco_PlotTracks; // create a file with data for 3-D plots of candidates
 	
 	// seeding the random generators 
@@ -128,6 +130,11 @@ int main(){
 	
 	HTA->initHists();
 	HTA->print(cout);
+	
+	// Check sanity of array dimensions
+	// see CellMap.cpp
+	
+	IndexCodec::checkDimensions();
 			
 	// Open data file
 	
@@ -189,6 +196,7 @@ int main(){
 		string bibFileName = par.reco_bibFileName;	
 		int code = bibRead.readFile(bibFileName);
 		cout << "return code = " << code << endl;
+		cout << "pool size = " << bibRead.size() << endl;
 		if(code == -1 && backGnd > 0) return 0;
 	
 		unsigned totBIB = bibRead.size();
@@ -881,11 +889,10 @@ int main(){
 			//////////////////////////////////////////////////////////////////////////////			
 			//////////////////////////////////////////////////////////////////////////////
 			/// FILL HTA ARRAY FOR PATTERN REGOGNITION ///////////////////////////////////
+		
 			
-			if(thisHit.isSeed())HTA->fill(thisHit);// use only seed hits 
-			
-
-			
+			if(thisHit.isSeed())HTA->fill(thisHit, par.reco_fillMode);// use only seed hits 
+		
 			Special = false;
 			
 				
@@ -918,9 +925,13 @@ int main(){
 				double chi2, phi, eta, invPt, z0, t0, beta;
 				vector <long int> goodFitHitList;
 				unsigned nHitsFit;
+					
+				//cout << "FitCandidate in"	<< 	endl;
 						
 				int retCodeFit = HTA->ArrElem[phi_b][eta_b][pt_b].
 						fitCandidate(&(HTA->allHits),chi2, phi, eta, invPt, z0, t0, beta, nHitsFit, goodFitHitList);
+				
+				//cout << "FitCandidate out"	<< 	endl;
 						
 				unsigned dof = 2*nHitsFit - 5; // Degrees of freedom of the fit
 				

@@ -29,6 +29,8 @@ using namespace std;
 #include "HTAmapper.h"
 
 #include "HTArray.cpp"
+#include "CellMap.cpp"
+
 
 // random generator
 
@@ -69,6 +71,10 @@ int main(){
 	//cout << "Done" << endl;
 	
 	HTA->print(cout);
+	
+	// check sanity of array dimensions
+	
+	IndexCodec::checkDimensions();
 
 			
 	// Open data file
@@ -140,6 +146,11 @@ int main(){
 
 	long unsigned maxTracks = par.train_maxTracks;
 	long unsigned iTrack = 0;
+	
+	
+    // Allocate the map on the heap using unique_ptr
+    
+    auto cellMap = std::make_unique<CellMap>(); // mapping from CellID to vector of cells
 	 
 	for(;;){ // infinite loop
 	
@@ -176,15 +187,15 @@ int main(){
 	
 		HTA->trainStat(i,j,k); // accumulate training statistics
 		
-			unsigned nHits = thisTrack.hitList.size();
+		unsigned nHits = thisTrack.hitList.size();
 		
-						for(unsigned iH = 0; iH != nHits; ++iH) { // begin loop on hits of each track
+		for(unsigned iH = 0; iH != nHits; ++iH) { // begin loop on hits of each track
 
-							Hit thisHit = thisTrack.hitList[iH]; 	
-				
-							HTA->train(thisHit,thisTrack,i,j,k);
-				
-			}	
+			Hit thisHit = thisTrack.hitList[iH]; 	
+			HTA->train(thisHit,thisTrack,i,j,k);
+			if(par.makeCellMap && TrainingPhase == 1) addCell(*cellMap, thisHit.CellID, i, j, k);
+
+		}	
 		
 		++iTrack;		
 	}
@@ -206,6 +217,13 @@ int main(){
 		outfile.open(dataFileName);
 		HTA->write(outfile);
 		outfile.close();
+		
+	// write cell map file
+	
+		if(par.makeCellMap && (TrainingPhase == 1)) {
+			cout << "Writing cell map file..." << endl;
+			writeMapBinary(*cellMap, "CellMap.dat");
+		}
 		
 	// Training summary
 	

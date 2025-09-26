@@ -1,11 +1,7 @@
 #------------------------------------------------------------------------
 # Compiler and flags
 CXX = c++
-CXXFLAGS = $(shell root-config --cflags)
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-    CXXFLAGS += -stdlib=libc++ -mmacosx-version-min=13.0
-endif
+CXXFLAGS = -std=c++14 -stdlib=libc++ -m64 -mmacosx-version-min=13.0 $(shell root-config --cflags)
 LDFLAGS = $(shell root-config --libs)
 
 # Executable names
