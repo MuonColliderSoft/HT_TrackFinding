@@ -5,7 +5,7 @@ CXXFLAGS = -std=c++14 -stdlib=libc++ -m64 -mmacosx-version-min=13.0 $(shell root
 LDFLAGS = $(shell root-config --libs)
 
 # Executable names
-BINARIES = Reconstruction HTArrayTraining
+BINARIES = Reconstruction HTArrayTraining CutOptimization
 
 # Default target: build all
 all: $(BINARIES)

@@ -20,10 +20,13 @@ public:
     double variance;
     double max;
     double min;
+    std::vector<double> xList;
+    
     
     Statistics();
     
     void Fill(double x);
+    void Clear();
     
     long int GetEntries();
     double GetMean();
@@ -31,6 +34,8 @@ public:
     double GetSigma();
     double GetMax();
     double GetMin();
-};
+    void GetQuantile(double fraction, double &high, double &low);
+    
+    };
 
 #endif /* defined(__LinearizedTrackFitting__Statistics__) */

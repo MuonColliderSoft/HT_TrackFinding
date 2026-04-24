@@ -15,6 +15,10 @@
 #include "CellMap.cpp"
 
 /// global variables	
+
+
+ extern int NFITS;
+ extern int TOTNFITS;
  
 
  extern int TrainingPhase;
@@ -538,21 +542,17 @@ double chi2Function(const double *x){
             	
 ////////////////////////////////////////////////////////////////////////////////////////
     
-
-        
+  
         // reset all hit lists in all layers of this element
         
          void reset (){
          
          	thisCellDone = false;       
-         	nHitLayers = 0;         	
-         	map<int, vector<long int>>::iterator it;
-         	for(it = layerIndHitIDList.begin(); it != layerIndHitIDList.end(); ++it){      
-        			(it->second).clear();  
-        	}       	     
+         	nHitLayers = 0;
+        	layerIndHitIDList.clear();
+        	      	     
         }
-        
-           	
+            	
 ////////////////////////////////////////////////////////////////////////////////////////
           
         void print(ostream &out){
@@ -576,23 +576,7 @@ double chi2Function(const double *x){
    			
         }
         
-            	
-////////////////////////////////////////////////////////////////////////////////////////
-    
 
-        
-   /*     
-        void printHits(ostream &out){
-        	out << "min,max Layers: " << minLayers << "," << maxLayers << endl;
-        	for(it = layerIndHitStat.begin(); it != layerIndHitStat.end(); ++it){
-        		out << "lay: " << it->first; out << " ";
-        			(it->second).printHits(out); out << endl;
-        	}
-        }
-        
-   */
-   
-       	
 ////////////////////////////////////////////////////////////////////////////////////////
     
 
@@ -600,16 +584,22 @@ double chi2Function(const double *x){
         
         void printHits(ostream &out){
         
+        long int nCombs = 1;
+        
         	map<int, vector<long int>>::iterator it;
          	for(it = layerIndHitIDList.begin(); it != layerIndHitIDList.end(); ++it){
          		out << "layerInd: " << it->first << " hit IDs : ";     
         		vector<long int> hitIDList = it->second;
+        		int nHits = 0;
         		for(int iH = 0; iH != (int)hitIDList.size(); ++iH){
         			long int hitID = hitIDList[iH];
-        			out << hitID << ", ";       		
+        			out << hitID << ", ";
+        			++nHits;       		
         		} 
+        		nCombs *= nHits;
         		out << endl; 
-        	}       	     
+        	}  
+        	out << nCombs << " combinations" << endl;
         }
             	
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -973,6 +963,9 @@ double chi2Function(const double *x){
 				};
 				
 			    min->Minimize(); // calls Minuit
+			    
+			    ++NFITS; // count the nummer of fits
+			    ++TOTNFITS; 
 		
 				// extract results returned by the fit
 				
@@ -986,8 +979,9 @@ double chi2Function(const double *x){
 				t0 = res[4];
 				beta = res[5];
 			
-				 
-				if(chi2 > par.reco_chi2Cut) continue;// failed chi2
+				unsigned dof = 3.*nHits - 5.;
+				double chi2Red = chi2/(double)dof; // reduced chi2
+				if(chi2Red > par.reco_chi2Cut) continue;// failed chi2
 				
 				oneGoodFit = true;
 				
@@ -1072,6 +1066,7 @@ class HTArray {
 		TH1D *HDeltaPhi;
 		TH1D *HDeltaPhi2;
 		TH1D *HInvptTimesR; 
+		
 		TH2I *HDeltaPhiVsInvptTimesR;
 		
 		
@@ -1214,7 +1209,9 @@ class HTArray {
 			HDeltaPhi = new TH1D("DeltaPhi","DeltaPhi",61,-30.5,+30.5);
 			HDeltaPhi2 = new TH1D("DeltaPhi2","DeltaPhi2",21,-10.5,+10.5);
 			HInvptTimesR = new TH1D("InvptTimesR","InvptTimesR",1000, 0.,0.3);
-			HDeltaPhiVsInvptTimesR = new TH2I("DeltaPhiVsInvptTimesR","DeltaPhiVsInvptTimesR",100,0.,0.3,510,-10.5,+40.5);					 
+			
+			HDeltaPhiVsInvptTimesR = new TH2I("DeltaPhiVsInvptTimesR","DeltaPhiVsInvptTimesR",100,0.,0.3,510,-10.5,+40.5);	
+							 
 			H3D_HTcellx = new TH3I("H3D_HTcellx","H3D_HTcellx; x1; x2; t",40,0.,1.,40,0.,1.,40,0.,1.);
 			H3D_HTcellu = new TH3I("H3D_HTcellu","H3D_HTcellu; x1; u1; u2",40,0.,1.,40,0.,1.,40,0.,1.);
 			H3D_HTAtrainStat = new TH3I("H3D_HTAtrainStat","H3D_HTAtrainStat; i; j; k",

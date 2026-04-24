@@ -53,7 +53,7 @@ extern std::mt19937 generator; // Mersenne Twister
         		     		     	
         		for(int iH = 0; iH != (int)thisTrack.hitList.size(); ++iH){
         			//thisTrack.hitList[iH].ID = hitList.size(); // set hit ID
-        			//thisTrack.hitList[iH].trackInd = iT; // set hit trackInd
+        			thisTrack.hitList[iH].trackInd = iT; // set hit trackInd
         			hitList.push_back(thisTrack.hitList[iH]); // add this hit to hitList
         			
         		} // end loop on hits of this track

@@ -82,10 +82,10 @@ public:
 // coordinates of a single HTA cell and detector layer 
 // whose hit coordinates we want to plot in 3-D
 
-	unsigned HTA_plotBinX = 14;
-	unsigned HTA_plotBinY = 189;
-	unsigned HTA_plotBinZ = 4;
-	unsigned HTA_plotLay = 302;
+	unsigned HTA_plotBinX = 6;
+	unsigned HTA_plotBinY = 174;
+	unsigned HTA_plotBinZ = 3;
+	unsigned HTA_plotLay = 5;
 
 		
 //////////////////////////////////////////////////////////////////////// 
@@ -97,9 +97,9 @@ public:
 
 	//string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_100k.root";
 	
-	//string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_dz1p5-10k.root";
+	string reco_inputTrackFileName = "ntu_muongun_cell_7-180-4_clean_10k.root";
 	
-	string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_dz1p5-10k-2.root";
+	//string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_dz1p5-10k-2.root";
 	
 // Plot reconstructed tracks in 3D
 
@@ -107,7 +107,7 @@ public:
 
 // Number of events to be generated for simulation
 
-	unsigned reco_nEvents = 10;
+	unsigned reco_nEvents = 10000;
 
 // number of tracks to be generated for each event
 
@@ -115,14 +115,14 @@ public:
 	
 // Background events to be generated
 
-	double reco_backGnd = 1000.; // -1. = no BIB ; 
+	double reco_backGnd = 1000; // -1. = no BIB ; 
 	
 // perform track fitting of candidates
 
 	bool reco_TrackFit = true;
-	unsigned reco_minLayersForFit = 5;
+	unsigned reco_minLayersForFit = 4;
 	unsigned reco_maxDroppedLayers = 1;
-	double reco_chi2Cut = 1000.;
+	double reco_chi2Cut = 40.; // Reduced Chi2
 	bool reco_massFit = false;
 	double reco_massFitMaxP = 3.; // GeV/c
 	
@@ -152,16 +152,18 @@ public:
 // data file with all Bib hits
 
 	string reco_bibFileName = "ntu_bkg_hits_phim22-52-1evt.root";
+	//string reco_bibFileName = "ntu_bkg_hits_phim22-52-1evt_OLDBIB.root";
+	
 	
 // Reconstruction histogram file
 
-	string reco_histFileName = "AAAReconstruction.root";
+	string reco_histFileName = "AAANewReconstruction.root";
 	
 	bool reco_fillHitHistograms = false; // selective histogram filling
 	
 // printing control
 
-	bool reco_verbose = false;
+	//bool reco_verbose = true;
 	
 		
 	
@@ -194,7 +196,7 @@ public:
 
 // ignore vertex
 
-	bool ignoreVertex = false;
+	bool ignoreVertex = true;
 
 // magnetic field in Tesla
 
