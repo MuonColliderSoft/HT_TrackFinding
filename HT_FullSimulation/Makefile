@@ -1,8 +1,14 @@
 #------------------------------------------------------------------------
 # Compiler and flags
 CXX = c++
-CXXFLAGS = -std=c++14 -stdlib=libc++ -m64 -mmacosx-version-min=13.0 $(shell root-config --cflags)
+CXXFLAGS = -m64 $(shell root-config --cflags)
 LDFLAGS = $(shell root-config --libs)
+
+# macOS-specific flags
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+    CXXFLAGS += -stdlib=libc++ -mmacosx-version-min=13.0
+endif
 
 # Executable names
 BINARIES = Reconstruction HTArrayTraining CutOptimization
