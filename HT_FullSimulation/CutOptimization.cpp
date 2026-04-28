@@ -559,6 +559,7 @@ struct counts {
 	unsigned NX2 = 0;
 	unsigned NT  = 0;
 	unsigned N   = 0;
+	unsigned Nin = 0;
 };
 
 map<string, counts>  sensorNameToAcceptedCount;
@@ -593,6 +594,7 @@ map<string, counts>  sensorNameToAcceptedCount;
 											
 			auto it1 = sensorNameToResults.find(sensorName + "_X1");		
 			if (it1 != sensorNameToResults.end()){
+				++sensorNameToAcceptedCount[sensorName].Nin; // counts per sensor		
 				//cout << "X1 FOUND ";
 				Results& R = it1->second;		
 				X1cut = (thisHit.x1 >= R.cutLow && thisHit.x1 <= R.cutHigh);
@@ -644,6 +646,8 @@ auto line2 = [&]() {
          << std::string(Wcnt, '-')
          << "+"
          << std::string(Wcnt, '-')
+         << "+"
+         << std::string(Wcnt, '-')
          << "+\n";
 };
 
@@ -656,6 +660,8 @@ line2();
 cout << "|"
      << std::setw(Wname2) << "Sensor"
      << "|"
+     << std::setw(Wcnt)   << "Nin  "
+     << "|"
      << std::setw(Wcnt)   << "NX1"
      << "|"
      << std::setw(Wcnt)   << "NX2"
@@ -667,6 +673,7 @@ cout << "|"
 
 line2();
 
+unsigned totalNin = 0;
 unsigned totalNX1 = 0;
 unsigned totalNX2 = 0;
 unsigned totalNT  = 0;
@@ -681,6 +688,8 @@ for (const auto& pair : sensorNameToAcceptedCount) {
     cout << "|"
          << std::setw(Wname2) << sensorName
          << "|"
+         << std::setw(Wcnt)   << C.Nin
+         << "|"
          << std::setw(Wcnt)   << C.NX1
          << "|"
          << std::setw(Wcnt)   << C.NX2
@@ -691,7 +700,8 @@ for (const auto& pair : sensorNameToAcceptedCount) {
          << "|\n";
 
     line2();
-
+    
+	totalNin += C.Nin;
     totalNX1 += C.NX1;
     totalNX2 += C.NX2;
     totalNT  += C.NT;
@@ -702,6 +712,8 @@ for (const auto& pair : sensorNameToAcceptedCount) {
 // Totals row
 cout << "|"
      << std::setw(Wname2) << "TOTAL"
+     << "|"
+     << std::setw(Wcnt)   << totalNin
      << "|"
      << std::setw(Wcnt)   << totalNX1
      << "|"
@@ -726,11 +738,13 @@ for (const auto& pair : sensorNameToAcceptedCount) {
 	const std::string& sensorName = pair.first;
     const counts& C = pair.second;
     
-    double pX1 = (double)C.NX1/(double)NTotBkg;
-    double pX2 = (double)C.NX2/(double)NTotBkg;
-    double pT = (double)C.NT/(double)NTotBkg;
+    unsigned NTot = C.Nin;
+    
+    double pX1 = (double)C.NX1/(double)NTot;
+    double pX2 = (double)C.NX2/(double)NTot;
+    double pT = (double)C.NT/(double)NTot;
     double PtotExp = pX1*pX2*pT;
-    double Nexp = (double)NTotBkg*PtotExp;
+    unsigned Nexp = (double)NTot*PtotExp;
     cout << sensorName << "  pX1 " << pX1 << " pX2 " << pX2 << " pT " << pT << " Ptot " << PtotExp << " Nexp: " << Nexp << " actual: " << C.N << endl;
 
 }

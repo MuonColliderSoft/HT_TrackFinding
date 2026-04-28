@@ -97,9 +97,11 @@ public:
 
 	//string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_100k.root";
 	
-	string reco_inputTrackFileName = "ntu_muongun_cell_7-180-4_clean_10k.root";
+	//string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_dz1p5-10k.root";
 	
-	//string reco_inputTrackFileName = "ntu_muongun_pt3_theta10-170_phi0-30_dz1p5-10k-2.root";
+	//string reco_inputTrackFileName = "ntu_muongun_cell_7-180-4_clean_10k.root";
+	string reco_inputTrackFileName = "ntu_muongun_cell_7-252-4_clean_100k.root";
+	//string reco_inputTrackFileName = "ntu_muongun_cell_7-304-4_clean_100k.root";
 	
 // Plot reconstructed tracks in 3D
 
@@ -115,14 +117,14 @@ public:
 	
 // Background events to be generated
 
-	double reco_backGnd = 1000; // -1. = no BIB ; 
+	double reco_backGnd = -1.; // -1. = no BIB ; 
 	
 // perform track fitting of candidates
 
 	bool reco_TrackFit = true;
-	unsigned reco_minLayersForFit = 4;
+	unsigned reco_minLayersForFit = 5;
 	unsigned reco_maxDroppedLayers = 1;
-	double reco_chi2Cut = 40.; // Reduced Chi2
+	double reco_chi2Cut = 1000.;
 	bool reco_massFit = false;
 	double reco_massFitMaxP = 3.; // GeV/c
 	
@@ -152,8 +154,7 @@ public:
 // data file with all Bib hits
 
 	string reco_bibFileName = "ntu_bkg_hits_phim22-52-1evt.root";
-	//string reco_bibFileName = "ntu_bkg_hits_phim22-52-1evt_OLDBIB.root";
-	
+
 	
 // Reconstruction histogram file
 
@@ -163,7 +164,7 @@ public:
 	
 // printing control
 
-	//bool reco_verbose = true;
+	bool reco_verbose = false;
 	
 		
 	
@@ -196,7 +197,7 @@ public:
 
 // ignore vertex
 
-	bool ignoreVertex = true;
+	bool ignoreVertex = false;
 
 // magnetic field in Tesla
 

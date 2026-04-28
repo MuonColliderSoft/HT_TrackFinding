@@ -85,9 +85,9 @@
     		const unsigned int system = (unsigned) ( CellID & 0x1f ); 
     		int layer = (unsigned) ( (CellID >> 7) & 0x3f );	
     		 
-    		if((system == 3) && (layer == 0)) return true;
-    		if((system == 3) && (layer == 1)) return true;
-    		if((system == 3) && (layer == 2)) return true;
+    		if((system == 3) && (layer == 0)) return false;
+    		if((system == 3) && (layer == 1)) return false;
+    		if((system == 3) && (layer == 2)) return false;
     		if((system == 5) && (layer == 0)) return true;
     		if((system == 5) && (layer == 1)) return true;
     		if((system == 5) && (layer == 2)) return true; 		
