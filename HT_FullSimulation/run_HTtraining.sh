@@ -14,7 +14,7 @@ make HTArrayTraining
 
 echo "Starting the Hough-Transform array training."
 
-for phase in {1..3};
+for phase in {1..2};
 do
 
     echo -n "Training PHASE $phase "
