@@ -1,7 +1,38 @@
-// simulation of track reconstruction. Aug 29 2022
-// modified for Muon Collider software integration Apr 14 2025
+//==============================================================================
+// CutOptimization.cpp
 //
+// Purpose:
+//   Analyze reconstructed detector hits sensor-by-sensor, derive optimized
+//   acceptance cuts for X1, X2, and time coordinates, then test those cuts
+//   on an independent background-hit sample.
 //
+// Main Functions:
+//   1. Read simulated reconstruction events.
+//   2. Group hits by sensor.
+//   3. Build X1 / X2 / T distributions.
+//   4. Compute min, max, quantiles, CutLow, CutHigh.
+//   5. Save per-sensor histograms to PDF and ROOT file.
+//   6. Read background hits.
+//   7. Count hits passing X1, X2, T, and all three cuts.
+//   8. Compare expected vs observed triple-cut acceptance.
+//
+// Outputs:
+//   - ROOT histogram file
+//   - PDF plots in ./hists/
+//   - Printed cut tables
+//   - Printed background rejection tables
+//
+// Example Build:
+//   clang++ -std=c++17 -O2 -Wall -Wextra CutOptimization.cpp -o CutOptimization \
+//       `root-config --cflags --libs`
+//
+// Example Run:
+//   ./CutOptimization
+//
+// Requirements:
+//   ROOT, C++17, Muon Collider software support classes.
+//
+//==============================================================================
 
 #include <iostream> 
 #include <fstream> 

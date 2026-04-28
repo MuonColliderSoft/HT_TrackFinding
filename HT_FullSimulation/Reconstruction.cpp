@@ -1,7 +1,42 @@
 // simulation of track reconstruction. Aug 29 2022
 // modified for Muon Collider software integration Apr 14 2025
 //
+//==============================================================================
+// Reconstruction.cpp
 //
+// Purpose:
+//   Muon Collider track-reconstruction study using a Hough Transform Array
+//   (HTA). Reads simulated signal tracks, optionally overlays background hits,
+//   performs pattern recognition, fits track candidates, and stores
+//   performance histograms.
+//
+// Main Steps:
+//   1. Initialize HTA and load training data.
+//   2. Read events with signal + optional BIB background.
+//   3. Fill HTA with seed hits.
+//   4. Find candidate cells.
+//   5. Fit candidate tracks.
+//   6. Apply chi2 quality cuts.
+//   7. Remove duplicate candidates.
+//   8. Write ROOT histograms.
+//
+// Outputs:
+//   - ROOT histogram file
+//   - Candidate / fit statistics
+//   - Signal and background hit distributions
+//   - Reconstruction performance metrics
+//
+// Example Build:
+//   clang++ -std=c++17 -O2 -Wall -Wextra Reconstruction.cpp -o Reconstruction \
+//       `root-config --cflags --libs`
+//
+// Example Run:
+//   ./Reconstruction
+//
+// Requirements:
+//   ROOT, C++17, Muon Collider support classes.
+//
+//==============================================================================
 
 #include <iostream> 
 #include <fstream> 
@@ -25,7 +60,6 @@
 #include "Math/Factory.h"
 #include "Math/Functor.h"
 #include "TError.h"
-//#include "TApplication.h"
 #include "TGraph2D.h"
 
 
